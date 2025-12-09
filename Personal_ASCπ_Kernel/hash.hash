@@ -1,0 +1,22 @@
+==== files.zip ==== 
+SHA256 hash of files.zip:
+b120f1d1fdac4816485c22921148bab7c7a4f639e913655748c12a07615fe7a2
+CertUtil: -hashfile command completed successfully.
+==== files.zip.ots ==== 
+SHA256 hash of files.zip.ots:
+dbf9b4d0e920b18f6da0a32de62415713f36610c9bca9ebb3737f1767c2570f9
+CertUtil: -hashfile command completed successfully.
+
+SHA256 hash of Internal_Technical_Assessment.md:
+2655395b9a614efeb9983da54deac75e0e631d56d13f7d634a0e1081602912c6
+CertUtil: -hashfile command completed successfully.
+
+==== Personal_ASCp_Kernel.js ==== 
+SHA256 hash of Personal_ASCp_Kernel.js:
+495afddc5e7e443bcaad411adcf28368b550dc7aa273161a689c14c831f3be21
+CertUtil: -hashfile command completed successfully.
+
+==== Personal_Development_Interface.html ==== 
+SHA256 hash of Personal_Development_Interface.html:
+2f394d06a057bbe434c19151a1d594c79466e5a823fea8ce81ffa411dc07c5df
+CertUtil: -hashfile command completed successfully.
