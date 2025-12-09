@@ -57,7 +57,7 @@ This insight is the foundation of ASCπ and the core of this prior art.
 
 ---
 
-# **2. FORMAL MOTOR EQUATIONS (NO DOLLAR SYMBOLS)**
+# **2. FORMAL MOTOR EQUATIONS**
 
 ## **2.1 Fundamental Motor Equation**
 
