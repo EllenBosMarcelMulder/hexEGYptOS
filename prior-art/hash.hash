@@ -1,0 +1,19 @@
+==== ASC?_Field_Computing_Prior_Art_Scientific_Paper.docx ==== 
+SHA256 hash of ASC?_Field_Computing_Prior_Art_Scientific_Paper.docx:
+8d69b3f66ea0b9e457394657db8a2d6d322c758892a1e794b724cdddfb77cd35
+CertUtil: -hashfile command completed successfully.
+==== files.zip ==== 
+SHA256 hash of files.zip:
+0e3e0beb70ec0472e8b97d331738dc0bba39f0c0dc1f3cc5017a7fe022733c55
+CertUtil: -hashfile command completed successfully.
+==== files.zip.ots ==== 
+SHA256 hash of files.zip.ots:
+afe748430799468902537618e2b016afd7bbecb7c11d9ec2c5ca1579facb0d54
+CertUtil: -hashfile command completed successfully.
+==== HASHREGISTER.txt ==== 
+CertUtil: -hashfile command FAILED: 0x80070020 (WIN32: 32 ERROR_SHARING_VIOLATION)
+CertUtil: The process cannot access the file because it is being used by another process.
+==== PRIOR_ART_DOCUMENTATION_SUMMARY.md ==== 
+SHA256 hash of PRIOR_ART_DOCUMENTATION_SUMMARY.md:
+a68f491e3d9be4a8686a4413213482e597dab52eb34e3e3f15c7e9565226ee17
+CertUtil: -hashfile command completed successfully.
