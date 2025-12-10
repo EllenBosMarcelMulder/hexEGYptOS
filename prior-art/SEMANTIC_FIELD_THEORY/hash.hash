@@ -22,9 +22,6 @@ CertUtil: -hashfile command completed successfully.
 SHA256 hash of figure_6_civilization_coherence_wave.svg:
 4b1895abebeb2151d3250f8d3ef01083a153e6179916c5e7840dc5a34e2bca56
 CertUtil: -hashfile command completed successfully.
-==== HASHREGISTER.txt ==== 
-CertUtil: -hashfile command FAILED: 0x80070020 (WIN32: 32 ERROR_SHARING_VIOLATION)
-CertUtil: The process cannot access the file because it is being used by another process.
 ==== THEORY_(FOUNDATIONAL RELEASE 1.0).md ==== 
 SHA256 hash of THEORY_(FOUNDATIONAL RELEASE 1.0).md:
 1822dda692ec83cf4ce4b2bad199264b05816ff249e2023f8abe5edece3158e1
