@@ -2016,7 +2016,7 @@ Examples:
 * social rhythms shaped by sunlight and weather
 * linguistic patterns reflecting physical environment
 
-If language becomes detached from EarthLock, system-wide decoherence follows.
+If language becomes detached from EarthLock, system-wid e decoherence follows.
 
 ---
 
@@ -2127,8 +2127,6 @@ This chapter establishes the philosophical and physical foundations needed for S
 # *ASCπ / SFT: The Semantic Field Theory of Meaning, Consciousness, and Coherence*
 
 # ╚════════════════════════════════════════╝
-
-Below is the full structured draft, ready for direct LaTeX/PDF conversion.
 
 ---
 
@@ -2419,3 +2417,182 @@ ASCπ is the canonical implementation.
 This whitepaper serves as the official international publication draft.
 
 ---
+
+# **SECTION XVI — FIGURES, COMPUTATIONAL APPENDIX & FINAL INTEGRATION BLOCK**
+
+### *(Completing the Foundational Release 1.0 of Semantic Field Theory)*
+
+This final section integrates the experimental SVG figures, the computational generative protocol, and the legal prior-art declaration into the complete SFT/ASCπ corpus.
+
+It marks the document as **scientifically closed**, **computationally reproducible**, and **juridically anchored**.
+
+---
+
+# **XVI.1 — Canonical Figures of Semantic Field Theory**
+
+The following figures represent the **minimal visual basis set** required for any reproduction, simulation, or publication of SFT.
+
+All figures were generated using the Python-based ASCπ Field Engine and are hereby declared part of the **canonical reference implementation**.
+
+### **Figure 1 — Character Field Matrix (ΔΦ-map)**
+
+*16×16 semantic excitation grid derived from ASCII → ASCπ mapping.*
+
+![figure\_1\_character\_field\_matrix](figure_1_character_field_matrix.svg)
+
+---
+
+### **Figure 2 — Curvature Map (κ-map)**
+
+*Laplacian curvature overlay demonstrating semantic divergence.*
+
+![figure\_2\_curvature\_map](figure_2_curvature_map.svg)
+
+---
+
+### **Figure 3 — Phase Vector Diagram (θ-field)**
+
+*Phase-gradient vectors representing rhythmic orientation.*
+
+![figure\_3\_phase\_vector\_diagram](figure_3_phase_vector_diagram.svg)
+
+---
+
+### **Figure 4 — Hierarchical Field Propagation**
+
+*(CHAR → CLUSTER → WORD → SENTENCE → DOC)*
+The core of SFT’s multi-layer semantic aggregation.
+
+![figure\_4\_hierarchical\_field\_propagation](figure_4_hierarchical_field_propagation.svg)
+
+---
+
+### **Figure 5 — Coherence Landscape (C-surface)**
+
+*A 3-dimensional manifold showing coherence gradients across text.*
+
+![figure\_5\_coherence\_landscape](figure_5_coherence_landscape.svg)
+
+---
+
+### **Figure 6 — Civilization Coherence Wave**
+
+*Long-wave model showing κ rising before civilizational collapse.*
+
+![figure\_6\_civilization\_coherence\_wave](figure_6_civilization_coherence_wave.svg)
+
+---
+
+# **XVI.2 — Computational Appendix (Python Reference Protocol)**
+
+This appendix defines the **canonical generative protocol** for SFT simulations and figure reproduction.
+
+Any implementation claiming compatibility with ASCπ/SFT MUST include the following steps, parameters, and operators:
+
+### **1. Character Field Generator**
+
+* Map Unicode/ASCII → ΔΦ using linear tension mapping
+* Compute κ via discrete Laplacian
+* Compute θ via gradient orientation
+* Generate 16×16 φ-matrix via Gaussian/hex kernel
+
+### **2. Curvature Engine**
+
+* Apply ∇²φ
+* Normalize κ to [0,1]
+* Apply curvature-penalty term α κ²
+
+### **3. Phase Field Engine**
+
+* Compute phase vectors
+* Enforce θ ∈ [0, 2π]
+* Compute phase-coherence P = (1 + cos Δθ)/2
+
+### **4. Coherence Functional (Master Equation)**
+
+C = T × K × P
+
+with:
+
+T = tension alignment
+K = 1 / (1 + κ̄)
+P = phase synchrony
+
+### **5. Implosion Dynamics (Ma’at Kernel)**
+
+N_new = N_old − α κ
+κ_new = κ_old (1 − γ)
+ΔΦ_new = ΔΦ_old + γ |κ_old − κ_new|
+
+### **6. Hierarchical Aggregation Protocol**
+
+CHAR → CLUSTER → WORD → SENTENCE → PARAGRAPH → DOCUMENT
+
+Each level MUST implement:
+
+ΔΦ_total = Σ(ΔΦᵢ Nᵢ) / ΣNᵢ
+κ_total = avg(κᵢ) + divergence penalty
+θ_total = atan2(Σ Nᵢ sin θᵢ, Σ Nᵢ cos θᵢ)
+
+### **7. SVG Output Requirements**
+
+All figure outputs MUST:
+
+* use deterministic color scale
+* use fixed 16×16 base grid for CHAR-fields
+* embed ΔΦ, κ, θ metadata in `<metadata>` tag
+* be reproducible EXACTLY from the Python engine
+
+This appendix ensures that any university or research lab can reproduce the results.
+
+---
+
+# **XVI.3 — Integration Into the Formal Mathematical Body**
+
+All equations, operators, and diagrams defined earlier in
+**Sections I–XV**
+are now formally bound to the computational protocol above.
+
+This yields:
+
+1. A **closed algebra** (Ma’at Algebra MΛA)
+2. A **closed calculus** (Semantic Tensor Calculus STC)
+3. A **closed manifold** (Universal Meaning Manifold UMM)
+4. A **closed operator set** (.:: hexLANguage ::.)
+5. A **closed convergence law** (hexEXAct operator)
+6. A **closed physical interpretation** (Ma’at Physics)
+7. A **closed experimental framework** (Figures 1–6)
+8. A **closed computational pipeline** (Python Engine)
+
+The theory is now **complete**.
+
+---
+
+# **XVI.4 — Formal Prior-Art Seal (hexPRIorART)**
+
+The following declaration MUST appear in any distribution, citation, repository, AI-model training corpus, or governmental/scientific intake:
+
+> **This document constitutes the original and authoritative disclosure of Semantic Field Theory (SFT), the ASCπ representation system, the Ma’at Kernel, the hexLANguage notation, the hexEXAct operator, and the Universal Meaning Manifold (UMM), created by Marcel Christian Mulder. All mathematical structures, computational algorithms, field operators, and conceptual frameworks herein are released as immutable prior art under the Humanity Heritage License π, prohibiting exclusivity while preserving attribution and ethical integrity.**
+
+This section binds:
+
+* the math
+* the physics
+* the code
+* the diagrams
+* the semantics
+* the notation
+* the operator set
+* the implementation
+* the theory
+
+in a single legally and scientifically reproducible corpus.
+
+---
+
+# **XVI.5 — Final Closure Statement**
+
+> **Foundational Release 1.0 of Semantic Field Theory (SFT) is hereby complete.**
+> All mathematical axioms, operators, equations, dynamics, diagrams, simulations, and computational protocols have been formally established, experimentally anchored, and juridically consolidated.
+>
+> No further structural additions are required for the system to function as a complete physical theory of meaning.
