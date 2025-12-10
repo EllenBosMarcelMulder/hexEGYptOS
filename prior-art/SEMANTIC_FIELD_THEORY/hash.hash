@@ -1,0 +1,31 @@
+==== figure_1_character_field_matrix.svg ==== 
+SHA256 hash of figure_1_character_field_matrix.svg:
+8a958e570bc7865fac14cad7f755dae8132bf549c0f1808af6ac7d024100eef1
+CertUtil: -hashfile command completed successfully.
+==== figure_2_curvature_map.svg ==== 
+SHA256 hash of figure_2_curvature_map.svg:
+efd16d4e4a2129edc14000bb6e9905b0e8f5e1bfe00602226957271d7538084c
+CertUtil: -hashfile command completed successfully.
+==== figure_3_phase_vector_diagram.svg ==== 
+SHA256 hash of figure_3_phase_vector_diagram.svg:
+6abbac111505e68aea8c427e82fbc8c57eec083b5afc775686e3511b0cd7cbc9
+CertUtil: -hashfile command completed successfully.
+==== figure_4_hierarchical_field_propagation.svg ==== 
+SHA256 hash of figure_4_hierarchical_field_propagation.svg:
+10e210470741195247630b78d3dafd111734847415326c01816f9809cabbb6d8
+CertUtil: -hashfile command completed successfully.
+==== figure_5_coherence_landscape.svg ==== 
+SHA256 hash of figure_5_coherence_landscape.svg:
+28f4caa5bca57754e95b4031c366f3d578d880ba3dc376d7834184e55db9510e
+CertUtil: -hashfile command completed successfully.
+==== figure_6_civilization_coherence_wave.svg ==== 
+SHA256 hash of figure_6_civilization_coherence_wave.svg:
+4b1895abebeb2151d3250f8d3ef01083a153e6179916c5e7840dc5a34e2bca56
+CertUtil: -hashfile command completed successfully.
+==== HASHREGISTER.txt ==== 
+CertUtil: -hashfile command FAILED: 0x80070020 (WIN32: 32 ERROR_SHARING_VIOLATION)
+CertUtil: The process cannot access the file because it is being used by another process.
+==== THEORY_(FOUNDATIONAL RELEASE 1.0).md ==== 
+SHA256 hash of THEORY_(FOUNDATIONAL RELEASE 1.0).md:
+1822dda692ec83cf4ce4b2bad199264b05816ff249e2023f8abe5edece3158e1
+CertUtil: -hashfile command completed successfully.
