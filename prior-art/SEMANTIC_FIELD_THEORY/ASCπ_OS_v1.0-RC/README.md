@@ -6,10 +6,6 @@ https://github.com/EllenBosMarcelMulder/hexEGYptOS/blob/main/README.md
 
 ---
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/placeholder/logo.png" width="120" />
-</p>
-
 <h1 align="center">ASCπ OS</h1>
 
 <p align="center">
