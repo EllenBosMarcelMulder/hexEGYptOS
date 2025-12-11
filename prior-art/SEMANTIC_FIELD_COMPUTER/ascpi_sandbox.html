@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ Developer Sandbox</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a25;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --phi: #f4a261;
+            --kappa: #2a9d8f;
+            --theta: #9b5de5;
+            --energy: #00d4ff;
+            --coherence: #7fff00;
+            --maat: #ff6b6b;
+            --syntax-keyword: #ff79c6;
+            --syntax-string: #f1fa8c;
+            --syntax-number: #bd93f9;
+            --syntax-comment: #6272a4;
+            --syntax-function: #50fa7b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sandbox {
+            display: grid;
+            grid-template-rows: 48px 1fr 200px;
+            height: 100vh;
+        }
+        
+        .toolbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--phi);
+        }
+        
+        .logo span { color: var(--theta); }
+        
+        .toolbar-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .toolbar-group.right { margin-left: auto; }
+        
+        .btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover { background: var(--border); }
+        .btn.primary { background: var(--theta); color: var(--bg); border-color: var(--theta); }
+        .btn.primary:hover { background: var(--coherence); border-color: var(--coherence); }
+        .btn.success { background: var(--coherence); color: var(--bg); border-color: var(--coherence); }
+        .btn.danger { background: var(--maat); color: var(--bg); border-color: var(--maat); }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--muted);
+        }
+        
+        .status-indicator.ready { background: var(--coherence); }
+        .status-indicator.error { background: var(--maat); }
+        .status-indicator.running { background: var(--energy); animation: pulse 1s infinite; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            overflow: hidden;
+        }
+        
+        .editor-panel {
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+        }
+        
+        .editor-tabs {
+            display: flex;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .editor-tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            border-bottom: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .editor-tab:hover { color: var(--text); }
+        .editor-tab.active { color: var(--theta); border-bottom-color: var(--theta); background: var(--surface2); }
+        
+        .editor-tab .close {
+            opacity: 0;
+            font-size: 0.7rem;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .editor-tab:hover .close { opacity: 0.5; }
+        .editor-tab .close:hover { opacity: 1; background: var(--maat); }
+        
+        .editor-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .editor {
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            border: none;
+            color: var(--text);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 16px;
+            resize: none;
+            outline: none;
+            tab-size: 4;
+        }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+        }
+        
+        .panel-section {
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-header {
+            padding: 12px 16px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .panel-header:hover { background: var(--surface2); }
+        
+        .panel-content {
+            padding: 12px 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .psi-display {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+        }
+        
+        .psi-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+        
+        .psi-row .label { color: var(--muted); }
+        .psi-row .value { color: var(--coherence); }
+        .psi-row.dphi .value { color: var(--phi); }
+        .psi-row.kappa .value { color: var(--kappa); }
+        .psi-row.theta .value { color: var(--theta); }
+        .psi-row.energy .value { color: var(--energy); }
+        
+        .psi-inject {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .psi-inject input {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 6px 8px;
+            color: var(--text);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        .psi-inject input::placeholder { color: var(--muted); }
+        
+        .plugin-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .plugin-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .plugin-item.active { border-color: var(--coherence); }
+        .plugin-item .icon { font-size: 1.2rem; }
+        .plugin-item .name { flex: 1; font-size: 0.85rem; }
+        
+        .plugin-item .toggle {
+            width: 36px;
+            height: 18px;
+            background: var(--border);
+            border-radius: 9px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .plugin-item.active .toggle { background: var(--coherence); }
+        
+        .plugin-item .toggle::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--text);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+        
+        .plugin-item.active .toggle::after { transform: translateX(18px); }
+        
+        .viz-mini {
+            height: 150px;
+            background: var(--bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .viz-mini canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .console-panel {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .console-header {
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+        
+        .console-tab {
+            padding: 4px 12px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .console-tab:hover { color: var(--text); }
+        .console-tab.active { background: var(--surface2); color: var(--theta); }
+        
+        .console-clear {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        
+        .console-clear:hover { color: var(--maat); }
+        
+        .console-output {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        
+        .console-line {
+            padding: 2px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 8px;
+        }
+        
+        .console-line .time {
+            color: var(--muted);
+            font-size: 0.75rem;
+            min-width: 70px;
+        }
+        
+        .console-line.log { color: var(--text); }
+        .console-line.info { color: var(--energy); }
+        .console-line.success { color: var(--coherence); }
+        .console-line.warn { color: var(--phi); }
+        .console-line.error { color: var(--maat); }
+        
+        .console-line pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .console-input {
+            display: flex;
+            border-top: 1px solid var(--border);
+        }
+        
+        .console-input span {
+            padding: 8px 12px;
+            color: var(--theta);
+        }
+        
+        .console-input input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: monospace;
+            font-size: 0.85rem;
+            padding: 8px;
+            outline: none;
+        }
+        
+        .template-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 200px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .template-menu.visible { display: block; }
+        
+        .template-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .template-item:hover { background: var(--surface2); }
+        
+        .metrics-bar {
+            display: flex;
+            gap: 16px;
+            padding: 0 16px;
+            font-size: 0.8rem;
+        }
+        
+        .metrics-bar .metric {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .metrics-bar .metric .label { color: var(--muted); }
+        .metrics-bar .metric .value { color: var(--coherence); font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="sandbox">
+        <div class="toolbar">
+            <div class="logo">ASC<span>π</span> DevSandbox</div>
+            
+            <div class="toolbar-group">
+                <div class="status-indicator" id="status"></div>
+                <span id="statusText" style="font-size: 0.8rem; color: var(--muted);">Ready</span>
+            </div>
+            
+            <div class="toolbar-group">
+                <button class="btn" onclick="newFile()">📄 New</button>
+                <div style="position: relative;">
+                    <button class="btn" onclick="toggleTemplates()">📋 Templates</button>
+                    <div class="template-menu" id="templateMenu">
+                        <div class="template-item" onclick="loadTemplate('basic')">Basic Energiebox</div>
+                        <div class="template-item" onclick="loadTemplate('analyzer')">Text Analyzer</div>
+                        <div class="template-item" onclick="loadTemplate('detector')">Pattern Detector</div>
+                        <div class="template-item" onclick="loadTemplate('transformer')">Field Transformer</div>
+                        <div class="template-item" onclick="loadTemplate('validator')">Coherence Validator</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="toolbar-group">
+                <button class="btn primary" onclick="runCode()">▶ Run</button>
+                <button class="btn success" onclick="loadPlugin()">⚡ Load Plugin</button>
+                <button class="btn" onclick="testPlugin()">🧪 Test</button>
+            </div>
+            
+            <div class="toolbar-group right">
+                <div class="metrics-bar">
+                    <div class="metric">
+                        <span class="label">Plugins:</span>
+                        <span class="value" id="pluginCount">0</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">Step:</span>
+                        <span class="value" id="stepCount">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main">
+            <div class="editor-panel">
+                <div class="editor-tabs" id="editorTabs">
+                    <button class="editor-tab active" data-file="untitled.js">
+                        untitled.js
+                        <span class="close" onclick="closeTab(event, 'untitled.js')">×</span>
+                    </button>
+                </div>
+                <div class="editor-container">
+                    <textarea class="editor" id="editor" spellcheck="false">// ASCπ Energiebox Plugin
+// Write your plugin code here
+
+export default {
+    id: 'my_plugin',
+    name: 'My Plugin',
+    icon: '🔧',
+    description: 'Custom field processor',
+    version: '1.0.0',
+    
+    // Called when plugin is loaded
+    onLoad(runtime) {
+        console.log('Plugin loaded');
+    },
+    
+    // Main processing function
+    // psi: current field state
+    // input: text input
+    // ctx: context object
+    process(psi, input, ctx) {
+        // Your field transformation logic here
+        
+        // Example: boost coherence for long inputs
+        if (input && input.length > 100) {
+            psi.C = Math.min(1, psi.C + 0.05);
+        }
+        
+        return psi;
+    },
+    
+    // Called when plugin is unloaded
+    onUnload(runtime) {
+        console.log('Plugin unloaded');
+    }
+};
+</textarea>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel-section">
+                    <div class="panel-header">
+                        <span>📊 Current Ψ State</span>
+                        <button class="btn" style="padding: 4px 8px; font-size: 0.7rem;" onclick="resetPsi()">Reset</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="psi-display">
+                            <div class="psi-row dphi">
+                                <span class="label">ΔΦ</span>
+                                <span class="value" id="psiDPhi">0.0000</span>
+                            </div>
+                            <div class="psi-row kappa">
+                                <span class="label">κ</span>
+                                <span class="value" id="psiKappa">0.5000</span>
+                            </div>
+                            <div class="psi-row theta">
+                                <span class="label">θ</span>
+                                <span class="value" id="psiTheta">0.0000</span>
+                            </div>
+                            <div class="psi-row energy">
+                                <span class="label">N</span>
+                                <span class="value" id="psiN">1.0000</span>
+                            </div>
+                            <div class="psi-row">
+                                <span class="label">C</span>
+                                <span class="value" id="psiC">0.5000</span>
+                            </div>
+                        </div>
+                        <div class="psi-inject">
+                            <input type="number" id="injectDPhi" placeholder="ΔΦ" step="0.1">
+                            <input type="number" id="injectKappa" placeholder="κ" step="0.1">
+                            <input type="number" id="injectTheta" placeholder="θ" step="0.1">
+                            <input type="number" id="injectN" placeholder="N" step="0.1">
+                            <input type="number" id="injectC" placeholder="C" step="0.1">
+                            <button class="btn" onclick="injectPsi()">Inject</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel-section">
+                    <div class="panel-header">
+                        <span>⚡ Active Plugins</span>
+                        <span id="activeCount">0</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="plugin-list" id="pluginList"></div>
+                    </div>
+                </div>
+                
+                <div class="panel-section" style="flex: 1;">
+                    <div class="panel-header">
+                        <span>🎯 Field Visualizer</span>
+                    </div>
+                    <div class="panel-content">
+                        <div class="viz-mini">
+                            <canvas id="vizCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="console-panel">
+            <div class="console-header">
+                <button class="console-tab active" onclick="setConsoleTab('console')">Console</button>
+                <button class="console-tab" onclick="setConsoleTab('output')">Output</button>
+                <button class="console-tab" onclick="setConsoleTab('errors')">Errors</button>
+                <button class="console-clear" onclick="clearConsole()">Clear</button>
+            </div>
+            <div class="console-output" id="consoleOutput"></div>
+            <div class="console-input">
+                <span>›</span>
+                <input type="text" id="consoleInput" placeholder="Enter command or test input..." onkeypress="if(event.key==='Enter')execCommand()">
+            </div>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONSTANTS & CORE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0
+};
+
+class Psi {
+    constructor(dPhi = 0, kappa = 0.5, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi; this.kappa = kappa; this.theta = theta;
+        this.N = N; this.C = C; this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        const dt = Math.min(Math.abs(this.theta - o.theta), CONST.tau - Math.abs(this.theta - o.theta)) ** 2;
+        return Math.sqrt(dp + dk + dt / CONST.pi ** 2);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SANDBOX RUNTIME
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class SandboxRuntime {
+    constructor() {
+        this.psi = new Psi();
+        this.plugins = new Map();
+        this.activePlugins = new Set();
+        this.step = 0;
+        this.history = [];
+    }
+    
+    registerPlugin(plugin) {
+        if (!plugin.id || !plugin.process) {
+            throw new Error('Plugin must have id and process function');
+        }
+        this.plugins.set(plugin.id, plugin);
+        if (plugin.onLoad) plugin.onLoad(this);
+        return plugin.id;
+    }
+    
+    unregisterPlugin(id) {
+        const plugin = this.plugins.get(id);
+        if (plugin) {
+            if (plugin.onUnload) plugin.onUnload(this);
+            this.plugins.delete(id);
+            this.activePlugins.delete(id);
+        }
+    }
+    
+    enablePlugin(id) {
+        if (this.plugins.has(id)) {
+            this.activePlugins.add(id);
+            const plugin = this.plugins.get(id);
+            if (plugin.onEnable) plugin.onEnable(this);
+        }
+    }
+    
+    disablePlugin(id) {
+        this.activePlugins.delete(id);
+        const plugin = this.plugins.get(id);
+        if (plugin && plugin.onDisable) plugin.onDisable(this);
+    }
+    
+    process(input) {
+        this.step++;
+        const ctx = { step: this.step, input };
+        let psi = this.psi.copy();
+        
+        for (const id of this.activePlugins) {
+            const plugin = this.plugins.get(id);
+            if (plugin) {
+                try {
+                    const result = plugin.process(psi, input, ctx);
+                    if (result) psi = result;
+                    if (psi.enforce) psi.enforce();
+                } catch (e) {
+                    log(`Plugin ${id} error: ${e.message}`, 'error');
+                }
+            }
+        }
+        
+        this.psi = psi;
+        this.history.push({ step: this.step, psi: psi.copy() });
+        if (this.history.length > 100) this.history.shift();
+        
+        return psi;
+    }
+    
+    setPsi(dPhi, kappa, theta, N, C) {
+        this.psi = new Psi(
+            dPhi ?? this.psi.dPhi,
+            kappa ?? this.psi.kappa,
+            theta ?? this.psi.theta,
+            N ?? this.psi.N,
+            C ?? this.psi.C,
+            this.psi.t
+        );
+    }
+    
+    reset() {
+        this.psi = new Psi();
+        this.step = 0;
+        this.history = [];
+    }
+}
+
+const runtime = new SandboxRuntime();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const TEMPLATES = {
+    basic: `// Basic Energiebox Template
+export default {
+    id: 'basic_plugin',
+    name: 'Basic Plugin',
+    icon: '🔧',
+    description: 'A simple field processor',
+    
+    process(psi, input, ctx) {
+        // Transform the field here
+        return psi;
+    }
+};`,
+
+    analyzer: `// Text Analyzer Energiebox
+export default {
+    id: 'text_analyzer',
+    name: 'Text Analyzer',
+    icon: '📊',
+    description: 'Analyzes text patterns and adjusts field',
+    
+    process(psi, input, ctx) {
+        if (!input) return psi;
+        
+        // Word count affects energy
+        const words = input.split(/\\s+/).filter(w => w.length > 0);
+        psi.N += words.length * 0.01;
+        
+        // Sentence complexity affects curvature
+        const sentences = input.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        const avgWordsPerSentence = words.length / Math.max(sentences.length, 1);
+        psi.kappa *= (1 + avgWordsPerSentence * 0.01);
+        
+        // Question marks increase tension
+        const questions = (input.match(/\\?/g) || []).length;
+        psi.dPhi += questions * 0.1;
+        
+        return psi;
+    }
+};`,
+
+    detector: `// Pattern Detector Energiebox
+export default {
+    id: 'pattern_detector',
+    name: 'Pattern Detector',
+    icon: '🔍',
+    description: 'Detects patterns and anomalies',
+    
+    // Store for pattern history
+    _patterns: [],
+    
+    process(psi, input, ctx) {
+        if (!input) return psi;
+        
+        // Detect repetition
+        const words = input.toLowerCase().split(/\\s+/);
+        const unique = new Set(words);
+        const repetitionRatio = 1 - (unique.size / words.length);
+        
+        // High repetition = lower coherence
+        if (repetitionRatio > 0.3) {
+            psi.C *= (1 - repetitionRatio * 0.2);
+            ctx.patternDetected = 'repetition';
+        }
+        
+        // Detect emphasis (caps, exclamation)
+        const capsRatio = (input.match(/[A-Z]/g) || []).length / input.length;
+        if (capsRatio > 0.3) {
+            psi.dPhi += 0.2;
+            ctx.patternDetected = 'emphasis';
+        }
+        
+        return psi;
+    }
+};`,
+
+    transformer: `// Field Transformer Energiebox
+export default {
+    id: 'field_transformer',
+    name: 'Field Transformer',
+    icon: '🔄',
+    description: 'Applies field transformations',
+    
+    // Configuration
+    config: {
+        phaseShift: 0.1,
+        curvatureSmooth: 0.9,
+        coherenceBoost: 0.02
+    },
+    
+    process(psi, input, ctx) {
+        const cfg = this.config;
+        
+        // Apply phase rotation
+        psi.theta += cfg.phaseShift;
+        
+        // Smooth curvature toward golden ratio
+        const targetKappa = 1 / CONST.phi;
+        psi.kappa = psi.kappa * cfg.curvatureSmooth + targetKappa * (1 - cfg.curvatureSmooth);
+        
+        // Gradual coherence increase
+        psi.C = Math.min(1, psi.C + cfg.coherenceBoost);
+        
+        return psi;
+    }
+};
+
+const CONST = { phi: (1 + Math.sqrt(5)) / 2 };`,
+
+    validator: `// Coherence Validator Energiebox
+export default {
+    id: 'coherence_validator',
+    name: 'Coherence Validator',
+    icon: '✅',
+    description: 'Validates field coherence and flags issues',
+    
+    _violations: [],
+    
+    process(psi, input, ctx) {
+        this._violations = [];
+        
+        // Check coherence bounds
+        if (psi.C < 0.1) {
+            this._violations.push('Low coherence warning');
+            psi.C = 0.1; // Minimum floor
+        }
+        
+        // Check curvature stability
+        if (psi.kappa > 5) {
+            this._violations.push('High curvature warning');
+        }
+        
+        // Check phase continuity (if we have history)
+        if (ctx.prevTheta !== undefined) {
+            const dTheta = Math.abs(psi.theta - ctx.prevTheta);
+            if (dTheta > Math.PI / 2) {
+                this._violations.push('Phase discontinuity detected');
+            }
+        }
+        
+        // Log violations
+        if (this._violations.length > 0) {
+            console.warn('Validation issues:', this._violations);
+            ctx.validationIssues = this._violations;
+        }
+        
+        return psi;
+    },
+    
+    getViolations() {
+        return this._violations;
+    }
+};`
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FILE MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let files = {
+    'untitled.js': TEMPLATES.basic
+};
+let currentFile = 'untitled.js';
+let fileCounter = 1;
+
+function newFile() {
+    const name = `plugin_${++fileCounter}.js`;
+    files[name] = TEMPLATES.basic;
+    currentFile = name;
+    renderTabs();
+    loadFile(name);
+}
+
+function loadFile(name) {
+    currentFile = name;
+    document.getElementById('editor').value = files[name] || '';
+    renderTabs();
+}
+
+function saveCurrentFile() {
+    files[currentFile] = document.getElementById('editor').value;
+}
+
+function closeTab(event, name) {
+    event.stopPropagation();
+    if (Object.keys(files).length <= 1) return;
+    delete files[name];
+    if (currentFile === name) {
+        currentFile = Object.keys(files)[0];
+    }
+    renderTabs();
+    loadFile(currentFile);
+}
+
+function renderTabs() {
+    const container = document.getElementById('editorTabs');
+    container.innerHTML = Object.keys(files).map(name => `
+        <button class="editor-tab ${name === currentFile ? 'active' : ''}" 
+                data-file="${name}" onclick="loadFile('${name}')">
+            ${name}
+            <span class="close" onclick="closeTab(event, '${name}')">×</span>
+        </button>
+    `).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function toggleTemplates() {
+    document.getElementById('templateMenu').classList.toggle('visible');
+}
+
+function loadTemplate(name) {
+    document.getElementById('editor').value = TEMPLATES[name] || TEMPLATES.basic;
+    document.getElementById('templateMenu').classList.remove('visible');
+    saveCurrentFile();
+}
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.template-menu') && !e.target.closest('[onclick="toggleTemplates()"]')) {
+        document.getElementById('templateMenu').classList.remove('visible');
+    }
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CODE EXECUTION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function runCode() {
+    saveCurrentFile();
+    const code = document.getElementById('editor').value;
+    
+    setStatus('running', 'Running...');
+    log('Executing code...', 'info');
+    
+    try {
+        // Extract the default export
+        const exportMatch = code.match(/export\s+default\s+({[\s\S]*});?\s*$/);
+        if (!exportMatch) {
+            throw new Error('No default export found. Plugin must export default { ... }');
+        }
+        
+        // Create plugin object
+        const pluginCode = exportMatch[1];
+        const fullCode = `(function() { 
+            const CONST = { phi: ${CONST.phi}, pi: ${CONST.pi}, tau: ${CONST.tau} };
+            return ${pluginCode}; 
+        })()`;
+        
+        const plugin = eval(fullCode);
+        
+        log(`Plugin parsed: ${plugin.id || 'unnamed'}`, 'success');
+        log(`  Name: ${plugin.name}`, 'info');
+        log(`  Icon: ${plugin.icon}`, 'info');
+        
+        setStatus('ready', 'Code valid');
+        
+    } catch (e) {
+        log(`Error: ${e.message}`, 'error');
+        setStatus('error', 'Error');
+    }
+}
+
+function loadPlugin() {
+    saveCurrentFile();
+    const code = document.getElementById('editor').value;
+    
+    try {
+        const exportMatch = code.match(/export\s+default\s+({[\s\S]*});?\s*$/);
+        if (!exportMatch) {
+            throw new Error('No default export found');
+        }
+        
+        const pluginCode = exportMatch[1];
+        const fullCode = `(function() { 
+            const CONST = { phi: ${CONST.phi}, pi: ${CONST.pi}, tau: ${CONST.tau} };
+            return ${pluginCode}; 
+        })()`;
+        
+        const plugin = eval(fullCode);
+        
+        // Unregister if exists
+        if (runtime.plugins.has(plugin.id)) {
+            runtime.unregisterPlugin(plugin.id);
+            log(`Reloading plugin: ${plugin.id}`, 'warn');
+        }
+        
+        runtime.registerPlugin(plugin);
+        runtime.enablePlugin(plugin.id);
+        
+        log(`Plugin loaded and enabled: ${plugin.id}`, 'success');
+        renderPluginList();
+        updateMetrics();
+        
+    } catch (e) {
+        log(`Load error: ${e.message}`, 'error');
+    }
+}
+
+function testPlugin() {
+    const input = document.getElementById('consoleInput').value || 'Test input for plugin';
+    
+    log(`Testing with input: "${input}"`, 'info');
+    
+    const before = runtime.psi.copy();
+    const result = runtime.process(input);
+    
+    log(`Before: Ψ(${before.dPhi.toFixed(3)}, ${before.kappa.toFixed(3)}, ${before.theta.toFixed(3)}, ${before.N.toFixed(3)}, ${before.C.toFixed(3)})`, 'info');
+    log(`After:  Ψ(${result.dPhi.toFixed(3)}, ${result.kappa.toFixed(3)}, ${result.theta.toFixed(3)}, ${result.N.toFixed(3)}, ${result.C.toFixed(3)})`, 'success');
+    log(`Distance: ${before.dist(result).toFixed(4)}`, 'info');
+    
+    updatePsiDisplay();
+    updateMetrics();
+    renderViz();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PSI MANAGEMENT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function updatePsiDisplay() {
+    const psi = runtime.psi;
+    document.getElementById('psiDPhi').textContent = psi.dPhi.toFixed(4);
+    document.getElementById('psiKappa').textContent = psi.kappa.toFixed(4);
+    document.getElementById('psiTheta').textContent = psi.theta.toFixed(4);
+    document.getElementById('psiN').textContent = psi.N.toFixed(4);
+    document.getElementById('psiC').textContent = psi.C.toFixed(4);
+}
+
+function injectPsi() {
+    const dPhi = parseFloat(document.getElementById('injectDPhi').value);
+    const kappa = parseFloat(document.getElementById('injectKappa').value);
+    const theta = parseFloat(document.getElementById('injectTheta').value);
+    const N = parseFloat(document.getElementById('injectN').value);
+    const C = parseFloat(document.getElementById('injectC').value);
+    
+    runtime.setPsi(
+        isNaN(dPhi) ? undefined : dPhi,
+        isNaN(kappa) ? undefined : kappa,
+        isNaN(theta) ? undefined : theta,
+        isNaN(N) ? undefined : N,
+        isNaN(C) ? undefined : C
+    );
+    
+    log(`Injected: Ψ(${runtime.psi.dPhi.toFixed(3)}, ${runtime.psi.kappa.toFixed(3)}, ${runtime.psi.theta.toFixed(3)}, ${runtime.psi.N.toFixed(3)}, ${runtime.psi.C.toFixed(3)})`, 'success');
+    
+    updatePsiDisplay();
+    renderViz();
+    
+    // Clear inputs
+    ['injectDPhi', 'injectKappa', 'injectTheta', 'injectN', 'injectC'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+}
+
+function resetPsi() {
+    runtime.reset();
+    updatePsiDisplay();
+    renderViz();
+    log('Psi reset to default', 'info');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PLUGIN LIST
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function renderPluginList() {
+    const container = document.getElementById('pluginList');
+    const plugins = Array.from(runtime.plugins.values());
+    
+    if (plugins.length === 0) {
+        container.innerHTML = '<div style="color: var(--muted); font-size: 0.85rem;">No plugins loaded</div>';
+        return;
+    }
+    
+    container.innerHTML = plugins.map(p => `
+        <div class="plugin-item ${runtime.activePlugins.has(p.id) ? 'active' : ''}" data-id="${p.id}">
+            <span class="icon">${p.icon || '🔧'}</span>
+            <span class="name">${p.name || p.id}</span>
+            <div class="toggle" onclick="togglePlugin('${p.id}')"></div>
+        </div>
+    `).join('');
+    
+    document.getElementById('activeCount').textContent = runtime.activePlugins.size;
+}
+
+function togglePlugin(id) {
+    if (runtime.activePlugins.has(id)) {
+        runtime.disablePlugin(id);
+        log(`Disabled: ${id}`, 'warn');
+    } else {
+        runtime.enablePlugin(id);
+        log(`Enabled: ${id}`, 'success');
+    }
+    renderPluginList();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('vizCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeViz() {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    renderViz();
+}
+
+function renderViz() {
+    const w = canvas.width;
+    const h = canvas.height;
+    const psi = runtime.psi;
+    
+    // Background
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, w, h);
+    
+    const cx = w / 2;
+    const cy = h / 2;
+    const maxR = Math.min(cx, cy) - 10;
+    
+    // Coherence ring
+    ctx.beginPath();
+    ctx.arc(cx, cy, maxR * psi.C, 0, CONST.tau);
+    ctx.strokeStyle = `hsla(120, 70%, 50%, ${0.3 + psi.C * 0.7})`;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    
+    // Phase vector
+    const vecLen = maxR * 0.8;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(psi.theta) * vecLen, cy + Math.sin(psi.theta) * vecLen);
+    ctx.strokeStyle = '#f4a261';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Curvature indicator
+    const kappaR = (psi.kappa / CONST.kappa_max) * maxR * 0.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, kappaR, 0, CONST.tau);
+    ctx.strokeStyle = '#2a9d8f';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    
+    // Center point
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, CONST.tau);
+    ctx.fillStyle = '#9b5de5';
+    ctx.fill();
+    
+    // History trail
+    if (runtime.history.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(155, 93, 229, 0.3)';
+        ctx.lineWidth = 1;
+        runtime.history.forEach((h, i) => {
+            const r = h.psi.C * maxR * 0.8;
+            const x = cx + Math.cos(h.psi.theta) * r;
+            const y = cy + Math.sin(h.psi.theta) * r;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+    }
+}
+
+window.addEventListener('resize', resizeViz);
+setTimeout(resizeViz, 100);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONSOLE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let consoleLogs = [];
+let consoleTab = 'console';
+
+function log(message, type = 'log') {
+    const time = new Date().toLocaleTimeString();
+    consoleLogs.push({ time, message, type });
+    if (consoleLogs.length > 500) consoleLogs.shift();
+    renderConsole();
+}
+
+function renderConsole() {
+    const container = document.getElementById('consoleOutput');
+    const filtered = consoleTab === 'errors' 
+        ? consoleLogs.filter(l => l.type === 'error' || l.type === 'warn')
+        : consoleLogs;
+    
+    container.innerHTML = filtered.map(l => `
+        <div class="console-line ${l.type}">
+            <span class="time">${l.time}</span>
+            <pre>${escapeHtml(l.message)}</pre>
+        </div>
+    `).join('');
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+function setConsoleTab(tab) {
+    consoleTab = tab;
+    document.querySelectorAll('.console-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    renderConsole();
+}
+
+function clearConsole() {
+    consoleLogs = [];
+    renderConsole();
+}
+
+function execCommand() {
+    const input = document.getElementById('consoleInput').value.trim();
+    if (!input) return;
+    
+    log(`> ${input}`, 'info');
+    
+    try {
+        // Special commands
+        if (input.startsWith('process ')) {
+            const text = input.substring(8);
+            const result = runtime.process(text);
+            log(`Result: C=${result.C.toFixed(3)}, θ=${result.theta.toFixed(3)}`, 'success');
+        } else if (input === 'psi') {
+            const p = runtime.psi;
+            log(`Ψ = (${p.dPhi.toFixed(4)}, ${p.kappa.toFixed(4)}, ${p.theta.toFixed(4)}, ${p.N.toFixed(4)}, ${p.C.toFixed(4)})`, 'success');
+        } else if (input === 'plugins') {
+            const plugins = Array.from(runtime.plugins.keys());
+            log(`Loaded: ${plugins.join(', ') || 'none'}`, 'info');
+        } else if (input === 'reset') {
+            runtime.reset();
+            log('Runtime reset', 'success');
+        } else {
+            // Eval as JS
+            const result = eval(input);
+            if (result !== undefined) log(String(result), 'success');
+        }
+    } catch (e) {
+        log(`Error: ${e.message}`, 'error');
+    }
+    
+    document.getElementById('consoleInput').value = '';
+    updatePsiDisplay();
+    renderViz();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATUS & METRICS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function setStatus(state, text) {
+    const indicator = document.getElementById('status');
+    indicator.className = 'status-indicator ' + state;
+    document.getElementById('statusText').textContent = text;
+}
+
+function updateMetrics() {
+    document.getElementById('pluginCount').textContent = runtime.plugins.size;
+    document.getElementById('stepCount').textContent = runtime.step;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// Override console for sandbox
+const originalConsole = { ...console };
+console.log = (...args) => { log(args.join(' '), 'log'); originalConsole.log(...args); };
+console.info = (...args) => { log(args.join(' '), 'info'); originalConsole.info(...args); };
+console.warn = (...args) => { log(args.join(' '), 'warn'); originalConsole.warn(...args); };
+console.error = (...args) => { log(args.join(' '), 'error'); originalConsole.error(...args); };
+
+// Auto-save on edit
+document.getElementById('editor').addEventListener('input', () => {
+    saveCurrentFile();
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            runCode();
+        } else if (e.key === 's') {
+            e.preventDefault();
+            saveCurrentFile();
+            log('Saved', 'success');
+        }
+    }
+});
+
+// Initial state
+setStatus('ready', 'Ready');
+updatePsiDisplay();
+renderPluginList();
+updateMetrics();
+log('ASCπ Developer Sandbox initialized', 'success');
+log('Ctrl+Enter to run, Ctrl+S to save', 'info');
+log('Type "help" in console for commands', 'info');
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ Test Suite</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --pass: #7fff00;
+            --fail: #ff6b6b;
+            --skip: #f4a261;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            color: #f4a261;
+            margin-bottom: 8px;
+        }
+        
+        h1 span { color: #9b5de5; }
+        
+        .subtitle {
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+        
+        .summary {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--surface);
+            border-radius: 8px;
+        }
+        
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .summary-item .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .summary-item .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        
+        .summary-item.pass .value { color: var(--pass); }
+        .summary-item.fail .value { color: var(--fail); }
+        .summary-item.skip .value { color: var(--skip); }
+        
+        .progress {
+            height: 8px;
+            background: var(--surface);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: var(--pass);
+            transition: width 0.3s;
+        }
+        
+        .test-group {
+            margin-bottom: 24px;
+        }
+        
+        .group-header {
+            font-size: 1.1rem;
+            color: #9b5de5;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .test-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            background: var(--surface);
+            border-radius: 4px;
+            margin-bottom: 4px;
+            gap: 12px;
+        }
+        
+        .test-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        
+        .test-status.pass { background: var(--pass); color: var(--bg); }
+        .test-status.fail { background: var(--fail); color: var(--bg); }
+        .test-status.skip { background: var(--skip); color: var(--bg); }
+        .test-status.running { background: #00d4ff; color: var(--bg); animation: pulse 1s infinite; }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        .test-name { flex: 1; }
+        .test-time { color: var(--muted); font-size: 0.8rem; }
+        
+        .test-error {
+            margin-left: 36px;
+            padding: 8px;
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid var(--fail);
+            font-size: 0.85rem;
+            margin-top: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .btn {
+            background: #9b5de5;
+            border: none;
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        
+        .btn:hover { background: #7fff00; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .controls {
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>ASC<span>π</span> Test Suite</h1>
+    <p class="subtitle">Automated validation for the ASCπ ecosystem</p>
+    
+    <div class="controls">
+        <button class="btn" onclick="runAllTests()" id="runBtn">▶ Run All Tests</button>
+        <button class="btn" onclick="location.reload()" style="background: #2a2a35; color: #e8e8f0;">↻ Reset</button>
+    </div>
+    
+    <div class="summary">
+        <div class="summary-item pass">
+            <span class="value" id="passCount">0</span>
+            <span class="label">Passed</span>
+        </div>
+        <div class="summary-item fail">
+            <span class="value" id="failCount">0</span>
+            <span class="label">Failed</span>
+        </div>
+        <div class="summary-item skip">
+            <span class="value" id="skipCount">0</span>
+            <span class="label">Skipped</span>
+        </div>
+        <div class="summary-item">
+            <span class="value" id="totalTime">0ms</span>
+            <span class="label">Total Time</span>
+        </div>
+    </div>
+    
+    <div class="progress">
+        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+    </div>
+    
+    <div id="testResults"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// INLINE ASCPI CORE FOR TESTING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0,
+    theta_max: Math.PI / 2,
+    delta_N: 0.2,
+    alpha: 0.15,
+    beta: 0.12,
+    gamma: 0.18,
+    eta: 0.25,
+    K: 0.5,
+    lambda: 0.02
+};
+
+class Psi {
+    constructor(dPhi = 0, kappa = 0.5, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi; this.kappa = kappa; this.theta = theta;
+        this.N = N; this.C = C; this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    vec() { return [this.dPhi, this.kappa, this.theta, this.N, this.C]; }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        let dt = Math.abs(this.theta - o.theta);
+        if (dt > Math.PI) dt = CONST.tau - dt;
+        return Math.sqrt(dp + dk + (dt / CONST.pi) ** 2);
+    }
+    
+    blend(o, a = 0.5) {
+        const b = 1 - a;
+        const sinT = a * Math.sin(this.theta) + b * Math.sin(o.theta);
+        const cosT = a * Math.cos(this.theta) + b * Math.cos(o.theta);
+        return new Psi(a * this.dPhi + b * o.dPhi, a * this.kappa + b * o.kappa,
+            Math.atan2(sinT, cosT), a * this.N + b * o.N, Math.max(this.C, o.C), Math.max(this.t, o.t) + 1);
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+    
+    toJSON() { return { dPhi: this.dPhi, kappa: this.kappa, theta: this.theta, N: this.N, C: this.C, t: this.t }; }
+    static fromJSON(j) { return new Psi(j.dPhi, j.kappa, j.theta, j.N, j.C, j.t || 0); }
+}
+
+function encodeText(text) {
+    if (!text || text.trim().length === 0) return new Psi();
+    let normalized = text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+    normalized = normalized.replace(/[^\x20-\x7E\n\r\t]/g, '').trim();
+    const chars = [...normalized].filter(c => !c.match(/\s/));
+    if (chars.length === 0) return new Psi();
+    let dP = 0, k = 0, N = 0, sinS = 0, cosS = 0;
+    chars.forEach((c, i) => {
+        const cp = c.charCodeAt(0);
+        const t = ((cp / 256) * CONST.phi + (cp % 256) / 256 * CONST.tau + (i / chars.length) * CONST.pi) % CONST.tau;
+        sinS += Math.sin(t); cosS += Math.cos(t); k += 0.3;
+        dP += Math.abs(cp - 0x4E00) / 0x10FFFF;
+        N += Math.log(1 + cp) / Math.log(0x10FFFF + 1);
+    });
+    const n = chars.length;
+    return new Psi(dP / n, k / n, Math.atan2(sinS, cosS), N, Math.sqrt(sinS ** 2 + cosS ** 2) / n, 0);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEST FRAMEWORK
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const tests = [];
+let results = { pass: 0, fail: 0, skip: 0, time: 0 };
+
+function describe(name, fn) {
+    tests.push({ type: 'group', name, tests: [] });
+    fn();
+}
+
+function it(name, fn) {
+    const group = tests[tests.length - 1];
+    group.tests.push({ name, fn });
+}
+
+function expect(actual) {
+    return {
+        toBe(expected) {
+            if (actual !== expected) throw new Error(`Expected ${expected}, got ${actual}`);
+        },
+        toBeCloseTo(expected, precision = 4) {
+            const diff = Math.abs(actual - expected);
+            if (diff > Math.pow(10, -precision)) {
+                throw new Error(`Expected ${expected} (±${Math.pow(10, -precision)}), got ${actual}`);
+            }
+        },
+        toBeGreaterThan(expected) {
+            if (actual <= expected) throw new Error(`Expected > ${expected}, got ${actual}`);
+        },
+        toBeLessThan(expected) {
+            if (actual >= expected) throw new Error(`Expected < ${expected}, got ${actual}`);
+        },
+        toBeTruthy() {
+            if (!actual) throw new Error(`Expected truthy, got ${actual}`);
+        },
+        toBeFalsy() {
+            if (actual) throw new Error(`Expected falsy, got ${actual}`);
+        },
+        toBeInstanceOf(cls) {
+            if (!(actual instanceof cls)) throw new Error(`Expected instance of ${cls.name}`);
+        },
+        toContain(item) {
+            if (!actual.includes(item)) throw new Error(`Expected to contain ${item}`);
+        },
+        toThrow() {
+            let threw = false;
+            try { actual(); } catch { threw = true; }
+            if (!threw) throw new Error('Expected to throw');
+        }
+    };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEST DEFINITIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe('Constants', () => {
+    it('phi is golden ratio', () => {
+        expect(CONST.phi).toBeCloseTo((1 + Math.sqrt(5)) / 2);
+    });
+    
+    it('tau is 2*pi', () => {
+        expect(CONST.tau).toBeCloseTo(2 * Math.PI);
+    });
+    
+    it('kappa bounds are valid', () => {
+        expect(CONST.kappa_min).toBeLessThan(CONST.kappa_max);
+        expect(CONST.kappa_min).toBeGreaterThan(0);
+    });
+});
+
+describe('Psi Class', () => {
+    it('creates default Psi', () => {
+        const psi = new Psi();
+        expect(psi.dPhi).toBe(0);
+        expect(psi.kappa).toBe(0.5);
+        expect(psi.C).toBe(0.5);
+    });
+    
+    it('enforces bounds on creation', () => {
+        const psi = new Psi(0, -5, 100, 0, 2, 0);
+        expect(psi.kappa).toBeGreaterThan(0);
+        expect(psi.C).toBeLessThan(1.01);
+        expect(psi.theta).toBeLessThan(CONST.tau);
+    });
+    
+    it('normalizes negative theta', () => {
+        const psi = new Psi(0, 0.5, -Math.PI, 1, 0.5, 0);
+        expect(psi.theta).toBeGreaterThan(0);
+        expect(psi.theta).toBeCloseTo(Math.PI);
+    });
+    
+    it('copies correctly', () => {
+        const psi1 = new Psi(0.1, 0.5, 1.0, 1.0, 0.8);
+        const psi2 = psi1.copy();
+        expect(psi2.dPhi).toBe(psi1.dPhi);
+        expect(psi2.C).toBe(psi1.C);
+        psi2.dPhi = 999;
+        expect(psi1.dPhi).toBe(0.1);
+    });
+    
+    it('calculates distance', () => {
+        const psi1 = new Psi(0, 0.5, 0, 1, 0.5);
+        const psi2 = new Psi(0, 0.5, 0, 1, 0.5);
+        expect(psi1.dist(psi2)).toBeCloseTo(0);
+        
+        const psi3 = new Psi(1, 1, Math.PI, 2, 1);
+        expect(psi1.dist(psi3)).toBeGreaterThan(0);
+    });
+    
+    it('blends two Psi fields', () => {
+        const psi1 = new Psi(0, 0.5, 0, 1, 0.5);
+        const psi2 = new Psi(1, 1.0, Math.PI, 2, 1.0);
+        const blend = psi1.blend(psi2, 0.5);
+        expect(blend.dPhi).toBeCloseTo(0.5);
+        expect(blend.kappa).toBeCloseTo(0.75);
+        expect(blend.C).toBe(1.0); // max of both
+    });
+    
+    it('serializes to JSON', () => {
+        const psi = new Psi(0.1, 0.5, 1.0, 1.0, 0.8, 5);
+        const json = psi.toJSON();
+        expect(json.dPhi).toBe(0.1);
+        expect(json.t).toBe(5);
+    });
+    
+    it('deserializes from JSON', () => {
+        const json = { dPhi: 0.2, kappa: 0.7, theta: 1.5, N: 1.2, C: 0.9, t: 10 };
+        const psi = Psi.fromJSON(json);
+        expect(psi.dPhi).toBe(0.2);
+        expect(psi.t).toBe(10);
+    });
+    
+    it('returns vector representation', () => {
+        const psi = new Psi(0.1, 0.5, 1.0, 1.0, 0.8);
+        const vec = psi.vec();
+        expect(vec.length).toBe(5);
+        expect(vec[0]).toBe(0.1);
+        expect(vec[4]).toBe(0.8);
+    });
+});
+
+describe('Text Encoding', () => {
+    it('encodes empty string', () => {
+        const psi = encodeText('');
+        expect(psi.C).toBe(0.5);
+    });
+    
+    it('encodes simple text', () => {
+        const psi = encodeText('Hello');
+        expect(psi.C).toBeGreaterThan(0);
+        expect(psi.kappa).toBeGreaterThan(0);
+    });
+    
+    it('different texts produce different Psi', () => {
+        const psi1 = encodeText('Hello');
+        const psi2 = encodeText('World');
+        expect(psi1.dist(psi2)).toBeGreaterThan(0);
+    });
+    
+    it('identical texts produce identical Psi', () => {
+        const psi1 = encodeText('Test');
+        const psi2 = encodeText('Test');
+        expect(psi1.dist(psi2)).toBeCloseTo(0);
+    });
+    
+    it('normalizes unicode', () => {
+        const psi1 = encodeText('cafe');
+        const psi2 = encodeText('café');
+        // Should be similar after normalization
+        expect(psi1.dist(psi2)).toBeLessThan(0.5);
+    });
+    
+    it('handles long text', () => {
+        const longText = 'a'.repeat(10000);
+        const psi = encodeText(longText);
+        expect(psi.C).toBeGreaterThan(0);
+    });
+});
+
+describe('Invariants', () => {
+    it('INV-1: Coherence has floor', () => {
+        const psi = new Psi(0, 0.5, 0, 1, 0.001);
+        expect(psi.C).toBeGreaterThan(0);
+    });
+    
+    it('INV-2: Curvature bounded', () => {
+        const psi1 = new Psi(0, 0.001, 0, 1, 0.5);
+        expect(psi1.kappa).toBeGreaterThan(CONST.kappa_min - 0.001);
+        
+        const psi2 = new Psi(0, 100, 0, 1, 0.5);
+        expect(psi2.kappa).toBeLessThan(CONST.kappa_max + 0.001);
+    });
+    
+    it('INV-4: Phase continuity wrap', () => {
+        const psi = new Psi(0, 0.5, 10 * Math.PI, 1, 0.5);
+        expect(psi.theta).toBeLessThan(CONST.tau);
+        expect(psi.theta).toBeGreaterThan(-0.001);
+    });
+});
+
+describe('Distance Metric', () => {
+    it('distance to self is zero', () => {
+        const psi = new Psi(0.5, 0.8, 1.2, 1.5, 0.9);
+        expect(psi.dist(psi)).toBeCloseTo(0);
+    });
+    
+    it('distance is symmetric', () => {
+        const psi1 = new Psi(0.1, 0.5, 1.0, 1.0, 0.5);
+        const psi2 = new Psi(0.3, 0.8, 2.0, 1.5, 0.7);
+        expect(psi1.dist(psi2)).toBeCloseTo(psi2.dist(psi1));
+    });
+    
+    it('distance respects phase wrap', () => {
+        const psi1 = new Psi(0, 0.5, 0.1, 1, 0.5);
+        const psi2 = new Psi(0, 0.5, CONST.tau - 0.1, 1, 0.5);
+        // Should be close since phases are near each other (across wrap)
+        expect(psi1.dist(psi2)).toBeLessThan(0.5);
+    });
+});
+
+describe('Blend Operation', () => {
+    it('blend with alpha=0 returns other', () => {
+        const psi1 = new Psi(0, 0.5, 0, 1, 0.3);
+        const psi2 = new Psi(1, 1.0, Math.PI, 2, 0.9);
+        const blend = psi1.blend(psi2, 0);
+        expect(blend.dPhi).toBeCloseTo(1);
+        expect(blend.kappa).toBeCloseTo(1.0);
+    });
+    
+    it('blend with alpha=1 returns self', () => {
+        const psi1 = new Psi(0, 0.5, 0, 1, 0.3);
+        const psi2 = new Psi(1, 1.0, Math.PI, 2, 0.9);
+        const blend = psi1.blend(psi2, 1);
+        expect(blend.dPhi).toBeCloseTo(0);
+        expect(blend.kappa).toBeCloseTo(0.5);
+    });
+    
+    it('blend coherence takes max', () => {
+        const psi1 = new Psi(0, 0.5, 0, 1, 0.3);
+        const psi2 = new Psi(0, 0.5, 0, 1, 0.9);
+        const blend = psi1.blend(psi2, 0.5);
+        expect(blend.C).toBe(0.9);
+    });
+    
+    it('blend phase uses circular mean', () => {
+        const psi1 = new Psi(0, 0.5, 0.1, 1, 0.5);
+        const psi2 = new Psi(0, 0.5, CONST.tau - 0.1, 1, 0.5);
+        const blend = psi1.blend(psi2, 0.5);
+        // Should be near 0 (average of 0.1 and -0.1)
+        const nearZero = blend.theta < 0.5 || blend.theta > CONST.tau - 0.5;
+        expect(nearZero).toBeTruthy();
+    });
+});
+
+describe('Determinism', () => {
+    it('encoding is deterministic', () => {
+        const results = [];
+        for (let i = 0; i < 10; i++) {
+            results.push(encodeText('Deterministic test').C);
+        }
+        const allSame = results.every(r => r === results[0]);
+        expect(allSame).toBeTruthy();
+    });
+    
+    it('distance is deterministic', () => {
+        const psi1 = encodeText('Alpha');
+        const psi2 = encodeText('Beta');
+        const results = [];
+        for (let i = 0; i < 10; i++) {
+            results.push(psi1.dist(psi2));
+        }
+        const allSame = results.every(r => r === results[0]);
+        expect(allSame).toBeTruthy();
+    });
+});
+
+describe('Edge Cases', () => {
+    it('handles whitespace-only input', () => {
+        const psi = encodeText('   \n\t   ');
+        expect(psi.C).toBe(0.5); // Default
+    });
+    
+    it('handles single character', () => {
+        const psi = encodeText('A');
+        expect(psi.C).toBeGreaterThan(0);
+    });
+    
+    it('handles numeric string', () => {
+        const psi = encodeText('12345');
+        expect(psi.C).toBeGreaterThan(0);
+    });
+    
+    it('handles special characters', () => {
+        const psi = encodeText('!@#$%^&*()');
+        expect(psi.C).toBeGreaterThan(0);
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEST RUNNER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function runAllTests() {
+    document.getElementById('runBtn').disabled = true;
+    const container = document.getElementById('testResults');
+    container.innerHTML = '';
+    
+    results = { pass: 0, fail: 0, skip: 0, time: 0 };
+    const startTime = performance.now();
+    
+    let totalTests = tests.reduce((sum, g) => sum + g.tests.length, 0);
+    let completed = 0;
+    
+    for (const group of tests) {
+        const groupEl = document.createElement('div');
+        groupEl.className = 'test-group';
+        groupEl.innerHTML = `<div class="group-header">📦 ${group.name}</div>`;
+        container.appendChild(groupEl);
+        
+        for (const test of group.tests) {
+            const testEl = document.createElement('div');
+            testEl.className = 'test-item';
+            testEl.innerHTML = `
+                <div class="test-status running">⏳</div>
+                <span class="test-name">${test.name}</span>
+                <span class="test-time">...</span>
+            `;
+            groupEl.appendChild(testEl);
+            
+            await new Promise(r => setTimeout(r, 10)); // Yield to UI
+            
+            const testStart = performance.now();
+            try {
+                test.fn();
+                const time = (performance.now() - testStart).toFixed(1);
+                testEl.querySelector('.test-status').className = 'test-status pass';
+                testEl.querySelector('.test-status').textContent = '✓';
+                testEl.querySelector('.test-time').textContent = time + 'ms';
+                results.pass++;
+            } catch (e) {
+                const time = (performance.now() - testStart).toFixed(1);
+                testEl.querySelector('.test-status').className = 'test-status fail';
+                testEl.querySelector('.test-status').textContent = '✗';
+                testEl.querySelector('.test-time').textContent = time + 'ms';
+                
+                const errorEl = document.createElement('div');
+                errorEl.className = 'test-error';
+                errorEl.textContent = e.message;
+                groupEl.appendChild(errorEl);
+                
+                results.fail++;
+            }
+            
+            completed++;
+            document.getElementById('progressBar').style.width = (completed / totalTests * 100) + '%';
+            updateSummary();
+        }
+    }
+    
+    results.time = (performance.now() - startTime).toFixed(0);
+    updateSummary();
+    document.getElementById('runBtn').disabled = false;
+    
+    // Set progress bar color
+    document.getElementById('progressBar').style.background = 
+        results.fail > 0 ? 'var(--fail)' : 'var(--pass)';
+}
+
+function updateSummary() {
+    document.getElementById('passCount').textContent = results.pass;
+    document.getElementById('failCount').textContent = results.fail;
+    document.getElementById('skipCount').textContent = results.skip;
+    document.getElementById('totalTime').textContent = results.time + 'ms';
+}
+
+// Initial state
+updateSummary();
+</script>
+</body>
+</html>
