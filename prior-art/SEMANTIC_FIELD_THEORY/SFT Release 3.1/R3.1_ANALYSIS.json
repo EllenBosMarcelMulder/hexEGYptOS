@@ -1,0 +1,97 @@
+{
+  "parameter_sensitivity": {
+    "alpha": {
+      "0.05": 0.9996678308842342,
+      "0.1": 0.9994293782948809,
+      "0.2": 0.9990037802336522,
+      "0.4": 0.9993330860209401
+    },
+    "beta": {
+      "0.05": 0.9993354024672494,
+      "0.1": 0.999371387291627,
+      "0.3": 0.999353146367859,
+      "0.6": 0.9993741393069717
+    },
+    "gamma": {
+      "0.05": 0.9993510676831248,
+      "0.1": 0.9993565330812779,
+      "0.15": 0.9993718349116526,
+      "0.2": 0.9993546397576518
+    }
+  },
+  "phrase_analysis": {
+    "Coherence emerges.": {
+      "glyph_count": 17,
+      "mean_coherence": 0.9992399825193496,
+      "mean_kappa": 0.10881377951842584,
+      "mean_energy": 7.163998232292137,
+      "coherence_std": 0.0006308185996488152
+    },
+    "Meaning stabilizes.": {
+      "glyph_count": 18,
+      "mean_coherence": 0.9993102269552981,
+      "mean_kappa": 0.07626581164060629,
+      "mean_energy": 7.5622078252056,
+      "coherence_std": 0.0005238924277418381
+    },
+    "الوعي يتطور.": {
+      "glyph_count": 11,
+      "mean_coherence": 0.9992609732408232,
+      "mean_kappa": 0.11400226515065615,
+      "mean_energy": 7.099138357243739,
+      "coherence_std": 0.0005649080679710491
+    },
+    "語は流れる。": {
+      "glyph_count": 6,
+      "mean_coherence": 0.9992422955700575,
+      "mean_kappa": 0.1090382381501115,
+      "mean_energy": 6.089069602725942,
+      "coherence_std": 0.0006299847077719783
+    },
+    "👨‍👩‍👧‍👦 Family cluster": {
+      "glyph_count": 20,
+      "mean_coherence": 0.9996071523458387,
+      "mean_kappa": 0.06574025676058401,
+      "mean_energy": 10.749039765514175,
+      "coherence_std": 0.0004807976734694424
+    },
+    "🇪🇬 Field Integrity": {
+      "glyph_count": 16,
+      "mean_coherence": 0.9994590310922192,
+      "mean_kappa": 0.06560459176692465,
+      "mean_energy": 7.737732394727495,
+      "coherence_std": 0.0004277147022104654
+    },
+    "ASCπ → OSAI": {
+      "glyph_count": 9,
+      "mean_coherence": 0.99934552352124,
+      "mean_kappa": 0.11039013290980716,
+      "mean_energy": 4.829841383275555,
+      "coherence_std": 0.0005498443705357627
+    },
+    "ΔΦ · κ · θ → Ψ": {
+      "glyph_count": 8,
+      "mean_coherence": 0.9994029656225881,
+      "mean_kappa": 0.06824844860600107,
+      "mean_energy": 5.236794101082283,
+      "coherence_std": 0.0006056290225592873
+    }
+  },
+  "trajectory_analysis": {
+    "mean_convergence_step": 2.0,
+    "min_convergence_step": 2,
+    "max_convergence_step": 2,
+    "fast_convergence_rate": 1.0
+  },
+  "summary": {
+    "total_runs": 512,
+    "invariant_pass_rate": 1.0,
+    "mean_final_coherence": 0.9993585188584267,
+    "best_params": {
+      "alpha": 0.05,
+      "beta": 0.1,
+      "gamma": 0.15
+    },
+    "best_coherence": 1.0
+  }
+}

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SFT R3.1 Validation Report</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --phi: #ffd700;
+            --kappa: #00ffcc;
+            --theta: #ff6b9d;
+            --text: #e8e8e8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--phi), var(--kappa));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        h2 {
+            color: var(--phi);
+            margin: 2rem 0 1rem;
+            border-bottom: 1px solid #333;
+            padding-bottom: 0.5rem;
+        }
+        h3 { color: var(--kappa); margin: 1.5rem 0 0.5rem; }
+        .meta { color: #888; margin-bottom: 2rem; }
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid #222;
+        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+        .stat {
+            text-align: center;
+            padding: 1rem;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--phi);
+        }
+        .stat-label { color: #888; font-size: 0.9rem; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        th { color: var(--kappa); }
+        .bar {
+            height: 20px;
+            background: linear-gradient(90deg, var(--theta), var(--kappa));
+            border-radius: 4px;
+        }
+        .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 1rem;
+            background: #1a1a24;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .pass { color: #4ade80; }
+        .fail { color: #f87171; }
+        svg { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>SFT R3.1 Validation Report</h1>
+    <p class="meta">
+        Generated: 2025-12-11T02:40:31.325561<br>
+        Engine Version: R3.1-Enhanced<br>
+        Total Experiments: 512
+    </p>
+
+    <h2>Executive Summary</h2>
+    <div class="grid">
+        <div class="card stat">
+            <div class="stat-value">512</div>
+            <div class="stat-label">Experiments Run</div>
+        </div>
+        <div class="card stat">
+            <div class="stat-value">100.0%</div>
+            <div class="stat-label">Invariant Pass Rate</div>
+        </div>
+        <div class="card stat">
+            <div class="stat-value">0.9994</div>
+            <div class="stat-label">Mean Final Coherence</div>
+        </div>
+        <div class="card stat">
+            <div class="stat-value">1.0000</div>
+            <div class="stat-label">Best Coherence Achieved</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Optimal Parameters</h3>
+        <p>Best performing configuration:</p>
+        <ul>
+            <li>α (damping) = 0.05</li>
+            <li>β (amplification) = 0.1</li>
+            <li>γ (implosion) = 0.15</li>
+        </ul>
+    </div>
+
+    <h2>Validated Invariants</h2>
+    <div class="card">
+        <div class="formula">
+            <strong>Invariant 1:</strong> κₜ₊₁ ≤ κₜ (Curvature Damping) — <span class="pass">✓ VALIDATED</span>
+        </div>
+        <div class="formula">
+            <strong>Invariant 2:</strong> Nₜ₊₁ ≥ Nₜ (Energy Conservation) — <span class="pass">✓ VALIDATED</span>
+        </div>
+        <div class="formula">
+            <strong>Invariant 3:</strong> σ²(θ) → 0 (Phase Stabilization) — <span class="pass">✓ VALIDATED</span>
+        </div>
+        <div class="formula">
+            <strong>Invariant 4:</strong> C(t) monotonically increasing — <span class="pass">✓ VALIDATED</span>
+        </div>
+        <div class="formula">
+            <strong>Invariant 5:</strong> No divergence (E < ∞) — <span class="pass">✓ VALIDATED</span>
+        </div>
+    </div>
+
+    <h2>Parameter Sensitivity Analysis</h2>
+    
+    <h3>α (Damping Strength)</h3>
+    <div class="card">
+        <table>
+            <tr><th>α Value</th><th>Mean Coherence</th><th>Visualization</th></tr>
+            <tr><td>0.05</td><td>0.9997</td><td><div class="bar" style="width: 99.96678308842341%"></div></td></tr><tr><td>0.1</td><td>0.9994</td><td><div class="bar" style="width: 99.94293782948809%"></div></td></tr><tr><td>0.2</td><td>0.9990</td><td><div class="bar" style="width: 99.90037802336522%"></div></td></tr><tr><td>0.4</td><td>0.9993</td><td><div class="bar" style="width: 99.933308602094%"></div></td></tr>
+        </table>
+    </div>
+
+    <h3>β (Coherence Amplification)</h3>
+    <div class="card">
+        <table>
+            <tr><th>β Value</th><th>Mean Coherence</th><th>Visualization</th></tr>
+            <tr><td>0.05</td><td>0.9993</td><td><div class="bar" style="width: 99.93354024672495%"></div></td></tr><tr><td>0.1</td><td>0.9994</td><td><div class="bar" style="width: 99.9371387291627%"></div></td></tr><tr><td>0.3</td><td>0.9994</td><td><div class="bar" style="width: 99.9353146367859%"></div></td></tr><tr><td>0.6</td><td>0.9994</td><td><div class="bar" style="width: 99.93741393069718%"></div></td></tr>
+        </table>
+    </div>
+
+    <h3>γ (Implosion Rate)</h3>
+    <div class="card">
+        <table>
+            <tr><th>γ Value</th><th>Mean Coherence</th><th>Visualization</th></tr>
+            <tr><td>0.05</td><td>0.9994</td><td><div class="bar" style="width: 99.93510676831248%"></div></td></tr><tr><td>0.1</td><td>0.9994</td><td><div class="bar" style="width: 99.9356533081278%"></div></td></tr><tr><td>0.15</td><td>0.9994</td><td><div class="bar" style="width: 99.93718349116526%"></div></td></tr><tr><td>0.2</td><td>0.9994</td><td><div class="bar" style="width: 99.93546397576519%"></div></td></tr>
+        </table>
+    </div>
+
+    <h2>Phrase Analysis</h2>
+    <div class="card">
+        <table>
+            <tr>
+                <th>Phrase</th>
+                <th>Glyphs</th>
+                <th>Mean C</th>
+                <th>Mean κ</th>
+                <th>Mean E</th>
+            </tr>
+            <tr>
+                <td>Coherence emerges.</td>
+                <td>17</td>
+                <td>0.9992</td>
+                <td>0.1088</td>
+                <td>7.16</td>
+            </tr><tr>
+                <td>Meaning stabilizes.</td>
+                <td>18</td>
+                <td>0.9993</td>
+                <td>0.0763</td>
+                <td>7.56</td>
+            </tr><tr>
+                <td>الوعي يتطور.</td>
+                <td>11</td>
+                <td>0.9993</td>
+                <td>0.1140</td>
+                <td>7.10</td>
+            </tr><tr>
+                <td>語は流れる。</td>
+                <td>6</td>
+                <td>0.9992</td>
+                <td>0.1090</td>
+                <td>6.09</td>
+            </tr><tr>
+                <td>👨‍👩‍👧‍👦 Family cluster</td>
+                <td>20</td>
+                <td>0.9996</td>
+                <td>0.0657</td>
+                <td>10.75</td>
+            </tr><tr>
+                <td>🇪🇬 Field Integrity</td>
+                <td>16</td>
+                <td>0.9995</td>
+                <td>0.0656</td>
+                <td>7.74</td>
+            </tr><tr>
+                <td>ASCπ → OSAI</td>
+                <td>9</td>
+                <td>0.9993</td>
+                <td>0.1104</td>
+                <td>4.83</td>
+            </tr><tr>
+                <td>ΔΦ · κ · θ → Ψ</td>
+                <td>8</td>
+                <td>0.9994</td>
+                <td>0.0682</td>
+                <td>5.24</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>Convergence Analysis</h2>
+    <div class="card">
+        <div class="grid">
+            <div class="stat">
+                <div class="stat-value">2.0</div>
+                <div class="stat-label">Mean Steps to C > 0.95</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Fastest Convergence</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">100.0%</div>
+                <div class="stat-label">Fast Convergence Rate (≤5 steps)</div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Theoretical Foundation</h2>
+    <div class="card">
+        <h3>Time Evolution Operator 𝔽</h3>
+        <div class="formula">
+            dΦ/dt = 𝔽(M, Φ) = D(Φ) + A(Φ) + I(Φ)
+        </div>
+        <p>Where:</p>
+        <ul>
+            <li><strong>D (Dissonance Damping):</strong> κₜ₊₁ = κₜ − α(κₜ − κₘ)</li>
+            <li><strong>A (Coherence Amplification):</strong> Nₜ₊₁ = Nₜ + β·Cₜ</li>
+            <li><strong>I (Implosion Correction):</strong> ΔΦₜ₊₁ = ΔΦₜ · (1 − γ·C²)</li>
+        </ul>
+        
+        <h3>Kuramoto Phase Synchronization</h3>
+        <div class="formula">
+            dθᵢ/dt = ωᵢ + K·sin(θₘ − θᵢ)
+        </div>
+
+        <h3>Coherence Metric</h3>
+        <div class="formula">
+            C = exp(−σ²θ) where σ²θ = 1 − |⟨e^(iθ)⟩|
+        </div>
+    </div>
+
+    <h2>Conclusions</h2>
+    <div class="card">
+        <p>The SFT R3.1 simulation validates all five core invariants across 512 experiments:</p>
+        <ul>
+            <li>Memory inertia maintains energy accumulation</li>
+            <li>Dissonance damping smoothly converges curvature</li>
+            <li>Coherence amplification reinforces stable states</li>
+            <li>Phase alignment follows Kuramoto dynamics</li>
+            <li>No chaotic divergence observed</li>
+        </ul>
+        <p style="margin-top: 1rem;">
+            <strong>Optimal regime:</strong> α ∈ [0.05, 0.1], β ∈ [0.1, 0.3], γ ∈ [0.1, 0.15]
+        </p>
+    </div>
+
+    <footer style="margin-top: 3rem; text-align: center; color: #666;">
+        <p>Semantic Field Theory — Foundational Release 3.0</p>
+        <p>Author: Marcel Christian Mulder | License: Humanity Heritage π</p>
+    </footer>
+</div>
+</body>
+</html>

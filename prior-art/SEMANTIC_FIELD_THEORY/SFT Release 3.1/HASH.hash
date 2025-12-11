@@ -1,0 +1,35 @@
+==== analyze_results.py ==== 
+SHA256 hash of analyze_results.py:
+4afe95dabaddd93ce2279da83e88d485936603d4406b4a89c80e8ca6569ffbda
+CertUtil: -hashfile command completed successfully.
+==== extended_tests.py ==== 
+SHA256 hash of extended_tests.py:
+b81bb73a97b413ce8415e8303342df0f0d1027c709c65b1ae960e1a3551368f0
+CertUtil: -hashfile command completed successfully.
+==== HASHREGISTER.txt ==== 
+CertUtil: -hashfile command FAILED: 0x80070020 (WIN32: 32 ERROR_SHARING_VIOLATION)
+CertUtil: The process cannot access the file because it is being used by another process.
+==== R3.1_ANALYSIS.json ==== 
+SHA256 hash of R3.1_ANALYSIS.json:
+03ca88dbe9e959db20e20c07e70603a34dbea581d72caaf596c43f7fb5a315f1
+CertUtil: -hashfile command completed successfully.
+==== R3.1_DATA_EXPORT.csv ==== 
+SHA256 hash of R3.1_DATA_EXPORT.csv:
+62918cec5ed73e5cf8bd70c8945034039272f5a9365f4ea09de48cb9b35cab94
+CertUtil: -hashfile command completed successfully.
+==== R3.1_SWEEP_RESULTS.json ==== 
+SHA256 hash of R3.1_SWEEP_RESULTS.json:
+4b81cf5ae88d15b81de2b6699e3e06eb919890d37ab3e7262eeed2e03bb6b07b
+CertUtil: -hashfile command completed successfully.
+==== R3.1_TEST_SUITE_RESULTS.json ==== 
+SHA256 hash of R3.1_TEST_SUITE_RESULTS.json:
+7be38ce1ddf5de549b0f550a52027bd17fd1c8260ddbd4658da8fd6440dec8ff
+CertUtil: -hashfile command completed successfully.
+==== R3.1_VALIDATION_REPORT.html ==== 
+SHA256 hash of R3.1_VALIDATION_REPORT.html:
+9f726e929f517610114a1534b1ba8f40b2cec1b841c641d467d6c894d68802a4
+CertUtil: -hashfile command completed successfully.
+==== sft_engine_r31.py ==== 
+SHA256 hash of sft_engine_r31.py:
+e4d5c278a2f374a86c573d48adad0b303b394f4a415c6f1834f849c189258b23
+CertUtil: -hashfile command completed successfully.

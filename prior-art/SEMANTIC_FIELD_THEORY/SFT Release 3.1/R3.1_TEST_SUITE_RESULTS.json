@@ -1,0 +1,146 @@
+{
+  "timestamp": "2025-12-11T02:41:35.589128",
+  "suite": "R3.1-Extended",
+  "tests": [
+    {
+      "name": "glyph_extraction_Emoji",
+      "status": "FAIL",
+      "details": "got 8, expected 2"
+    },
+    {
+      "name": "glyph_extraction_Mixed",
+      "status": "FAIL",
+      "details": "got 10, expected 11"
+    },
+    {
+      "name": "theta_normalization",
+      "status": "PASS",
+      "details": "θ=1.2168"
+    },
+    {
+      "name": "theta_normalization_negative",
+      "status": "PASS",
+      "details": "θ=3.2832"
+    },
+    {
+      "name": "damping_convergence",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "coherence_amplification",
+      "status": "PASS",
+      "details": "ΔE=0.0800"
+    },
+    {
+      "name": "implosion_threshold",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "kuramoto_wrap",
+      "status": "PASS",
+      "details": "θ=0.0007"
+    },
+    {
+      "name": "s8_hash_deterministic",
+      "status": "PASS",
+      "details": "hash=d6f04689"
+    },
+    {
+      "name": "memory_energy_monotonic",
+      "status": "PASS",
+      "details": "energies=['0.17', '0.33', '0.47', '0.60', '0.73']"
+    },
+    {
+      "name": "full_pipeline",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "unicode_range_stability",
+      "status": "PASS",
+      "details": "9 ranges"
+    },
+    {
+      "name": "long_sequence_10k",
+      "status": "PASS",
+      "details": "0.02s"
+    },
+    {
+      "name": "many_steps_100",
+      "status": "PASS",
+      "details": "0.01s"
+    },
+    {
+      "name": "repeated_processing",
+      "status": "PASS",
+      "details": "variance=0.0000"
+    },
+    {
+      "name": "extreme_high_alpha",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "extreme_high_beta",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "extreme_high_gamma",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "extreme_all_low",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "extreme_all_high",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "empty_input",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "single_char",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "whitespace_only",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "surrogate_pairs",
+      "status": "PASS",
+      "details": "glyphs=7"
+    },
+    {
+      "name": "invariant_kappa_decreasing",
+      "status": "PASS",
+      "details": "ratio=94.74%"
+    },
+    {
+      "name": "invariant_energy_increasing",
+      "status": "PASS",
+      "details": "ratio=100.00%"
+    },
+    {
+      "name": "invariant_coherence_stable",
+      "status": "PASS",
+      "details": "var=0.0000"
+    }
+  ],
+  "summary": {
+    "passed": 25,
+    "failed": 2,
+    "pass_rate": 0.9259259259259259
+  }
+}
