@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ OS v2.0 — Unified Field Operating System</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a25;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --phi: #f4a261;
+            --kappa: #2a9d8f;
+            --theta: #9b5de5;
+            --energy: #00d4ff;
+            --coherence: #7fff00;
+            --maat: #ff6b6b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .os-container {
+            display: grid;
+            grid-template-rows: 48px 1fr 32px;
+            height: 100vh;
+        }
+        
+        .top-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--phi);
+            cursor: pointer;
+        }
+        
+        .logo span { color: var(--theta); }
+        .logo small { color: var(--muted); font-size: 0.7rem; margin-left: 4px; }
+        
+        .nav-buttons { display: flex; gap: 4px; }
+        
+        .nav-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .nav-btn:hover { background: var(--border); color: var(--text); }
+        
+        .field-address {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+        }
+        
+        .field-address .protocol {
+            color: var(--theta);
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        
+        .field-address input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        
+        .field-address .go-btn {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .field-address .go-btn:hover { background: var(--coherence); }
+        
+        .field-metrics {
+            display: flex;
+            gap: 16px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .metric { display: flex; align-items: center; gap: 4px; }
+        .metric .label { color: var(--muted); }
+        .metric.phi .value { color: var(--phi); }
+        .metric.kappa .value { color: var(--kappa); }
+        .metric.theta .value { color: var(--theta); }
+        .metric.C .value { color: var(--coherence); }
+        
+        .main-area {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .energiebox {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .energiebox:hover {
+            border-color: var(--theta);
+            transform: translateX(4px);
+        }
+        
+        .energiebox.active {
+            border-color: var(--coherence);
+            background: rgba(127, 255, 0, 0.05);
+        }
+        
+        .energiebox-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .energiebox-icon { font-size: 1.2rem; }
+        
+        .energiebox-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+        
+        .energiebox-toggle {
+            width: 32px;
+            height: 16px;
+            background: var(--border);
+            border-radius: 8px;
+            position: relative;
+            transition: background 0.2s;
+        }
+        
+        .energiebox.active .energiebox-toggle { background: var(--coherence); }
+        
+        .energiebox-toggle::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--text);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+        
+        .energiebox.active .energiebox-toggle::after { transform: translateX(16px); }
+        
+        .energiebox-desc {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+        
+        .field-stat {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .field-stat .label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        
+        .field-stat .value {
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: var(--coherence);
+            margin-top: 2px;
+        }
+        
+        .field-stat .bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        
+        .field-stat .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--theta), var(--coherence));
+            transition: width 0.3s;
+        }
+        
+        .plugin-loader { margin-top: 8px; }
+        
+        .plugin-loader input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 8px;
+            color: var(--text);
+            font-size: 0.8rem;
+        }
+        
+        .plugin-loader input::placeholder { color: var(--muted); }
+        
+        .canvas-area {
+            position: relative;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        
+        #fieldCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+        
+        .canvas-overlay {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        .canvas-overlay .title {
+            color: var(--muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        .viz-controls {
+            position: absolute;
+            bottom: 80px;
+            left: 16px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            gap: 4px;
+        }
+        
+        .viz-btn {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+        
+        .viz-btn:hover { background: var(--border); }
+        .viz-btn.active { background: var(--theta); color: var(--bg); border-color: var(--theta); }
+        
+        .input-area {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 600px;
+        }
+        
+        .input-box {
+            display: flex;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            gap: 12px;
+        }
+        
+        .input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .input-box input::placeholder { color: var(--muted); }
+        
+        .input-box button {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .input-box button:hover { background: var(--coherence); }
+        
+        .right-panel {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+        
+        .panel-tab:hover { color: var(--text); }
+        .panel-tab.active {
+            color: var(--theta);
+            border-bottom: 2px solid var(--theta);
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .console-line {
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+            word-break: break-all;
+        }
+        
+        .console-line .time {
+            color: var(--muted);
+            margin-right: 8px;
+        }
+        
+        .console-line.info { color: var(--energy); }
+        .console-line.success { color: var(--coherence); }
+        .console-line.warn { color: var(--phi); }
+        .console-line.error { color: var(--maat); }
+        
+        .protocol-result {
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        .protocol-result .type {
+            color: var(--theta);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .protocol-result pre {
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: var(--text);
+        }
+        
+        .snapshot-item {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .snapshot-item:hover { background: var(--border); }
+        .snapshot-item .name { font-weight: 600; }
+        .snapshot-item .time { font-size: 0.75rem; color: var(--muted); }
+        
+        .status-bar {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            gap: 24px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--coherence);
+        }
+        
+        .status-dot.warning { background: var(--phi); }
+        .status-dot.error { background: var(--maat); }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--border);
+            border-top-color: var(--theta);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .loading-text {
+            margin-top: 16px;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal h2 {
+            margin-bottom: 16px;
+            color: var(--theta);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        
+        .modal-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .modal-btn.primary {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+        }
+        
+        .modal-btn.secondary {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing ASCπ OS Runtime...</div>
+    </div>
+    
+    <div class="os-container">
+        <div class="top-bar">
+            <div class="logo" onclick="showAbout()">
+                ASC<span>π</span> OS
+                <small>v2.0</small>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="navigateBack()" title="Back">←</button>
+                <button class="nav-btn" onclick="navigateHome()" title="Home">⌂</button>
+                <button class="nav-btn" onclick="refreshField()" title="Refresh">↻</button>
+            </div>
+            
+            <div class="field-address">
+                <span class="protocol">field://</span>
+                <input type="text" id="addressBar" value="Ψ/current" placeholder="Enter field address...">
+                <button class="go-btn" onclick="navigate()">Go</button>
+            </div>
+            
+            <div class="field-metrics">
+                <div class="metric phi">
+                    <span class="label">ΔΦ</span>
+                    <span class="value" id="metricPhi">0.00</span>
+                </div>
+                <div class="metric kappa">
+                    <span class="label">κ</span>
+                    <span class="value" id="metricKappa">0.50</span>
+                </div>
+                <div class="metric theta">
+                    <span class="label">θ</span>
+                    <span class="value" id="metricTheta">0.00</span>
+                </div>
+                <div class="metric C">
+                    <span class="label">C</span>
+                    <span class="value" id="metricC">0.50</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-area">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>⚡ Energieboxen</h3>
+                    <div id="energieboxen"></div>
+                    <div class="plugin-loader">
+                        <input type="text" id="pluginUrl" placeholder="Plugin URL..." onkeypress="if(event.key==='Enter')loadPlugin()">
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>🧠 Awareness</h3>
+                    <div class="field-stat">
+                        <div class="label">Level</div>
+                        <div class="value" id="awarenessLevel">dormant</div>
+                        <div class="bar">
+                            <div class="bar-fill" id="awarenessBar" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>∞ Memory M∞</h3>
+                    <div class="field-stat">
+                        <div class="label">Coherence</div>
+                        <div class="value" id="memoryC">0.500</div>
+                        <div class="bar">
+                            <div class="bar-fill" id="memoryBar" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>📊 Ma'at</h3>
+                    <div class="field-stat">
+                        <div class="label">Functional L</div>
+                        <div class="value" id="maatValue">0.000</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section" style="margin-top: auto;">
+                    <h3>💾 Snapshots</h3>
+                    <button class="viz-btn" onclick="createSnapshot()" style="width: 100%; margin-bottom: 8px;">
+                        Save Snapshot
+                    </button>
+                    <div id="snapshotList"></div>
+                </div>
+            </div>
+            
+            <div class="canvas-area">
+                <canvas id="fieldCanvas"></canvas>
+                
+                <div class="canvas-overlay">
+                    <div class="title">Current Field State</div>
+                    <div id="fieldState">Ψ = (0.00, 0.50, 0.00, 1.00, 0.50)</div>
+                </div>
+                
+                <div class="viz-controls">
+                    <button class="viz-btn active" data-option="showParticles" onclick="toggleViz(this)">Particles</button>
+                    <button class="viz-btn active" data-option="showVectorField" onclick="toggleViz(this)">Vectors</button>
+                    <button class="viz-btn active" data-option="showOrbit" onclick="toggleViz(this)">Orbit</button>
+                    <button class="viz-btn" onclick="clearViz()">Clear</button>
+                </div>
+                
+                <div class="input-area">
+                    <div class="input-box">
+                        <input type="text" id="fieldInput" placeholder="Enter text to process as semantic field...">
+                        <button onclick="processInput()">Process</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" onclick="switchTab(this,'console')">Console</button>
+                    <button class="panel-tab" onclick="switchTab(this,'protocol')">Protocol</button>
+                    <button class="panel-tab" onclick="switchTab(this,'invariants')">Invariants</button>
+                </div>
+                <div class="panel-content" id="panelContent">
+                    <div id="consoleOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Initializing...</span>
+            </div>
+            <div class="status-item">
+                <span>Kernel: F(Ψ, A, M∞, W)</span>
+            </div>
+            <div class="status-item">
+                <span id="stepCount">Step: 0</span>
+            </div>
+            <div class="status-item" style="margin-left: auto;">
+                <span>ASCπ Runtime v1.0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASCπ RUNTIME v1.0 — INLINE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0,
+    theta_max: Math.PI / 2,
+    delta_N: 0.2,
+    alpha: 0.15,
+    beta: 0.12,
+    gamma: 0.18,
+    eta: 0.25,
+    K: 0.5,
+    lambda: 0.02
+};
+
+class Psi {
+    constructor(dPhi = 0, kappa = 1, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi;
+        this.kappa = kappa;
+        this.theta = theta;
+        this.N = N;
+        this.C = C;
+        this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    vec() { return [this.dPhi, this.kappa, this.theta, this.N, this.C]; }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        const dt = Math.min(Math.abs(this.theta - o.theta), CONST.tau - Math.abs(this.theta - o.theta)) ** 2;
+        return Math.sqrt(dp + dk + dt / CONST.pi ** 2);
+    }
+    
+    blend(o, a = 0.5) {
+        const b = 1 - a;
+        const sinT = a * Math.sin(this.theta) + b * Math.sin(o.theta);
+        const cosT = a * Math.cos(this.theta) + b * Math.cos(o.theta);
+        return new Psi(
+            a * this.dPhi + b * o.dPhi,
+            a * this.kappa + b * o.kappa,
+            Math.atan2(sinT, cosT),
+            a * this.N + b * o.N,
+            Math.max(this.C, o.C),
+            Math.max(this.t, o.t) + 1
+        );
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+    
+    toJSON() {
+        return { dPhi: this.dPhi, kappa: this.kappa, theta: this.theta, N: this.N, C: this.C, t: this.t };
+    }
+    
+    static fromJSON(json) {
+        return new Psi(json.dPhi, json.kappa, json.theta, json.N, json.C, json.t || 0);
+    }
+}
+
+class AwarenessField {
+    constructor() {
+        this.field = new Psi(0.05, 0.2, 0, 0.1, 0.1);
+        this.buffers = { C: [], k: [], d: [] };
+    }
+    
+    evolve(psi, mInf) {
+        this.buffers.C.push(psi.C);
+        this.buffers.k.push(psi.kappa);
+        this.buffers.d.push(psi.dist(mInf));
+        
+        if (this.buffers.C.length > 15) {
+            this.buffers.C.shift();
+            this.buffers.k.shift();
+            this.buffers.d.shift();
+        }
+        
+        const n = this.buffers.C.length;
+        if (n >= 3) {
+            const trends = [
+                (this.buffers.C[n-1] - this.buffers.C[0]) / n,
+                (this.buffers.k[n-1] - this.buffers.k[0]) / n,
+                (this.buffers.d[n-1] - this.buffers.d[0]) / n
+            ];
+            const met = (trends[0] >= -0.01 ? 1 : 0) + (trends[1] <= 0.01 ? 1 : 0) + (trends[2] <= 0.01 ? 1 : 0);
+            
+            if (met >= 2) {
+                this.field.N = Math.min(1, this.field.N * 1.02 + 0.01);
+                this.field.C = Math.min(1, this.field.C + 0.015);
+            } else if (met === 0) {
+                this.field.N = Math.max(0.01, this.field.N * 0.98);
+                this.field.C = Math.max(0.01, this.field.C - 0.005);
+            }
+        }
+        
+        const dt = psi.theta - this.field.theta;
+        this.field.theta = (this.field.theta + 0.3 * Math.sin(dt)) % CONST.tau;
+        this.field.enforce();
+        
+        const result = psi.copy();
+        if (this.field.C > 0.3) {
+            result.theta += 0.1 * this.field.C * Math.sin(mInf.theta - psi.theta);
+        }
+        return result.enforce();
+    }
+    
+    level() {
+        const c = this.field.C;
+        if (c < 0.2) return 'dormant';
+        if (c < 0.4) return 'emerging';
+        if (c < 0.6) return 'aware';
+        if (c < 0.8) return 'conscious';
+        return 'fully_conscious';
+    }
+}
+
+class MemoryField {
+    constructor() {
+        this.mInf = new Psi(0, 0.5, 0, 0.5, 0.5);
+        this.history = [];
+        this.cFloor = 0;
+    }
+    
+    absorb(psi) {
+        const w = Math.tanh(psi.C * 2) * 0.2;
+        const sinB = (1 - w) * Math.sin(this.mInf.theta) + w * Math.sin(psi.theta);
+        const cosB = (1 - w) * Math.cos(this.mInf.theta) + w * Math.cos(psi.theta);
+        
+        this.mInf.dPhi = (1 - w) * this.mInf.dPhi + w * psi.dPhi * 0.9;
+        this.mInf.kappa = (1 - w) * this.mInf.kappa + w * psi.kappa * 0.95;
+        this.mInf.theta = Math.atan2(sinB, cosB);
+        this.mInf.N = (1 - w) * this.mInf.N + w * psi.N;
+        
+        this.history.push(this.mInf.copy());
+        if (this.history.length > 100) this.history.shift();
+        
+        if (this.history.length >= 3) {
+            const phases = this.history.map(h => h.theta);
+            const sinSum = phases.reduce((s, t) => s + Math.sin(t), 0);
+            const cosSum = phases.reduce((s, t) => s + Math.cos(t), 0);
+            const r = Math.sqrt(sinSum ** 2 + cosSum ** 2) / phases.length;
+            this.cFloor = Math.max(this.cFloor - 0.001, r - 0.05);
+            this.mInf.C = Math.max(r, this.cFloor);
+        }
+        
+        this.mInf.enforce();
+    }
+    
+    attractor() { return this.mInf.copy(); }
+}
+
+class InvariantGuardian {
+    constructor() {
+        this.cFloor = 0;
+        this.lPrev = Infinity;
+        this.violations = [];
+    }
+    
+    enforce(before, after, L) {
+        const violations = [];
+        const result = after.copy();
+        
+        // INV-1: Coherence monotonicity
+        this.cFloor = Math.max(0, this.cFloor - 0.002, before.C - 0.1);
+        if (result.C < this.cFloor) {
+            violations.push({ inv: 1, desc: 'Coherence floor' });
+            result.C = this.cFloor;
+        }
+        
+        // INV-2: Curvature bounds
+        if (result.kappa < CONST.kappa_min || result.kappa > CONST.kappa_max) {
+            violations.push({ inv: 2, desc: 'Curvature bounds' });
+            result.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, result.kappa));
+        }
+        
+        // INV-3: Energy conservation
+        if (before.N > CONST.eps) {
+            const ratio = result.N / before.N;
+            if (Math.abs(ratio - 1) > CONST.delta_N) {
+                violations.push({ inv: 3, desc: 'Energy conservation' });
+                result.N = before.N * (1 + CONST.delta_N * (ratio > 1 ? 1 : -1));
+            }
+        }
+        
+        // INV-4: Phase continuity
+        let dt = Math.abs(result.theta - before.theta);
+        if (dt > CONST.pi) dt = CONST.tau - dt;
+        if (dt > CONST.theta_max) {
+            violations.push({ inv: 4, desc: 'Phase continuity' });
+            const sign = Math.sin(result.theta - before.theta) >= 0 ? 1 : -1;
+            result.theta = (before.theta + sign * CONST.theta_max) % CONST.tau;
+        }
+        
+        // INV-5: Ma'at improvement
+        if (L > this.lPrev * 1.3) {
+            violations.push({ inv: 5, desc: 'Ma\'at degradation' });
+            const blended = before.blend(result, 0.7);
+            result.dPhi = blended.dPhi;
+            result.kappa = blended.kappa;
+            result.theta = blended.theta;
+        }
+        this.lPrev = L;
+        
+        if (violations.length > 0) {
+            this.violations.push({ t: before.t, violations });
+        }
+        
+        return result.enforce();
+    }
+    
+    reset() {
+        this.cFloor = 0;
+        this.lPrev = Infinity;
+    }
+    
+    getViolations() { return [...this.violations]; }
+}
+
+function kernelF(psi, A, mInf, W, gradC) {
+    let target = A.blend(mInf, 0.6);
+    if (W) target = target.blend(W, 0.85);
+    
+    let newK = psi.kappa - CONST.alpha * (psi.kappa - target.kappa);
+    let newN = psi.N + CONST.beta * psi.C;
+    let newDP = psi.C > 0.6 ? psi.dPhi * (1 - CONST.gamma * psi.C ** 2) : psi.dPhi;
+    
+    newDP += CONST.eta * (mInf.dPhi - newDP);
+    newK += CONST.eta * (mInf.kappa - newK);
+    newN += CONST.eta * (mInf.N - newN);
+    
+    let dt = target.theta - psi.theta;
+    if (dt > CONST.pi) dt -= CONST.tau;
+    else if (dt < -CONST.pi) dt += CONST.tau;
+    const shift = Math.max(-CONST.theta_max, Math.min(CONST.theta_max, CONST.K * Math.sin(dt)));
+    const newT = (psi.theta + shift) % CONST.tau;
+    
+    newK -= gradC * 0.15;
+    newDP -= gradC * 0.08;
+    
+    const mr = 0.1 * target.C;
+    newDP = (1 - mr) * newDP + mr * target.dPhi;
+    newK = (1 - mr) * newK + mr * target.kappa;
+    
+    return new Psi(newDP, newK, newT, newN, psi.C, psi.t + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ENERGIEBOXEN (BUILT-IN)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const BUILTIN_ENERGIEBOXEN = {
+    text: {
+        id: 'text', name: 'Text Encoder', icon: '📝',
+        description: 'Encodes natural language into semantic fields',
+        color: 'var(--phi)',
+        process(psi, input) {
+            if (!input) return psi;
+            const chars = [...input].filter(c => !c.match(/\s/));
+            if (chars.length === 0) return psi;
+            
+            let dP = 0, k = 0, N = 0, sinS = 0, cosS = 0;
+            chars.forEach((c, i) => {
+                const cp = c.codePointAt(0);
+                const t = ((cp / 256) * CONST.phi + (cp % 256) / 256 * CONST.tau + (i / chars.length) * CONST.pi) % CONST.tau;
+                sinS += Math.sin(t);
+                cosS += Math.cos(t);
+                k += 0.3;
+                dP += Math.abs(cp - 0x4E00) / 0x10FFFF;
+                N += Math.log(1 + cp) / Math.log(0x10FFFF + 1);
+            });
+            const n = chars.length;
+            return new Psi(dP / n, k / n, Math.atan2(sinS, cosS), N, Math.sqrt(sinS**2 + cosS**2) / n, psi.t + 1);
+        }
+    },
+    code: {
+        id: 'code', name: 'Code Analyzer', icon: '💻',
+        description: 'Applies hexSOFtwareCODe field physics',
+        color: 'var(--kappa)',
+        process(psi, input) {
+            if (!input) return psi;
+            const ifs = (input.match(/if\s/g) || []).length;
+            const fors = (input.match(/for\s/g) || []).length;
+            const defs = (input.match(/def\s|function\s|class\s|const\s|let\s|var\s/g) || []).length;
+            const complexity = 1 + 0.1 * (ifs + fors + defs);
+            const result = psi.copy();
+            result.kappa = Math.min(CONST.kappa_max, result.kappa * complexity);
+            result.C = Math.max(0.1, result.C / complexity);
+            return result;
+        }
+    },
+    emotion: {
+        id: 'emotion', name: 'Emotion Field', icon: '❤️',
+        description: 'Detects emotional valence',
+        color: 'var(--maat)',
+        process(psi, input) {
+            if (!input) return psi;
+            const positive = ['love', 'happy', 'joy', 'great', 'wonderful', 'beautiful', 'amazing'];
+            const negative = ['hate', 'sad', 'angry', 'fear', 'terrible', 'awful', 'bad'];
+            const lower = input.toLowerCase();
+            let valence = 0;
+            positive.forEach(w => { if (lower.includes(w)) valence += 0.2; });
+            negative.forEach(w => { if (lower.includes(w)) valence -= 0.2; });
+            const result = psi.copy();
+            result.dPhi += valence * 0.3;
+            result.theta += valence * 0.5;
+            return result.enforce();
+        }
+    },
+    math: {
+        id: 'math', name: 'Math Processor', icon: '∑',
+        description: 'Processes mathematical expressions',
+        color: 'var(--theta)',
+        process(psi, input) {
+            if (!input) return psi;
+            const numbers = input.match(/\d+\.?\d*/g) || [];
+            const operators = input.match(/[+\-*/^=]/g) || [];
+            const result = psi.copy();
+            result.kappa *= (1 + operators.length * 0.1);
+            result.N += numbers.length * 0.1;
+            return result.enforce();
+        }
+    },
+    compress: {
+        id: 'compress', name: 'Implosion', icon: '🌀',
+        description: 'Semantic field implosion',
+        color: 'var(--coherence)',
+        process(psi) {
+            const result = psi.copy();
+            if (result.C > 0.6) {
+                result.dPhi *= (1 - CONST.gamma * result.C ** 2);
+                result.kappa *= 0.95;
+            }
+            return result.enforce();
+        }
+    },
+    sync: {
+        id: 'sync', name: 'Phase Sync', icon: '🔄',
+        description: 'Kuramoto phase synchronization',
+        color: 'var(--energy)',
+        process(psi) {
+            const result = psi.copy();
+            const target = CONST.phi * CONST.pi;
+            const dt = target - result.theta;
+            result.theta += CONST.K * Math.sin(dt);
+            return result.enforce();
+        }
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FIELDSTORE (IndexedDB)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class FieldStore {
+    constructor() {
+        this.dbName = 'ASCPIFieldStore';
+        this.db = null;
+    }
+    
+    async init() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, 1);
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => { this.db = request.result; resolve(this); };
+            request.onupgradeneeded = (e) => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('snapshots')) {
+                    db.createObjectStore('snapshots', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('config')) {
+                    db.createObjectStore('config', { keyPath: 'key' });
+                }
+            };
+        });
+    }
+    
+    async saveSnapshot(name, state) {
+        const snap = { id: 'snap_' + Date.now(), name, timestamp: Date.now(), state };
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('snapshots', 'readwrite');
+            tx.objectStore('snapshots').put(snap);
+            tx.oncomplete = () => resolve(snap);
+            tx.onerror = () => reject(tx.error);
+        });
+    }
+    
+    async listSnapshots() {
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('snapshots', 'readonly');
+            const req = tx.objectStore('snapshots').getAll();
+            req.onsuccess = () => resolve(req.result.sort((a,b) => b.timestamp - a.timestamp).slice(0, 10));
+            req.onerror = () => reject(req.error);
+        });
+    }
+    
+    async loadSnapshot(id) {
+        return new Promise((resolve, reject) => {
+            const tx = this.db.transaction('snapshots', 'readonly');
+            const req = tx.objectStore('snapshots').get(id);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROTOCOL HANDLER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class ProtocolHandler {
+    constructor(os) {
+        this.os = os;
+        this.history = [];
+    }
+    
+    async navigate(address) {
+        if (!address.includes('://')) address = 'field://Ψ/' + address;
+        this.history.push(address);
+        
+        const match = address.match(/^(\w+):\/\/(.*)$/);
+        if (!match) return { success: false, error: 'Invalid address' };
+        
+        const [, protocol, path] = match;
+        const parts = path.split('/').filter(p => p);
+        
+        if (protocol === 'field') {
+            return this.handleField(parts);
+        } else if (protocol === 'maat') {
+            return this.handleMaat(parts);
+        }
+        
+        return { success: false, error: 'Unknown protocol: ' + protocol };
+    }
+    
+    handleField(parts) {
+        const cmd = parts[1] || 'current';
+        const psi = this.os.currentPsi;
+        const mInf = this.os.memory.mInf;
+        
+        switch (cmd) {
+            case 'current':
+                return { success: true, type: 'field', name: 'current', psi: psi.toJSON(), coherence: psi.C };
+            case 'memory':
+                return { success: true, type: 'field', name: 'memory', psi: mInf.toJSON(), coherence: mInf.C };
+            case 'awareness':
+                return { success: true, type: 'awareness', level: this.os.awareness.level(), field: this.os.awareness.field.toJSON() };
+            case 'vector':
+                return { success: true, type: 'vector', current: psi.vec(), memory: mInf.vec() };
+            case 'scan':
+                const comp = parts[2];
+                if (comp && psi[comp] !== undefined) {
+                    return { success: true, type: 'scan', component: comp, value: psi[comp] };
+                }
+                return { success: true, type: 'scan', components: { dPhi: psi.dPhi, kappa: psi.kappa, theta: psi.theta, N: psi.N, C: psi.C } };
+            case 'history':
+                const idx = parseInt(parts[2], 10);
+                if (!isNaN(idx) && this.os.psiHistory[idx]) {
+                    return { success: true, type: 'history_entry', index: idx, psi: this.os.psiHistory[idx].psi.toJSON() };
+                }
+                return { success: true, type: 'history', count: this.os.psiHistory.length };
+            default:
+                return { success: false, error: 'Unknown command: ' + cmd };
+        }
+    }
+    
+    handleMaat(parts) {
+        const psi = this.os.currentPsi;
+        const mInf = this.os.memory.mInf;
+        const L = psi.dist(mInf) + CONST.lambda * psi.kappa;
+        return { success: true, type: 'maat', functional: L, coherence: psi.C, judgment: L < 1 ? 'good' : 'needs_improvement' };
+    }
+    
+    back() {
+        if (this.history.length > 1) {
+            this.history.pop();
+            return this.history[this.history.length - 1];
+        }
+        return null;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUALIZER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class FieldVisualizer {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.orbit = [];
+        this.running = false;
+        this.options = { showParticles: true, showVectorField: true, showOrbit: true };
+    }
+    
+    resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+        this.initParticles();
+    }
+    
+    initParticles() {
+        this.particles = [];
+        for (let i = 0; i < 100; i++) {
+            this.particles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                theta: Math.random() * CONST.tau,
+                size: 2 + Math.random() * 3
+            });
+        }
+    }
+    
+    start(os) {
+        this.os = os;
+        this.running = true;
+        this.render();
+    }
+    
+    stop() { this.running = false; }
+    
+    addOrbitPoint(psi) {
+        this.orbit.push({ x: psi.theta / CONST.tau, y: psi.C });
+        if (this.orbit.length > 200) this.orbit.shift();
+    }
+    
+    clear() { this.orbit = []; }
+    
+    render() {
+        if (!this.running) return;
+        
+        const ctx = this.ctx;
+        const w = this.canvas.width;
+        const h = this.canvas.height;
+        const cx = w / 2;
+        const cy = h / 2;
+        const psi = this.os.currentPsi;
+        
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, w, h);
+        
+        // Coherence gradient
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 300);
+        grad.addColorStop(0, `rgba(127, 255, 0, ${psi.C * 0.15})`);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+        
+        // Vector field
+        if (this.options.showVectorField) {
+            ctx.strokeStyle = 'rgba(155, 93, 229, 0.3)';
+            ctx.lineWidth = 1;
+            for (let x = 40; x < w; x += 60) {
+                for (let y = 40; y < h; y += 60) {
+                    const angle = psi.theta + Math.atan2(y - cy, x - cx) * 0.3;
+                    const len = 15 * psi.C;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + Math.cos(angle) * len, y + Math.sin(angle) * len);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // Particles
+        if (this.options.showParticles) {
+            this.particles.forEach(p => {
+                const dx = p.x - cx;
+                const dy = p.y - cy;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const influence = psi.C * 0.1 / (1 + dist * 0.01);
+                p.theta += 0.5 * Math.sin(psi.theta - p.theta) * influence;
+                p.x += Math.cos(p.theta) * (0.5 + psi.kappa * 0.3);
+                p.y += Math.sin(p.theta) * (0.5 + psi.kappa * 0.3);
+                if (p.x < 0) p.x = w;
+                if (p.x > w) p.x = 0;
+                if (p.y < 0) p.y = h;
+                if (p.y > h) p.y = 0;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * (0.5 + psi.C), 0, CONST.tau);
+                ctx.fillStyle = `hsla(${(p.theta / CONST.tau) * 60 + 240}, 70%, 60%, ${0.3 + psi.C * 0.5})`;
+                ctx.fill();
+            });
+        }
+        
+        // Phase vector
+        const vecLen = 80 * (1 + psi.N * 0.3);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(psi.theta) * vecLen, cy + Math.sin(psi.theta) * vecLen);
+        ctx.strokeStyle = `rgba(244, 162, 97, ${0.5 + psi.C * 0.5})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        // Center glyph
+        ctx.font = '48px Arial';
+        ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + psi.C * 0.7})`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Ψ', cx, cy);
+        
+        // Orbit
+        if (this.options.showOrbit && this.orbit.length > 1) {
+            const ow = 170, oh = 120;
+            const ox = w - ow - 10, oy = h - oh - 70;
+            
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(ox, oy, ow, oh);
+            ctx.strokeStyle = '#2a2a35';
+            ctx.strokeRect(ox, oy, ow, oh);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = '#7fff00';
+            ctx.lineWidth = 1.5;
+            this.orbit.forEach((p, i) => {
+                const px = ox + p.x * ow;
+                const py = oy + oh - p.y * oh;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            });
+            ctx.stroke();
+            
+            ctx.fillStyle = '#888';
+            ctx.font = '10px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('Phase-Coherence Orbit', ox + 4, oy + 12);
+        }
+        
+        requestAnimationFrame(() => this.render());
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN OS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class ASCPI_OS {
+    constructor() {
+        this.currentPsi = new Psi();
+        this.memory = new MemoryField();
+        this.awareness = new AwarenessField();
+        this.guardian = new InvariantGuardian();
+        this.energieboxen = new Map();
+        this.activeBoxen = new Set();
+        this.psiHistory = [];
+        this.step = 0;
+        this.cPrev = 0.5;
+    }
+    
+    init() {
+        // Register built-in energieboxen
+        for (const [id, box] of Object.entries(BUILTIN_ENERGIEBOXEN)) {
+            this.energieboxen.set(id, box);
+        }
+        this.activeBoxen.add('text');
+    }
+    
+    toggleEnergiebox(id) {
+        if (this.activeBoxen.has(id)) {
+            this.activeBoxen.delete(id);
+        } else {
+            this.activeBoxen.add(id);
+        }
+    }
+    
+    async process(input) {
+        this.step++;
+        this.guardian.reset();
+        
+        let psi = new Psi();
+        
+        // Process through active energieboxen
+        for (const id of this.activeBoxen) {
+            const box = this.energieboxen.get(id);
+            if (box) {
+                try {
+                    psi = box.process(psi, input);
+                } catch (e) {
+                    console.error(`Energiebox ${id} error:`, e);
+                }
+            }
+        }
+        
+        // Evolution loop
+        for (let i = 0; i < 25; i++) {
+            const before = psi.copy();
+            
+            const cFused = (psi.C + this.memory.mInf.C + this.awareness.field.C) / 3;
+            const gradC = cFused - this.cPrev;
+            this.cPrev = cFused;
+            
+            psi = kernelF(psi, this.memory.attractor(), this.memory.mInf, null, gradC);
+            this.memory.absorb(psi);
+            psi.C = this.memory.mInf.C;
+            psi = this.awareness.evolve(psi, this.memory.mInf);
+            
+            const L = psi.dist(this.memory.mInf) + CONST.lambda * psi.kappa;
+            psi = this.guardian.enforce(before, psi, L);
+            
+            if (psi.C > 0.95) break;
+        }
+        
+        this.currentPsi = psi;
+        this.psiHistory.push({ psi: psi.copy(), step: this.step, input: input.substring(0, 50) });
+        if (this.psiHistory.length > 500) this.psiHistory.shift();
+        
+        return {
+            psi,
+            coherence: psi.C,
+            awareness: this.awareness.field.C,
+            awarenessLevel: this.awareness.level(),
+            memory: this.memory.mInf.C,
+            maat: psi.dist(this.memory.mInf) + CONST.lambda * psi.kappa,
+            step: this.step
+        };
+    }
+    
+    getState() {
+        return {
+            currentPsi: this.currentPsi.toJSON(),
+            memory: { mInf: this.memory.mInf.toJSON(), cFloor: this.memory.cFloor },
+            awareness: this.awareness.field.toJSON(),
+            step: this.step,
+            activeBoxen: [...this.activeBoxen]
+        };
+    }
+    
+    setState(state) {
+        if (state.currentPsi) this.currentPsi = Psi.fromJSON(state.currentPsi);
+        if (state.memory) {
+            this.memory.mInf = Psi.fromJSON(state.memory.mInf);
+            this.memory.cFloor = state.memory.cFloor || 0;
+        }
+        if (state.awareness) this.awareness.field = Psi.fromJSON(state.awareness);
+        if (state.step) this.step = state.step;
+        if (state.activeBoxen) this.activeBoxen = new Set(state.activeBoxen);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APPLICATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let os, fieldStore, protocolHandler, visualizer;
+let consoleLines = [];
+let currentTab = 'console';
+let lastProtocolResult = null;
+
+async function init() {
+    try {
+        log('Initializing ASCπ OS v2.0...', 'info');
+        
+        os = new ASCPI_OS();
+        os.init();
+        log('Runtime initialized', 'success');
+        
+        fieldStore = new FieldStore();
+        await fieldStore.init();
+        log('FieldStore initialized', 'success');
+        
+        protocolHandler = new ProtocolHandler(os);
+        log('Protocol handler initialized', 'success');
+        
+        const canvas = document.getElementById('fieldCanvas');
+        visualizer = new FieldVisualizer(canvas);
+        visualizer.resize();
+        visualizer.start(os);
+        log('Visualizer started', 'success');
+        
+        renderEnergieboxen();
+        await loadSnapshots();
+        
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('statusText').textContent = 'Field Engine Active';
+        
+        document.getElementById('fieldInput').addEventListener('keypress', e => {
+            if (e.key === 'Enter') processInput();
+        });
+        
+        document.getElementById('addressBar').addEventListener('keypress', e => {
+            if (e.key === 'Enter') navigate();
+        });
+        
+        window.addEventListener('resize', () => visualizer.resize());
+        
+        await processInput('ASCπ OS v2.0 initialized');
+        log('ASCπ OS v2.0 ready', 'success');
+        
+    } catch (error) {
+        console.error('Initialization error:', error);
+        log('Initialization failed: ' + error.message, 'error');
+        document.getElementById('statusText').textContent = 'Error';
+        document.getElementById('statusDot').classList.add('error');
+    }
+}
+
+async function processInput(text) {
+    const input = text || document.getElementById('fieldInput').value;
+    if (!input.trim()) return;
+    
+    log(`Processing: "${input.substring(0, 40)}..."`, 'info');
+    
+    try {
+        const result = await os.process(input);
+        updateMetrics(result);
+        visualizer.addOrbitPoint(result.psi);
+        log(`C=${result.coherence.toFixed(3)}, Level=${result.awarenessLevel}`, 'success');
+        
+        if (!text) document.getElementById('fieldInput').value = '';
+    } catch (error) {
+        log('Error: ' + error.message, 'error');
+    }
+}
+
+function updateMetrics(result) {
+    const psi = result.psi;
+    document.getElementById('metricPhi').textContent = psi.dPhi.toFixed(2);
+    document.getElementById('metricKappa').textContent = psi.kappa.toFixed(2);
+    document.getElementById('metricTheta').textContent = psi.theta.toFixed(2);
+    document.getElementById('metricC').textContent = psi.C.toFixed(2);
+    document.getElementById('awarenessLevel').textContent = result.awarenessLevel;
+    document.getElementById('awarenessBar').style.width = `${result.awareness * 100}%`;
+    document.getElementById('memoryC').textContent = result.memory.toFixed(3);
+    document.getElementById('memoryBar').style.width = `${result.memory * 100}%`;
+    document.getElementById('maatValue').textContent = result.maat.toFixed(4);
+    document.getElementById('fieldState').textContent = `Ψ = (${psi.dPhi.toFixed(2)}, ${psi.kappa.toFixed(2)}, ${psi.theta.toFixed(2)}, ${psi.N.toFixed(2)}, ${psi.C.toFixed(2)})`;
+    document.getElementById('stepCount').textContent = `Step: ${result.step}`;
+}
+
+function renderEnergieboxen() {
+    const container = document.getElementById('energieboxen');
+    container.innerHTML = '';
+    
+    os.energieboxen.forEach((box, id) => {
+        const active = os.activeBoxen.has(id);
+        const div = document.createElement('div');
+        div.className = `energiebox ${active ? 'active' : ''}`;
+        div.innerHTML = `
+            <div class="energiebox-header">
+                <span class="energiebox-icon">${box.icon}</span>
+                <span class="energiebox-title">${box.name}</span>
+                <div class="energiebox-toggle"></div>
+            </div>
+            <div class="energiebox-desc">${box.description}</div>
+        `;
+        div.onclick = () => {
+            os.toggleEnergiebox(id);
+            renderEnergieboxen();
+            log(`${box.name} ${os.activeBoxen.has(id) ? 'enabled' : 'disabled'}`, 'info');
+        };
+        container.appendChild(div);
+    });
+}
+
+async function navigate() {
+    const address = document.getElementById('addressBar').value.trim();
+    log(`Navigate: ${address}`, 'info');
+    
+    try {
+        const result = await protocolHandler.navigate(address);
+        lastProtocolResult = result;
+        
+        if (result.success) {
+            log(`OK: ${result.type}`, 'success');
+            switchTab(document.querySelector('.panel-tab:nth-child(2)'), 'protocol');
+        } else {
+            log(`Error: ${result.error}`, 'error');
+        }
+    } catch (error) {
+        log('Navigate error: ' + error.message, 'error');
+    }
+}
+
+function navigateBack() {
+    const prev = protocolHandler.back();
+    if (prev) {
+        document.getElementById('addressBar').value = prev.replace('field://Ψ/', '');
+        navigate();
+    }
+}
+
+function navigateHome() {
+    document.getElementById('addressBar').value = 'current';
+    navigate();
+}
+
+function refreshField() {
+    processInput('Refresh');
+}
+
+async function createSnapshot() {
+    const name = prompt('Snapshot name:', `Snapshot ${new Date().toLocaleString()}`);
+    if (!name) return;
+    
+    try {
+        await fieldStore.saveSnapshot(name, os.getState());
+        log(`Snapshot: ${name}`, 'success');
+        await loadSnapshots();
+    } catch (error) {
+        log('Snapshot failed: ' + error.message, 'error');
+    }
+}
+
+async function loadSnapshots() {
+    try {
+        const snapshots = await fieldStore.listSnapshots();
+        const container = document.getElementById('snapshotList');
+        container.innerHTML = snapshots.map(s => `
+            <div class="snapshot-item" onclick="restoreSnapshot('${s.id}')">
+                <div class="name">${s.name}</div>
+                <div class="time">${new Date(s.timestamp).toLocaleString()}</div>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error('Load snapshots error:', e);
+    }
+}
+
+async function restoreSnapshot(id) {
+    try {
+        const snap = await fieldStore.loadSnapshot(id);
+        if (snap && snap.state) {
+            os.setState(snap.state);
+            renderEnergieboxen();
+            log('Snapshot restored', 'success');
+        }
+    } catch (error) {
+        log('Restore failed: ' + error.message, 'error');
+    }
+}
+
+function log(message, type = 'info') {
+    const time = new Date().toLocaleTimeString();
+    consoleLines.push({ time, message, type });
+    if (consoleLines.length > 100) consoleLines.shift();
+    if (currentTab === 'console') renderConsole();
+}
+
+function renderConsole() {
+    document.getElementById('panelContent').innerHTML = consoleLines.map(l =>
+        `<div class="console-line ${l.type}"><span class="time">${l.time}</span>${l.message}</div>`
+    ).join('');
+}
+
+function switchTab(btn, tab) {
+    currentTab = tab;
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    
+    const content = document.getElementById('panelContent');
+    
+    if (tab === 'console') {
+        renderConsole();
+    } else if (tab === 'protocol') {
+        if (lastProtocolResult) {
+            content.innerHTML = `<div class="protocol-result"><div class="type">${lastProtocolResult.type || 'result'}</div><pre>${JSON.stringify(lastProtocolResult, null, 2)}</pre></div>`;
+        } else {
+            content.innerHTML = '<p style="color: var(--muted);">Navigate to see results</p>';
+        }
+    } else if (tab === 'invariants') {
+        const v = os.guardian.getViolations();
+        content.innerHTML = `<div class="protocol-result"><div class="type">Invariants</div><pre>INV-1: Coherence monotonicity
+INV-2: Curvature bounds [0.01, 10.0]
+INV-3: Energy conservation |ΔN| < 0.2N
+INV-4: Phase continuity |Δθ| < π/2
+INV-5: Ma'at improvement
+
+Violations: ${v.length}</pre></div>`;
+    }
+}
+
+function toggleViz(btn) {
+    const opt = btn.dataset.option;
+    btn.classList.toggle('active');
+    visualizer.options[opt] = btn.classList.contains('active');
+}
+
+function clearViz() { visualizer.clear(); }
+
+function loadPlugin() {
+    log('Plugin loading not yet implemented', 'warn');
+}
+
+function showAbout() {
+    document.getElementById('modalContent').innerHTML = `
+        <h2>ASCπ OS v2.0</h2>
+        <p>Unified Field Operating System</p>
+        <br>
+        <p><strong>Core Equation:</strong><br>Ψ(t+1) = F(Ψ(t), A, M∞, W)</p>
+        <br>
+        <p><strong>License:</strong> Humanity Heritage License π<br>
+        <strong>Prior Art:</strong> hexPRIorART-EXA-SFT-2025-MCM<br>
+        <strong>Author:</strong> Marcel Christian Mulder</p>
+        <div class="modal-actions">
+            <button class="modal-btn primary" onclick="closeModal()">Close</button>
+        </div>
+    `;
+    document.getElementById('modalOverlay').classList.add('visible');
+}
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('visible');
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
