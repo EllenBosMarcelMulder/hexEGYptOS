@@ -1,0 +1,112 @@
+{
+  "timestamp": "2025-12-11T04:32:01.122769",
+  "engine_version": "5.0",
+  "tests": [
+    {
+      "name": "wcm_sources",
+      "status": "PASS",
+      "details": "sources=3"
+    },
+    {
+      "name": "wcm_global_coherence",
+      "status": "PASS",
+      "details": "C=0.9178"
+    },
+    {
+      "name": "resonance_broadcast",
+      "status": "PASS",
+      "details": "agents_reached=2"
+    },
+    {
+      "name": "implosive_stabilization",
+      "status": "PASS",
+      "details": "coherence=0.9974"
+    },
+    {
+      "name": "memory_m2_contexts",
+      "status": "PASS",
+      "details": "contexts=5"
+    },
+    {
+      "name": "memory_coherence",
+      "status": "PASS",
+      "details": "C=0.9787"
+    },
+    {
+      "name": "memory_prediction",
+      "status": "PASS",
+      "details": "predicted_θ=0.6799"
+    },
+    {
+      "name": "tpl_cycle_detection",
+      "status": "PASS",
+      "details": "cycles=2, history=50"
+    },
+    {
+      "name": "tpl_prediction",
+      "status": "PASS",
+      "details": "predictions=5"
+    },
+    {
+      "name": "governor_allow_good",
+      "status": "PASS",
+      "details": "decision=allow"
+    },
+    {
+      "name": "governor_rebuild_bad",
+      "status": "PASS",
+      "details": "decision=rebuild"
+    },
+    {
+      "name": "qcb_disambiguation",
+      "status": "PASS",
+      "details": "selected: The financial institution was ..."
+    },
+    {
+      "name": "qcb_collapse",
+      "status": "PASS",
+      "details": "collapsed=1"
+    },
+    {
+      "name": "protocol_stack",
+      "status": "PASS",
+      "details": "protocols=5/5"
+    },
+    {
+      "name": "pipeline_world_context",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "pipeline_governor",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "pipeline_resonance",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "pipeline_protocol",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "stress_20_iterations",
+      "status": "PASS",
+      "details": "time=0.07s"
+    },
+    {
+      "name": "stress_memory_intact",
+      "status": "PASS",
+      "details": "steps=20"
+    }
+  ],
+  "summary": {
+    "passed": 20,
+    "failed": 0,
+    "total": 20,
+    "pass_rate": 1.0
+  }
+}
