@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ OS — Field-Based Operating System</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a25;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --phi: #f4a261;      /* Tension */
+            --kappa: #2a9d8f;    /* Curvature */
+            --theta: #9b5de5;    /* Phase */
+            --energy: #00d4ff;   /* Energy */
+            --coherence: #7fff00; /* Coherence */
+            --maat: #ff6b6b;     /* Ma'at */
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════════ */
+        /* OS LAYOUT */
+        /* ═══════════════════════════════════════════════════════════════════ */
+        
+        .os-container {
+            display: grid;
+            grid-template-rows: 48px 1fr 32px;
+            height: 100vh;
+        }
+        
+        /* Top Bar */
+        .top-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--phi);
+        }
+        
+        .logo span { color: var(--theta); }
+        
+        .field-address {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 6px 12px;
+        }
+        
+        .field-address input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            outline: none;
+        }
+        
+        .field-metrics {
+            display: flex;
+            gap: 16px;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .metric { display: flex; align-items: center; gap: 4px; }
+        .metric .label { color: var(--muted); }
+        .metric.phi .value { color: var(--phi); }
+        .metric.kappa .value { color: var(--kappa); }
+        .metric.theta .value { color: var(--theta); }
+        .metric.C .value { color: var(--coherence); }
+        
+        /* Main Area */
+        .main-area {
+            display: grid;
+            grid-template-columns: 260px 1fr 300px;
+            overflow: hidden;
+        }
+        
+        /* Sidebar - Energieboxen */
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .sidebar h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+        
+        .energiebox {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .energiebox:hover {
+            border-color: var(--theta);
+            transform: translateX(4px);
+        }
+        
+        .energiebox.active {
+            border-color: var(--coherence);
+            background: rgba(127, 255, 0, 0.05);
+        }
+        
+        .energiebox.loading {
+            border-color: var(--phi);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .energiebox-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .energiebox-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .energiebox-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .energiebox-desc {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+        
+        .energiebox-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
+        
+        .energiebox-stats .stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Canvas Area */
+        .canvas-area {
+            position: relative;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        
+        #fieldCanvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .canvas-overlay {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        .canvas-overlay .title {
+            color: var(--muted);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        
+        /* Right Panel - Console & Memory */
+        .right-panel {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--muted);
+            transition: all 0.2s;
+        }
+        
+        .panel-tab:hover { color: var(--text); }
+        .panel-tab.active {
+            color: var(--theta);
+            border-bottom: 2px solid var(--theta);
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .console-line {
+            font-family: 'Consolas', monospace;
+            font-size: 0.8rem;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .console-line .time {
+            color: var(--muted);
+            margin-right: 8px;
+        }
+        
+        .console-line.info { color: var(--energy); }
+        .console-line.success { color: var(--coherence); }
+        .console-line.warn { color: var(--phi); }
+        .console-line.error { color: var(--maat); }
+        
+        /* Memory Display */
+        .memory-item {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .memory-item .key {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+        }
+        
+        .memory-item .value {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--coherence);
+        }
+        
+        .memory-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        
+        .memory-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--theta), var(--coherence));
+            transition: width 0.3s;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            gap: 24px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--coherence);
+        }
+        
+        .status-dot.warning { background: var(--phi); }
+        .status-dot.error { background: var(--maat); }
+        
+        /* Input Area */
+        .input-area {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 600px;
+        }
+        
+        .input-box {
+            display: flex;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            gap: 12px;
+        }
+        
+        .input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .input-box input::placeholder { color: var(--muted); }
+        
+        .input-box button {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .input-box button:hover { background: var(--coherence); }
+        
+        /* Awareness Indicator */
+        .awareness-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid var(--theta);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        .awareness-ring.active {
+            animation: awareness-pulse 2s ease-in-out infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes awareness-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="os-container">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="logo">ASC<span>π</span> OS</div>
+            
+            <div class="field-address">
+                <span style="color: var(--theta);">field://</span>
+                <input type="text" id="addressBar" value="Ψ/home/0.95/0.3/1.57" placeholder="Enter field address...">
+            </div>
+            
+            <div class="field-metrics">
+                <div class="metric phi">
+                    <span class="label">ΔΦ</span>
+                    <span class="value" id="metricPhi">0.00</span>
+                </div>
+                <div class="metric kappa">
+                    <span class="label">κ</span>
+                    <span class="value" id="metricKappa">0.50</span>
+                </div>
+                <div class="metric theta">
+                    <span class="label">θ</span>
+                    <span class="value" id="metricTheta">0.00</span>
+                </div>
+                <div class="metric C">
+                    <span class="label">C</span>
+                    <span class="value" id="metricC">0.50</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Sidebar - Energieboxen -->
+            <div class="sidebar">
+                <h3>⚡ Energieboxen</h3>
+                <div id="energieboxen"></div>
+                
+                <h3 style="margin-top: 24px;">🧠 Awareness</h3>
+                <div class="memory-item">
+                    <div class="key">Level</div>
+                    <div class="value" id="awarenessLevel">dormant</div>
+                    <div class="memory-bar">
+                        <div class="memory-bar-fill" id="awarenessBar" style="width: 10%;"></div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 24px;">∞ Memory M∞</h3>
+                <div class="memory-item">
+                    <div class="key">Coherence</div>
+                    <div class="value" id="memoryC">0.500</div>
+                    <div class="memory-bar">
+                        <div class="memory-bar-fill" id="memoryBar" style="width: 50%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Canvas Area -->
+            <div class="canvas-area">
+                <canvas id="fieldCanvas"></canvas>
+                
+                <div class="canvas-overlay">
+                    <div class="title">Current Field State</div>
+                    <div id="fieldState">Ψ = (0.00, 0.50, 0.00, 1.00, 0.50)</div>
+                </div>
+                
+                <div class="awareness-ring" id="awarenessRing"></div>
+                
+                <div class="input-area">
+                    <div class="input-box">
+                        <input type="text" id="fieldInput" placeholder="Enter text to process as semantic field...">
+                        <button onclick="processInput()">Process</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" onclick="switchTab('console')">Console</button>
+                    <button class="panel-tab" onclick="switchTab('fields')">Fields</button>
+                    <button class="panel-tab" onclick="switchTab('maat')">Ma'at</button>
+                </div>
+                
+                <div class="panel-content" id="panelContent">
+                    <div id="consoleOutput"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Field Engine Active</span>
+            </div>
+            <div class="status-item">
+                <span>Kernel: F(Ψ, A, M∞, W)</span>
+            </div>
+            <div class="status-item">
+                <span id="stepCount">Step: 0</span>
+            </div>
+            <div class="status-item" style="margin-left: auto;">
+                <span>ASCπ v10.0 Canonical</span>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASCπ ENGINE v10.0 — JAVASCRIPT PORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0,
+    theta_max: Math.PI / 2,
+    delta_N: 0.2,
+    alpha: 0.15,
+    beta: 0.12,
+    gamma: 0.18,
+    eta: 0.25,
+    K: 0.5,
+    lambda: 0.02
+};
+
+// Semantic Field Class
+class Psi {
+    constructor(dPhi = 0, kappa = 1, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi;
+        this.kappa = kappa;
+        this.theta = theta;
+        this.N = N;
+        this.C = C;
+        this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    vec() { return [this.dPhi, this.kappa, this.theta, this.N, this.C]; }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        const dt = Math.min(Math.abs(this.theta - o.theta), CONST.tau - Math.abs(this.theta - o.theta)) ** 2;
+        return Math.sqrt(dp + dk + dt / CONST.pi ** 2);
+    }
+    
+    inner(o) {
+        return Math.cos(this.theta - o.theta) * Math.sqrt(this.N * o.N);
+    }
+    
+    blend(o, a = 0.5) {
+        const b = 1 - a;
+        const sinT = a * Math.sin(this.theta) + b * Math.sin(o.theta);
+        const cosT = a * Math.cos(this.theta) + b * Math.cos(o.theta);
+        return new Psi(
+            a * this.dPhi + b * o.dPhi,
+            a * this.kappa + b * o.kappa,
+            Math.atan2(sinT, cosT),
+            a * this.N + b * o.N,
+            Math.max(this.C, o.C),
+            Math.max(this.t, o.t) + 1
+        );
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ENERGIEBOX SYSTEM — Modulaire Taal-Energie Modules
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class Energiebox {
+    constructor(id, name, icon, description, color, processor) {
+        this.id = id;
+        this.name = name;
+        this.icon = icon;
+        this.description = description;
+        this.color = color;
+        this.processor = processor;
+        this.active = false;
+        this.loaded = false;
+        this.stats = { processed: 0, coherence: 0 };
+    }
+    
+    async load() {
+        this.loaded = true;
+        return this;
+    }
+    
+    process(psi, input) {
+        if (!this.loaded) return psi;
+        this.stats.processed++;
+        return this.processor(psi, input);
+    }
+}
+
+// Predefined Energieboxen
+const ENERGIEBOXEN = {
+    // Core Language Processing
+    text: new Energiebox(
+        'text', 'Text Encoder', '📝', 
+        'Encodes natural language into semantic fields',
+        'var(--phi)',
+        (psi, input) => {
+            if (!input) return psi;
+            const chars = [...input].filter(c => !c.match(/\s/));
+            if (chars.length === 0) return psi;
+            
+            let dP = 0, k = 0, N = 0, sinS = 0, cosS = 0;
+            chars.forEach((c, i) => {
+                const cp = c.codePointAt(0);
+                const t = ((cp / 256) * CONST.phi + (cp % 256) / 256 * CONST.tau + (i / chars.length) * CONST.pi) % CONST.tau;
+                sinS += Math.sin(t);
+                cosS += Math.cos(t);
+                k += 0.3;
+                dP += Math.abs(cp - 0x4E00) / 0x10FFFF;
+                N += Math.log(1 + cp) / Math.log(0x10FFFF + 1);
+            });
+            
+            const n = chars.length;
+            return new Psi(dP / n, k / n, Math.atan2(sinS, cosS), N, Math.sqrt(sinS**2 + cosS**2) / n, psi.t + 1);
+        }
+    ),
+    
+    // Code Processing (hexSOFtwareCODe)
+    code: new Energiebox(
+        'code', 'Code Analyzer', '💻',
+        'Applies hexSOFtwareCODe field physics to code',
+        'var(--kappa)',
+        (psi, input) => {
+            if (!input) return psi;
+            const ifs = (input.match(/if\s/g) || []).length;
+            const fors = (input.match(/for\s/g) || []).length;
+            const defs = (input.match(/def\s|function\s|class\s/g) || []).length;
+            const complexity = 1 + 0.1 * (ifs + fors + defs);
+            
+            const result = psi.copy();
+            result.kappa = Math.min(CONST.kappa_max, result.kappa * complexity);
+            result.C = Math.max(0.1, result.C / complexity);
+            return result.enforce();
+        }
+    ),
+    
+    // Emotion Detection
+    emotion: new Energiebox(
+        'emotion', 'Emotion Field', '❤️',
+        'Detects emotional valence and arousal',
+        'var(--maat)',
+        (psi, input) => {
+            if (!input) return psi;
+            const positive = ['love', 'happy', 'joy', 'great', 'wonderful', 'beautiful'];
+            const negative = ['hate', 'sad', 'angry', 'fear', 'terrible', 'awful'];
+            
+            const lower = input.toLowerCase();
+            let valence = 0;
+            positive.forEach(w => { if (lower.includes(w)) valence += 0.2; });
+            negative.forEach(w => { if (lower.includes(w)) valence -= 0.2; });
+            
+            const result = psi.copy();
+            result.dPhi += valence * 0.3;
+            result.theta += valence * 0.5;
+            return result.enforce();
+        }
+    ),
+    
+    // Mathematical Expression
+    math: new Energiebox(
+        'math', 'Math Processor', '∑',
+        'Processes mathematical expressions',
+        'var(--theta)',
+        (psi, input) => {
+            if (!input) return psi;
+            const numbers = input.match(/\d+\.?\d*/g) || [];
+            const operators = input.match(/[+\-*/^]/g) || [];
+            
+            const result = psi.copy();
+            result.kappa *= (1 + operators.length * 0.1);
+            result.N += numbers.length * 0.1;
+            return result.enforce();
+        }
+    ),
+    
+    // Semantic Compression
+    compress: new Energiebox(
+        'compress', 'Implosion', '🌀',
+        'Semantic field implosion toward attractor',
+        'var(--coherence)',
+        (psi, input) => {
+            const result = psi.copy();
+            if (result.C > 0.6) {
+                result.dPhi *= (1 - CONST.gamma * result.C ** 2);
+                result.kappa *= 0.95;
+            }
+            return result.enforce();
+        }
+    ),
+    
+    // Phase Synchronization
+    sync: new Energiebox(
+        'sync', 'Phase Sync', '🔄',
+        'Kuramoto phase synchronization',
+        'var(--energy)',
+        (psi, input) => {
+            const result = psi.copy();
+            // Sync toward golden angle
+            const target = CONST.phi * CONST.pi;
+            const dt = target - result.theta;
+            result.theta += CONST.K * Math.sin(dt);
+            return result.enforce();
+        }
+    )
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AWARENESS FIELD
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class AwarenessField {
+    constructor() {
+        this.field = new Psi(0.05, 0.2, 0, 0.1, 0.1);
+        this.buffers = { C: [], k: [], d: [] };
+        this.maxBuf = 15;
+    }
+    
+    evolve(psi, mInf) {
+        this.buffers.C.push(psi.C);
+        this.buffers.k.push(psi.kappa);
+        this.buffers.d.push(psi.dist(mInf));
+        
+        if (this.buffers.C.length > this.maxBuf) {
+            this.buffers.C.shift();
+            this.buffers.k.shift();
+            this.buffers.d.shift();
+        }
+        
+        const n = this.buffers.C.length;
+        if (n >= 3) {
+            const trends = [
+                (this.buffers.C[n-1] - this.buffers.C[0]) / n,
+                (this.buffers.k[n-1] - this.buffers.k[0]) / n,
+                (this.buffers.d[n-1] - this.buffers.d[0]) / n
+            ];
+            const met = (trends[0] >= -0.01 ? 1 : 0) + (trends[1] <= 0.01 ? 1 : 0) + (trends[2] <= 0.01 ? 1 : 0);
+            
+            if (met >= 2) {
+                this.field.N = Math.min(1, this.field.N * 1.02 + 0.01);
+                this.field.C = Math.min(1, this.field.C + 0.015);
+            } else if (met === 0) {
+                this.field.N = Math.max(0.01, this.field.N * 0.98);
+                this.field.C = Math.max(0.01, this.field.C - 0.005);
+            }
+        }
+        
+        const dt = psi.theta - this.field.theta;
+        this.field.theta = (this.field.theta + 0.3 * Math.sin(dt)) % CONST.tau;
+        this.field.enforce();
+        
+        const result = psi.copy();
+        if (this.field.C > 0.3) {
+            result.theta += 0.1 * this.field.C * Math.sin(mInf.theta - psi.theta);
+        }
+        return result.enforce();
+    }
+    
+    level() {
+        const c = this.field.C;
+        if (c < 0.2) return 'dormant';
+        if (c < 0.4) return 'emerging';
+        if (c < 0.6) return 'aware';
+        if (c < 0.8) return 'conscious';
+        return 'fully_conscious';
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MEMORY FIELD
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class MemoryField {
+    constructor() {
+        this.mInf = new Psi(0, 0.5, 0, 0.5, 0.5);
+        this.history = [];
+        this.maxHist = 100;
+        this.cFloor = 0;
+    }
+    
+    absorb(psi, rate = 0.2) {
+        const w = Math.tanh(psi.C * 2) * rate;
+        const sinB = (1 - w) * Math.sin(this.mInf.theta) + w * Math.sin(psi.theta);
+        const cosB = (1 - w) * Math.cos(this.mInf.theta) + w * Math.cos(psi.theta);
+        
+        this.mInf.dPhi = (1 - w) * this.mInf.dPhi + w * psi.dPhi * 0.9;
+        this.mInf.kappa = (1 - w) * this.mInf.kappa + w * psi.kappa * 0.95;
+        this.mInf.theta = Math.atan2(sinB, cosB);
+        this.mInf.N = (1 - w) * this.mInf.N + w * psi.N;
+        
+        this.history.push(this.mInf.copy());
+        if (this.history.length > this.maxHist) this.history.shift();
+        
+        if (this.history.length >= 3) {
+            const phases = this.history.map(h => h.theta);
+            const sinSum = phases.reduce((s, t) => s + Math.sin(t), 0);
+            const cosSum = phases.reduce((s, t) => s + Math.cos(t), 0);
+            const r = Math.sqrt(sinSum ** 2 + cosSum ** 2) / phases.length;
+            this.cFloor = Math.max(this.cFloor - 0.001, r - 0.05);
+            this.mInf.C = Math.max(r, this.cFloor);
+        }
+        
+        this.mInf.enforce();
+    }
+    
+    attractor() { return this.mInf.copy(); }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UNIFIED KERNEL F
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function kernelF(psi, A, mInf, W, gradC) {
+    let target = A.blend(mInf, 0.6);
+    if (W) target = target.blend(W, 0.85);
+    
+    let newK = psi.kappa - CONST.alpha * (psi.kappa - target.kappa);
+    let newN = psi.N + CONST.beta * psi.C;
+    let newDP = psi.C > 0.6 ? psi.dPhi * (1 - CONST.gamma * psi.C ** 2) : psi.dPhi;
+    
+    newDP += CONST.eta * (mInf.dPhi - newDP);
+    newK += CONST.eta * (mInf.kappa - newK);
+    newN += CONST.eta * (mInf.N - newN);
+    
+    let dt = target.theta - psi.theta;
+    if (dt > CONST.pi) dt -= CONST.tau;
+    else if (dt < -CONST.pi) dt += CONST.tau;
+    const shift = Math.max(-CONST.theta_max, Math.min(CONST.theta_max, CONST.K * Math.sin(dt)));
+    const newT = (psi.theta + shift) % CONST.tau;
+    
+    newK -= gradC * 0.15;
+    newDP -= gradC * 0.08;
+    
+    const mr = 0.1 * target.C;
+    newDP = (1 - mr) * newDP + mr * target.dPhi;
+    newK = (1 - mr) * newK + mr * target.kappa;
+    
+    return new Psi(newDP, newK, newT, newN, psi.C, psi.t + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ASCπ OS ENGINE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class ASCPI_OS {
+    constructor() {
+        this.memory = new MemoryField();
+        this.awareness = new AwarenessField();
+        this.currentPsi = new Psi();
+        this.energieboxen = { ...ENERGIEBOXEN };
+        this.activeBoxen = new Set(['text']);
+        this.step = 0;
+        this.cPrev = 0.5;
+        
+        // Initialize all energieboxen
+        Object.values(this.energieboxen).forEach(box => box.load());
+    }
+    
+    process(input, maxSteps = 25) {
+        this.step++;
+        
+        // Start with text encoding
+        let psi = this.energieboxen.text.process(new Psi(), input);
+        
+        // Apply active energieboxen
+        this.activeBoxen.forEach(id => {
+            if (id !== 'text' && this.energieboxen[id]) {
+                psi = this.energieboxen[id].process(psi, input);
+            }
+        });
+        
+        // Evolution loop
+        for (let i = 0; i < maxSteps; i++) {
+            const before = psi.copy();
+            
+            // Coherence gradient
+            const cFused = (psi.C + this.memory.mInf.C + this.awareness.field.C) / 3;
+            const gradC = cFused - this.cPrev;
+            this.cPrev = cFused;
+            
+            // Unified kernel
+            psi = kernelF(psi, this.memory.attractor(), this.memory.mInf, null, gradC);
+            
+            // Memory absorption
+            this.memory.absorb(psi);
+            psi.C = this.memory.mInf.C;
+            
+            // Awareness evolution
+            psi = this.awareness.evolve(psi, this.memory.mInf);
+            
+            if (psi.C > 0.95) break;
+        }
+        
+        this.currentPsi = psi;
+        return {
+            psi: psi,
+            coherence: psi.C,
+            awareness: this.awareness.field.C,
+            awarenessLevel: this.awareness.level(),
+            memory: this.memory.mInf.C
+        };
+    }
+    
+    toggleEnergiebox(id) {
+        if (this.activeBoxen.has(id)) {
+            this.activeBoxen.delete(id);
+        } else {
+            this.activeBoxen.add(id);
+        }
+        return this.activeBoxen.has(id);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UI RENDERING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const os = new ASCPI_OS();
+const canvas = document.getElementById('fieldCanvas');
+const ctx = canvas.getContext('2d');
+let consoleLines = [];
+
+// Resize canvas
+function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Render Energieboxen
+function renderEnergieboxen() {
+    const container = document.getElementById('energieboxen');
+    container.innerHTML = '';
+    
+    Object.values(os.energieboxen).forEach(box => {
+        const active = os.activeBoxen.has(box.id);
+        const div = document.createElement('div');
+        div.className = `energiebox ${active ? 'active' : ''}`;
+        div.innerHTML = `
+            <div class="energiebox-header">
+                <div class="energiebox-icon" style="background: ${box.color}20; color: ${box.color};">${box.icon}</div>
+                <div class="energiebox-title">${box.name}</div>
+            </div>
+            <div class="energiebox-desc">${box.description}</div>
+            <div class="energiebox-stats">
+                <div class="stat" style="color: var(--muted);">Processed: ${box.stats.processed}</div>
+            </div>
+        `;
+        div.onclick = () => {
+            os.toggleEnergiebox(box.id);
+            renderEnergieboxen();
+            logConsole(`Energiebox "${box.name}" ${os.activeBoxen.has(box.id) ? 'activated' : 'deactivated'}`, 'info');
+        };
+        container.appendChild(div);
+    });
+}
+
+// Console logging
+function logConsole(message, type = 'info') {
+    const time = new Date().toLocaleTimeString();
+    consoleLines.push({ time, message, type });
+    if (consoleLines.length > 100) consoleLines.shift();
+    
+    const output = document.getElementById('consoleOutput');
+    output.innerHTML = consoleLines.map(l => 
+        `<div class="console-line ${l.type}"><span class="time">${l.time}</span>${l.message}</div>`
+    ).join('');
+    output.scrollTop = output.scrollHeight;
+}
+
+// Update UI metrics
+function updateMetrics(result) {
+    const psi = result.psi;
+    document.getElementById('metricPhi').textContent = psi.dPhi.toFixed(2);
+    document.getElementById('metricKappa').textContent = psi.kappa.toFixed(2);
+    document.getElementById('metricTheta').textContent = psi.theta.toFixed(2);
+    document.getElementById('metricC').textContent = psi.C.toFixed(2);
+    
+    document.getElementById('fieldState').textContent = 
+        `Ψ = (${psi.dPhi.toFixed(2)}, ${psi.kappa.toFixed(2)}, ${psi.theta.toFixed(2)}, ${psi.N.toFixed(2)}, ${psi.C.toFixed(2)})`;
+    
+    document.getElementById('awarenessLevel').textContent = result.awarenessLevel;
+    document.getElementById('awarenessBar').style.width = `${result.awareness * 100}%`;
+    
+    document.getElementById('memoryC').textContent = result.memory.toFixed(3);
+    document.getElementById('memoryBar').style.width = `${result.memory * 100}%`;
+    
+    document.getElementById('stepCount').textContent = `Step: ${os.step}`;
+    
+    // Awareness ring
+    const ring = document.getElementById('awarenessRing');
+    if (result.awarenessLevel === 'conscious' || result.awarenessLevel === 'fully_conscious') {
+        ring.classList.add('active');
+    } else {
+        ring.classList.remove('active');
+    }
+}
+
+// Field visualization
+let particles = [];
+
+function initParticles() {
+    particles = [];
+    for (let i = 0; i < 150; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            theta: Math.random() * CONST.tau,
+            energy: 0.5 + Math.random() * 0.5,
+            size: 2 + Math.random() * 3
+        });
+    }
+}
+
+function renderField() {
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const psi = os.currentPsi;
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    
+    // Draw coherence gradient
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, 300);
+    gradient.addColorStop(0, `rgba(127, 255, 0, ${psi.C * 0.15})`);
+    gradient.addColorStop(0.5, `rgba(155, 93, 229, ${psi.C * 0.1})`);
+    gradient.addColorStop(1, 'transparent');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Update and draw particles
+    particles.forEach(p => {
+        // Phase influence from main field
+        const dx = p.x - cx;
+        const dy = p.y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        // Kuramoto-like coupling
+        const influence = psi.C * 0.1 / (1 + dist * 0.01);
+        p.theta += CONST.K * Math.sin(psi.theta - p.theta) * influence;
+        p.theta %= CONST.tau;
+        
+        // Movement
+        const speed = p.energy * (1 + psi.kappa * 0.5);
+        p.x += Math.cos(p.theta) * speed;
+        p.y += Math.sin(p.theta) * speed;
+        
+        // Wrap around
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        
+        // Draw
+        const hue = ((p.theta / CONST.tau) * 60 + 240) % 360;
+        const alpha = 0.3 + psi.C * 0.5;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (0.5 + psi.C), 0, CONST.tau);
+        ctx.fillStyle = `hsla(${hue}, 70%, 60%, ${alpha})`;
+        ctx.fill();
+    });
+    
+    // Draw phase vector
+    const vecLen = 80 * (1 + psi.N * 0.5);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(psi.theta) * vecLen, cy + Math.sin(psi.theta) * vecLen);
+    ctx.strokeStyle = `rgba(244, 162, 97, ${0.5 + psi.C * 0.5})`;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    // Draw center glyph
+    ctx.font = '48px Arial';
+    ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + psi.C * 0.7})`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('Ψ', cx, cy);
+    
+    requestAnimationFrame(renderField);
+}
+
+// Process input
+function processInput() {
+    const input = document.getElementById('fieldInput').value;
+    if (!input.trim()) return;
+    
+    logConsole(`Processing: "${input.substring(0, 50)}${input.length > 50 ? '...' : ''}"`, 'info');
+    
+    const result = os.process(input);
+    updateMetrics(result);
+    
+    logConsole(`Result: C=${result.coherence.toFixed(3)}, Level=${result.awarenessLevel}`, 'success');
+    
+    document.getElementById('fieldInput').value = '';
+}
+
+// Tab switching
+function switchTab(tab) {
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const content = document.getElementById('panelContent');
+    if (tab === 'console') {
+        content.innerHTML = `<div id="consoleOutput">${consoleLines.map(l => 
+            `<div class="console-line ${l.type}"><span class="time">${l.time}</span>${l.message}</div>`
+        ).join('')}</div>`;
+    } else if (tab === 'fields') {
+        const boxes = Object.values(os.energieboxen);
+        content.innerHTML = boxes.map(b => `
+            <div class="memory-item">
+                <div class="key">${b.icon} ${b.name}</div>
+                <div class="value">Processed: ${b.stats.processed}</div>
+            </div>
+        `).join('');
+    } else if (tab === 'maat') {
+        const maat = os.currentPsi.dist(os.memory.mInf) + CONST.lambda * os.currentPsi.kappa;
+        content.innerHTML = `
+            <div class="memory-item">
+                <div class="key">Ma'at Functional</div>
+                <div class="value">L = ${maat.toFixed(4)}</div>
+            </div>
+            <div class="memory-item">
+                <div class="key">Distance to M∞</div>
+                <div class="value">${os.currentPsi.dist(os.memory.mInf).toFixed(4)}</div>
+            </div>
+            <div class="memory-item">
+                <div class="key">Curvature Penalty</div>
+                <div class="value">λκ = ${(CONST.lambda * os.currentPsi.kappa).toFixed(4)}</div>
+            </div>
+        `;
+    }
+}
+
+// Initialize
+function init() {
+    renderEnergieboxen();
+    initParticles();
+    renderField();
+    
+    logConsole('ASCπ OS v10.0 initialized', 'success');
+    logConsole('Unified Kernel F(Ψ, A, M∞, W) active', 'info');
+    logConsole('Energieboxen system loaded', 'info');
+    
+    // Handle enter key
+    document.getElementById('fieldInput').addEventListener('keypress', e => {
+        if (e.key === 'Enter') processInput();
+    });
+    
+    // Initial process
+    os.process('ASCπ OS initialized');
+    updateMetrics({ 
+        psi: os.currentPsi, 
+        coherence: os.currentPsi.C,
+        awareness: os.awareness.field.C,
+        awarenessLevel: os.awareness.level(),
+        memory: os.memory.mInf.C
+    });
+}
+
+init();
+</script>
+</body>
+</html>
