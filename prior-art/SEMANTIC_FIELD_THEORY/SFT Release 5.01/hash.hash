@@ -1,0 +1,16 @@
+==== ascpi_engine_v5.1.py ==== 
+SHA256 hash of ascpi_engine_v5.1.py:
+e247f99f31cc163eaeda4acda1de33fe7223f6f0e13f96311bcbecfe4d9ad0e4
+CertUtil: -hashfile command completed successfully.
+==== v5_engine_state.json ==== 
+SHA256 hash of v5_engine_state.json:
+6912f5ffdb1ddb74d1a9cfd80c742d1de88aa16ee5bf4648c5ef048b3b7cd32c
+CertUtil: -hashfile command completed successfully.
+==== v5_forensic_log.json ==== 
+SHA256 hash of v5_forensic_log.json:
+5c1aac487368a8639da2c50dda8f48f4455c2869831b31491c8240d6c998c942
+CertUtil: -hashfile command completed successfully.
+==== v5_verification_results.json ==== 
+SHA256 hash of v5_verification_results.json:
+cd1fe2f93c412ae022289d9fd97cc58589f26e3ea2a7f7f21742c0be4c7225e5
+CertUtil: -hashfile command completed successfully.

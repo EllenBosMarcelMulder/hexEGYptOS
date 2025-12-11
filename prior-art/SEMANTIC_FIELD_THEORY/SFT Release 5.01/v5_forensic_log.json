@@ -1,0 +1,1816 @@
+{
+  "session_id": "d32e6bc7",
+  "start_time": 1765435211.11134,
+  "entry_count": 63,
+  "invariant_violations": 3,
+  "entries": [
+    {
+      "id": 1,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.11134,
+      "elapsed": 0.0,
+      "operator": "INIT",
+      "before": {
+        "delta_phi": 0.0,
+        "kappa": 1.0,
+        "theta": 0.0,
+        "energy": 1.0,
+        "coherence": 0.0,
+        "timestamp": 0,
+        "source_type": "generic"
+      },
+      "after": {
+        "delta_phi": 0.0,
+        "kappa": 1.0,
+        "theta": 0.0,
+        "energy": 1.0,
+        "coherence": 0.1,
+        "timestamp": 0,
+        "source_type": "initialization"
+      },
+      "delta": {
+        "delta_phi": 0.0,
+        "kappa": 0.0,
+        "theta": 0.0,
+        "energy": 0.0,
+        "coherence": 0.1
+      },
+      "context": {
+        "agent_id": "demo_v5",
+        "version": "5.0"
+      },
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 2,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "MULTIMODAL_PROJECT",
+      "before": {
+        "delta_phi": 0.017818278430066663,
+        "kappa": 0.35420944558521555,
+        "theta": 4.184593013781349,
+        "energy": 16.62118374797445,
+        "coherence": 0.5234175383536338,
+        "timestamp": 0,
+        "source_type": "language"
+      },
+      "after": {
+        "delta_phi": 0.015044973518909942,
+        "kappa": 0.4312434409398715,
+        "theta": 4.238101532863859,
+        "energy": 10.554264930421107,
+        "coherence": 0.7554219087960022,
+        "timestamp": 0,
+        "source_type": "multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0027733049111567203,
+        "kappa": 0.07703399535465594,
+        "theta": 0.0535085190825102,
+        "energy": -6.066918817553342,
+        "coherence": 0.23200437044236843
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": false,
+        "violations": [
+          "INV-3: Energy change too large (0.6349887643656734)"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "fusion",
+      "timestamp": 1765435211.1138737,
+      "components": {
+        "language": 0.5234175383536338,
+        "code": 0.6186138584342623,
+        "memory": 0.0
+      },
+      "fused": 0.3949511728717322
+    },
+    {
+      "id": 4,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_0",
+      "before": {
+        "delta_phi": 0.015044973518909942,
+        "kappa": 0.4312434409398715,
+        "theta": 4.238101532863859,
+        "energy": 10.554264930421107,
+        "coherence": 0.7554219087960022,
+        "timestamp": 0,
+        "source_type": "multimodal"
+      },
+      "after": {
+        "delta_phi": 0.010226645519132124,
+        "kappa": 0.6307494432915361,
+        "theta": 5.2404944961313245,
+        "energy": 8.270341643668807,
+        "coherence": 0.5,
+        "timestamp": 2,
+        "source_type": "pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0048183279997778185,
+        "kappa": 0.19950600235166466,
+        "theta": 1.0023929632674653,
+        "energy": -2.2839232867523,
+        "coherence": -0.25542190879600224
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": false,
+        "violations": [
+          "INV-1: Coherence dropped significantly",
+          "INV-3: Energy change too large (0.78360186125618)"
+        ]
+      }
+    },
+    {
+      "id": 5,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "criteria_met": 0,
+        "status": "warming_up"
+      }
+    },
+    {
+      "id": 6,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_1",
+      "before": {
+        "delta_phi": 0.010226645519132124,
+        "kappa": 0.6307494432915361,
+        "theta": 5.2404944961313245,
+        "energy": 8.270341643668807,
+        "coherence": 0.5,
+        "timestamp": 2,
+        "source_type": "pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.007771955329527805,
+        "kappa": 0.7579345197907223,
+        "theta": 5.837007523045329,
+        "energy": 6.534411206812942,
+        "coherence": 0.5,
+        "timestamp": 4,
+        "source_type": "pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.002454690189604319,
+        "kappa": 0.1271850764991862,
+        "theta": 0.5965130269140042,
+        "energy": -1.735930436855865,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": false,
+        "violations": [
+          "INV-3: Energy change too large (0.7901017259444449)"
+        ]
+      }
+    },
+    {
+      "id": 7,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "criteria_met": 0,
+        "status": "warming_up"
+      }
+    },
+    {
+      "id": 8,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_2",
+      "before": {
+        "delta_phi": 0.007771955329527805,
+        "kappa": 0.7579345197907223,
+        "theta": 5.837007523045329,
+        "energy": 6.534411206812942,
+        "coherence": 0.5,
+        "timestamp": 4,
+        "source_type": "pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.005930937687324566,
+        "kappa": 0.8390150060589535,
+        "theta": 6.093497370769193,
+        "energy": 5.232463379171042,
+        "coherence": 0.5,
+        "timestamp": 6,
+        "source_type": "pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0018410176422032389,
+        "kappa": 0.08108048626823117,
+        "theta": 0.25648984772386463,
+        "energy": -1.3019478276419,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 9,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "criteria_met": 0,
+        "status": "warming_up"
+      }
+    },
+    {
+      "id": 10,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_3",
+      "before": {
+        "delta_phi": 0.005930937687324566,
+        "kappa": 0.8390150060589535,
+        "theta": 6.093497370769193,
+        "energy": 5.232463379171042,
+        "coherence": 0.5,
+        "timestamp": 6,
+        "source_type": "pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.004550174455672137,
+        "kappa": 0.8907038160549509,
+        "theta": 6.192032012785573,
+        "energy": 4.256002508439618,
+        "coherence": 0.5,
+        "timestamp": 8,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0013807632316524291,
+        "kappa": 0.05168880999599734,
+        "theta": 0.09853464201637951,
+        "energy": -0.9764608707314242,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 11,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "criteria_met": 0,
+        "status": "warming_up"
+      }
+    },
+    {
+      "id": 12,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_4",
+      "before": {
+        "delta_phi": 0.004550174455672137,
+        "kappa": 0.8907038160549509,
+        "theta": 6.192032012785573,
+        "energy": 4.256002508439618,
+        "coherence": 0.5,
+        "timestamp": 8,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.003514602031932815,
+        "kappa": 0.9236554324273991,
+        "theta": 6.229113403307086,
+        "energy": 3.5236568553910494,
+        "coherence": 0.5,
+        "timestamp": 10,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.001035572423739322,
+        "kappa": 0.032951616372448256,
+        "theta": 0.03708139052151349,
+        "energy": -0.7323456530485686,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 13,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 5
+      }
+    },
+    {
+      "id": 14,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_5",
+      "before": {
+        "delta_phi": 0.003514602031932815,
+        "kappa": 0.9236554324273991,
+        "theta": 6.229113403307086,
+        "energy": 3.5236568553910494,
+        "coherence": 0.5,
+        "timestamp": 10,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.002737922714128323,
+        "kappa": 0.9446620878648349,
+        "theta": 6.2430258828637415,
+        "energy": 2.974397615604623,
+        "coherence": 0.5,
+        "timestamp": 12,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0007766793178044917,
+        "kappa": 0.02100665543743574,
+        "theta": 0.0139124795566552,
+        "energy": -0.5492592397864264,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 15,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 6
+      }
+    },
+    {
+      "id": 16,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_6",
+      "before": {
+        "delta_phi": 0.002737922714128323,
+        "kappa": 0.9446620878648349,
+        "theta": 6.2430258828637415,
+        "energy": 2.974397615604623,
+        "coherence": 0.5,
+        "timestamp": 12,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0021554132257749544,
+        "kappa": 0.9580538307062002,
+        "theta": 6.248243430042791,
+        "energy": 2.562453185764803,
+        "coherence": 0.5,
+        "timestamp": 14,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0005825094883533687,
+        "kappa": 0.01339174284136535,
+        "theta": 0.005217547179049653,
+        "energy": -0.4119444298398198,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 17,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 7
+      }
+    },
+    {
+      "id": 18,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_7",
+      "before": {
+        "delta_phi": 0.0021554132257749544,
+        "kappa": 0.9580538307062002,
+        "theta": 6.248243430042791,
+        "energy": 2.562453185764803,
+        "coherence": 0.5,
+        "timestamp": 14,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.001718531109509928,
+        "kappa": 0.9665910667675706,
+        "theta": 6.250200029609731,
+        "energy": 2.2534948633849385,
+        "coherence": 0.5,
+        "timestamp": 16,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.00043688211626502645,
+        "kappa": 0.008537236061370357,
+        "theta": 0.0019565995669399427,
+        "energy": -0.30895832237986465,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 19,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 8
+      }
+    },
+    {
+      "id": 20,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_8",
+      "before": {
+        "delta_phi": 0.001718531109509928,
+        "kappa": 0.9665910667675706,
+        "theta": 6.250200029609731,
+        "energy": 2.2534948633849385,
+        "coherence": 0.5,
+        "timestamp": 16,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0013908695223111582,
+        "kappa": 0.9720335547566943,
+        "theta": 6.250933755469075,
+        "energy": 2.0217761216000403,
+        "coherence": 0.5,
+        "timestamp": 18,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0003276615871987698,
+        "kappa": 0.005442487989123723,
+        "theta": 0.0007337258593436147,
+        "energy": -0.23171874178489826,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 21,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 9
+      }
+    },
+    {
+      "id": 22,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_9",
+      "before": {
+        "delta_phi": 0.0013908695223111582,
+        "kappa": 0.9720335547566943,
+        "theta": 6.250933755469075,
+        "energy": 2.0217761216000403,
+        "coherence": 0.5,
+        "timestamp": 18,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0011451233319120808,
+        "kappa": 0.9755031408497606,
+        "theta": 6.25120890272021,
+        "energy": 1.8479870652613664,
+        "coherence": 0.5,
+        "timestamp": 20,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.0002457461903990774,
+        "kappa": 0.003469586093066357,
+        "theta": 0.0002751472511350883,
+        "energy": -0.17378905633867392,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 23,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 10
+      }
+    },
+    {
+      "id": 24,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_10",
+      "before": {
+        "delta_phi": 0.0011451233319120808,
+        "kappa": 0.9755031408497606,
+        "theta": 6.25120890272021,
+        "energy": 1.8479870652613664,
+        "coherence": 0.5,
+        "timestamp": 20,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0009608136891127727,
+        "kappa": 0.9777150019840904,
+        "theta": 6.251312082942227,
+        "energy": 1.7176452730073608,
+        "coherence": 0.5,
+        "timestamp": 22,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.00018430964279930804,
+        "kappa": 0.0022118611343298067,
+        "theta": 0.0001031802220170519,
+        "energy": -0.13034179225400555,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 25,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 11
+      }
+    },
+    {
+      "id": 26,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_11",
+      "before": {
+        "delta_phi": 0.0009608136891127727,
+        "kappa": 0.9777150019840904,
+        "theta": 6.251312082942227,
+        "energy": 1.7176452730073608,
+        "coherence": 0.5,
+        "timestamp": 22,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0008225814570132918,
+        "kappa": 0.9791250634572257,
+        "theta": 6.2513507755256335,
+        "energy": 1.6198889288168568,
+        "coherence": 0.5,
+        "timestamp": 24,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.00013823223209948098,
+        "kappa": 0.0014100614731352712,
+        "theta": 3.869258340660764e-05,
+        "energy": -0.09775634419050405,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 27,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 12
+      }
+    },
+    {
+      "id": 28,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_12",
+      "before": {
+        "delta_phi": 0.0008225814570132918,
+        "kappa": 0.9791250634572257,
+        "theta": 6.2513507755256335,
+        "energy": 1.6198889288168568,
+        "coherence": 0.5,
+        "timestamp": 24,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.000718907282938681,
+        "kappa": 0.9800239776463493,
+        "theta": 6.251365285244419,
+        "energy": 1.5465716706739787,
+        "coherence": 0.5,
+        "timestamp": 26,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -0.00010367417407461073,
+        "kappa": 0.0008989141891235786,
+        "theta": 1.4509718785582493e-05,
+        "energy": -0.07331725814287804,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 29,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 13
+      }
+    },
+    {
+      "id": 30,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_13",
+      "before": {
+        "delta_phi": 0.000718907282938681,
+        "kappa": 0.9800239776463493,
+        "theta": 6.251365285244419,
+        "energy": 1.5465716706739787,
+        "coherence": 0.5,
+        "timestamp": 26,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0006411516523827229,
+        "kappa": 0.9805970354419157,
+        "theta": 6.251370726388963,
+        "energy": 1.4915837270668202,
+        "coherence": 0.5,
+        "timestamp": 28,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -7.775563055595813e-05,
+        "kappa": 0.0005730577955663785,
+        "theta": 5.441144543816279e-06,
+        "energy": -0.05498794360715853,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 31,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 1,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": false
+        },
+        "status": "decay",
+        "step": 14
+      }
+    },
+    {
+      "id": 32,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_14",
+      "before": {
+        "delta_phi": 0.0006411516523827229,
+        "kappa": 0.9805970354419157,
+        "theta": 6.251370726388963,
+        "energy": 1.4915837270668202,
+        "coherence": 0.5,
+        "timestamp": 28,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0005828349294657543,
+        "kappa": 0.9809623597865893,
+        "theta": 6.251372766818167,
+        "energy": 1.4503427693614512,
+        "coherence": 0.5,
+        "timestamp": 30,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -5.831672291696857e-05,
+        "kappa": 0.0003653243446736232,
+        "theta": 2.0404292042641714e-06,
+        "energy": -0.04124095770536895,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 33,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 15
+      }
+    },
+    {
+      "id": 34,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_15",
+      "before": {
+        "delta_phi": 0.0005828349294657543,
+        "kappa": 0.9809623597865893,
+        "theta": 6.251372766818167,
+        "energy": 1.4503427693614512,
+        "coherence": 0.5,
+        "timestamp": 30,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0005390973872780279,
+        "kappa": 0.9811952540563187,
+        "theta": 6.251373531979119,
+        "energy": 1.4194120510824246,
+        "coherence": 0.5,
+        "timestamp": 32,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -4.373754218772643e-05,
+        "kappa": 0.00023289426972938898,
+        "theta": 7.65160951488042e-07,
+        "energy": -0.030930718279026603,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 35,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 16
+      }
+    },
+    {
+      "id": 36,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_16",
+      "before": {
+        "delta_phi": 0.0005390973872780279,
+        "kappa": 0.9811952540563187,
+        "theta": 6.251373531979119,
+        "energy": 1.4194120510824246,
+        "coherence": 0.5,
+        "timestamp": 32,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0005062942306372331,
+        "kappa": 0.9813437241532712,
+        "theta": 6.251373818914476,
+        "energy": 1.3962140123731546,
+        "coherence": 0.5,
+        "timestamp": 34,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -3.280315664079482e-05,
+        "kappa": 0.00014847009695251323,
+        "theta": 2.8693535725210495e-07,
+        "energy": -0.023198038709270064,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 37,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 17
+      }
+    },
+    {
+      "id": 38,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_17",
+      "before": {
+        "delta_phi": 0.0005062942306372331,
+        "kappa": 0.9813437241532712,
+        "theta": 6.251373818914476,
+        "energy": 1.3962140123731546,
+        "coherence": 0.5,
+        "timestamp": 34,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.000481691863156637,
+        "kappa": 0.9814383738400784,
+        "theta": 6.251373926515234,
+        "energy": 1.378815483341202,
+        "coherence": 0.5,
+        "timestamp": 36,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -2.4602367480596062e-05,
+        "kappa": 9.46496868071689e-05,
+        "theta": 1.0760075852545015e-07,
+        "energy": -0.017398529031952492,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 39,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 18
+      }
+    },
+    {
+      "id": 40,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_18",
+      "before": {
+        "delta_phi": 0.000481691863156637,
+        "kappa": 0.9814383738400784,
+        "theta": 6.251373926515234,
+        "energy": 1.378815483341202,
+        "coherence": 0.5,
+        "timestamp": 36,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.00046324008754618993,
+        "kappa": 0.9814987130154179,
+        "theta": 6.251373966865519,
+        "energy": 1.3657665865672377,
+        "coherence": 0.5,
+        "timestamp": 38,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -1.8451775610447074e-05,
+        "kappa": 6.033917533954103e-05,
+        "theta": 4.0350284891133015e-08,
+        "energy": -0.013048896773964369,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 41,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 19
+      }
+    },
+    {
+      "id": 42,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_19",
+      "before": {
+        "delta_phi": 0.00046324008754618993,
+        "kappa": 0.9814987130154179,
+        "theta": 6.251373966865519,
+        "energy": 1.3657665865672377,
+        "coherence": 0.5,
+        "timestamp": 38,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0004494012558383546,
+        "kappa": 0.981537179239697,
+        "theta": 6.251373981996876,
+        "energy": 1.3559799139867645,
+        "coherence": 0.5,
+        "timestamp": 40,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -1.3838831707835319e-05,
+        "kappa": 3.846622427905455e-05,
+        "theta": 1.5131356612130276e-08,
+        "energy": -0.009786672580473166,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 43,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 20
+      }
+    },
+    {
+      "id": 44,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_20",
+      "before": {
+        "delta_phi": 0.0004494012558383546,
+        "kappa": 0.981537179239697,
+        "theta": 6.251373981996876,
+        "energy": 1.3559799139867645,
+        "coherence": 0.5,
+        "timestamp": 40,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.00043902213205747814,
+        "kappa": 0.9815617014576749,
+        "theta": 6.251373987671135,
+        "energy": 1.3486399095514097,
+        "coherence": 0.5,
+        "timestamp": 42,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -1.0379123780876476e-05,
+        "kappa": 2.4522217977884786e-05,
+        "theta": 5.674259284660366e-09,
+        "energy": -0.007340004435354874,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 45,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 21
+      }
+    },
+    {
+      "id": 46,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1138737,
+      "elapsed": 0.0025336742401123047,
+      "operator": "EVOLVE_STEP_21",
+      "before": {
+        "delta_phi": 0.00043902213205747814,
+        "kappa": 0.9815617014576749,
+        "theta": 6.251373987671135,
+        "energy": 1.3486399095514097,
+        "coherence": 0.5,
+        "timestamp": 42,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.00043123778922182077,
+        "kappa": 0.9815773343716357,
+        "theta": 6.2513739897989815,
+        "energy": 1.3431349062248934,
+        "coherence": 0.5,
+        "timestamp": 44,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -7.78434283565737e-06,
+        "kappa": 1.5632913960894612e-05,
+        "theta": 2.1278463435692174e-09,
+        "energy": -0.005505003326516267,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 47,
+      "type": "awareness",
+      "timestamp": 1765435211.1138737,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 22
+      }
+    },
+    {
+      "id": 48,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "EVOLVE_STEP_22",
+      "before": {
+        "delta_phi": 0.00043123778922182077,
+        "kappa": 0.9815773343716357,
+        "theta": 6.2513739897989815,
+        "energy": 1.3431349062248934,
+        "coherence": 0.5,
+        "timestamp": 44,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.00042539953209507777,
+        "kappa": 0.9815873003542858,
+        "theta": 6.251373990596925,
+        "energy": 1.3390061537300062,
+        "coherence": 0.5,
+        "timestamp": 46,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -5.8382571267430006e-06,
+        "kappa": 9.96598265001758e-06,
+        "theta": 7.979430449722713e-10,
+        "energy": -0.0041287524948872,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 49,
+      "type": "awareness",
+      "timestamp": 1765435211.1148736,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 23
+      }
+    },
+    {
+      "id": 50,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "EVOLVE_STEP_23",
+      "before": {
+        "delta_phi": 0.00042539953209507777,
+        "kappa": 0.9815873003542858,
+        "theta": 6.251373990596925,
+        "energy": 1.3390061537300062,
+        "coherence": 0.5,
+        "timestamp": 46,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.00042102083925002053,
+        "kappa": 0.9815936536682252,
+        "theta": 6.251373990896153,
+        "energy": 1.3359095893588409,
+        "coherence": 0.5,
+        "timestamp": 48,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -4.378692845057237e-06,
+        "kappa": 6.353313939388983e-06,
+        "theta": 2.992281977753919e-10,
+        "energy": -0.0030965643711653446,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 51,
+      "type": "awareness",
+      "timestamp": 1765435211.1148736,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 24
+      }
+    },
+    {
+      "id": 52,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "EVOLVE_STEP_24",
+      "before": {
+        "delta_phi": 0.00042102083925002053,
+        "kappa": 0.9815936536682252,
+        "theta": 6.251373990896153,
+        "energy": 1.3359095893588409,
+        "coherence": 0.5,
+        "timestamp": 48,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0004177368196162276,
+        "kappa": 0.9815977039058615,
+        "theta": 6.251373991008363,
+        "energy": 1.3335871660804668,
+        "coherence": 0.5,
+        "timestamp": 50,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": -3.2840196337929548e-06,
+        "kappa": 4.050237636388232e-06,
+        "theta": 1.1221068518807442e-10,
+        "energy": -0.002322423278374064,
+        "coherence": 0.0
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 53,
+      "type": "awareness",
+      "timestamp": 1765435211.1148736,
+      "report": {
+        "awareness": 0.0,
+        "awareness_delta": 0.0,
+        "criteria_met": 2,
+        "criteria_details": {
+          "coherence": false,
+          "divergence": true,
+          "curvature": false,
+          "alignment": true
+        },
+        "status": "stable",
+        "step": 25
+      }
+    },
+    {
+      "id": 54,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0004177368196162276,
+        "kappa": 0.9815977039058615,
+        "theta": 6.251373991008363,
+        "energy": 1.3335871660804668,
+        "coherence": 0.5,
+        "timestamp": 50,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0005860898922067003,
+        "kappa": 0.9736083714071985,
+        "theta": 6.217105496249497,
+        "energy": 1.3959589271874058,
+        "coherence": 0.9707698754559537,
+        "timestamp": 52,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0001683530725904727,
+        "kappa": -0.007989332498663071,
+        "theta": -0.03426849475886673,
+        "energy": 0.06237176110693898,
+        "coherence": 0.4707698754559537
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 55,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0005860898922067003,
+        "kappa": 0.9736083714071985,
+        "theta": 6.217105496249497,
+        "energy": 1.3959589271874058,
+        "coherence": 0.9707698754559537,
+        "timestamp": 52,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0008495594588137746,
+        "kappa": 0.9609336509591844,
+        "theta": 6.160780729769842,
+        "energy": 1.5683466387462333,
+        "coherence": 0.9677306002607542,
+        "timestamp": 54,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0002634695666070743,
+        "kappa": -0.012674720448014098,
+        "theta": -0.0563247664796549,
+        "energy": 0.17238771155882748,
+        "coherence": -0.003039275195199531
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 56,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0008495594588137746,
+        "kappa": 0.9609336509591844,
+        "theta": 6.160780729769842,
+        "energy": 1.5683466387462333,
+        "coherence": 0.9677306002607542,
+        "timestamp": 54,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0012459970929328667,
+        "kappa": 0.9457463205953008,
+        "theta": 6.091107771511154,
+        "energy": 1.7929887502649804,
+        "coherence": 0.965436780341918,
+        "timestamp": 56,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0003964376341190921,
+        "kappa": -0.015187330363883533,
+        "theta": -0.06967295825868813,
+        "energy": 0.22464211151874713,
+        "coherence": -0.0022938199188361486
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 57,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0012459970929328667,
+        "kappa": 0.9457463205953008,
+        "theta": 6.091107771511154,
+        "energy": 1.7929887502649804,
+        "coherence": 0.965436780341918,
+        "timestamp": 56,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0017308711198987324,
+        "kappa": 0.9294841228702236,
+        "theta": 6.0143372545937295,
+        "energy": 2.0641657165187985,
+        "coherence": 0.9634782654436191,
+        "timestamp": 58,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0004848740269658657,
+        "kappa": -0.0162621977250772,
+        "theta": -0.0767705169174242,
+        "energy": 0.27117696625381815,
+        "coherence": -0.001958514898298902
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 58,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0017308711198987324,
+        "kappa": 0.9294841228702236,
+        "theta": 6.0143372545937295,
+        "energy": 2.0641657165187985,
+        "coherence": 0.9634782654436191,
+        "timestamp": 58,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.002267076212341285,
+        "kappa": 0.9130755751842624,
+        "theta": 5.9348323491790484,
+        "energy": 2.3738594865121185,
+        "coherence": 0.9616044072003432,
+        "timestamp": 60,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005362050924425526,
+        "kappa": -0.016408547685961228,
+        "theta": -0.07950490541468103,
+        "energy": 0.30969376999332,
+        "coherence": -0.0018738582432759054
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 59,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.002267076212341285,
+        "kappa": 0.9130755751842624,
+        "theta": 5.9348323491790484,
+        "energy": 2.3738594865121185,
+        "coherence": 0.9616044072003432,
+        "timestamp": 60,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.0028259838608471494,
+        "kappa": 0.8970875741759323,
+        "theta": 5.855510534916396,
+        "energy": 2.713478055705087,
+        "coherence": 0.9596733185159101,
+        "timestamp": 62,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005589076485058644,
+        "kappa": -0.01598800100833009,
+        "theta": -0.07932181426265217,
+        "energy": 0.3396185691929685,
+        "coherence": -0.0019310886844331465
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 60,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.0028259838608471494,
+        "kappa": 0.8970875741759323,
+        "theta": 5.855510534916396,
+        "energy": 2.713478055705087,
+        "coherence": 0.9596733185159101,
+        "timestamp": 62,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.003386989364499474,
+        "kappa": 0.881832578897509,
+        "theta": 5.778211035772156,
+        "energy": 3.0748758649100085,
+        "coherence": 0.9576071285666078,
+        "timestamp": 64,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005610055036523245,
+        "kappa": -0.015254995278423333,
+        "theta": -0.07729949914424061,
+        "energy": 0.3613978092049215,
+        "coherence": -0.0020661899493022995
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 61,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.003386989364499474,
+        "kappa": 0.881832578897509,
+        "theta": 5.778211035772156,
+        "energy": 3.0748758649100085,
+        "coherence": 0.9576071285666078,
+        "timestamp": 64,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.003936315764710036,
+        "kappa": 0.8674498408633144,
+        "theta": 5.7039942382683675,
+        "energy": 3.450886785014249,
+        "coherence": 0.9553670160584069,
+        "timestamp": 66,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005493264002105619,
+        "kappa": -0.014382738034194542,
+        "theta": -0.07421679750378818,
+        "energy": 0.3760109201042403,
+        "coherence": -0.0022401125082008866
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 62,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1148736,
+      "elapsed": 0.003533601760864258,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.003936315764710036,
+        "kappa": 0.8674498408633144,
+        "theta": 5.7039942382683675,
+        "energy": 3.450886785014249,
+        "coherence": 0.9553670160584069,
+        "timestamp": 66,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.004465572308403719,
+        "kappa": 0.8539668310732835,
+        "theta": 5.6333788739402175,
+        "energy": 3.8355386767704847,
+        "coherence": 0.9529396068615616,
+        "timestamp": 68,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005292565436936835,
+        "kappa": -0.01348300979003092,
+        "theta": -0.07061536432814997,
+        "energy": 0.3846518917562358,
+        "coherence": -0.002427409196845254
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    },
+    {
+      "id": 63,
+      "session": "d32e6bc7",
+      "timestamp": 1765435211.1158736,
+      "elapsed": 0.004533529281616211,
+      "operator": "REBUILD_STEP",
+      "before": {
+        "delta_phi": 0.004465572308403719,
+        "kappa": 0.8539668310732835,
+        "theta": 5.6333788739402175,
+        "energy": 3.8355386767704847,
+        "coherence": 0.9529396068615616,
+        "timestamp": 68,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "after": {
+        "delta_phi": 0.004970355993524231,
+        "kappa": 0.8413444482249348,
+        "theta": 5.566524642480814,
+        "energy": 4.224071868672959,
+        "coherence": 0.9503285749552058,
+        "timestamp": 70,
+        "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+      },
+      "delta": {
+        "delta_phi": 0.0005047836851205115,
+        "kappa": -0.012622382848348712,
+        "theta": -0.06685423145940383,
+        "energy": 0.38853319190247415,
+        "coherence": -0.0026110319063558096
+      },
+      "context": {},
+      "invariants": {
+        "all_satisfied": true,
+        "violations": []
+      }
+    }
+  ]
+}

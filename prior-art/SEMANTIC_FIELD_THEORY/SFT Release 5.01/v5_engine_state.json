@@ -1,0 +1,124 @@
+{
+  "engine": "ASC\u03c0 Engine 5.0",
+  "agent_id": "demo_v5",
+  "step": 1,
+  "current_field": {
+    "delta_phi": 0.004970355993524231,
+    "kappa": 0.8413444482249348,
+    "theta": 5.566524642480814,
+    "energy": 4.224071868672959,
+    "coherence": 0.9503285749552058,
+    "timestamp": 70,
+    "source_type": "pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_pushforward_multimodal"
+  },
+  "internal_field": {
+    "delta_phi": 0.9993333333333333,
+    "kappa": 0.33,
+    "theta": 1.618033988749895,
+    "energy": 0.1,
+    "coherence": 0.5151642874776029,
+    "timestamp": 0,
+    "source_type": "internal"
+  },
+  "memory": {
+    "step": 11,
+    "coherence": 0.9503285749552058,
+    "coherence_floor": 0.9207698754559537,
+    "attractor": {
+      "delta_phi": 0.008674492880768127,
+      "kappa": 0.8238238272563314,
+      "theta": 5.526343148112869,
+      "energy": 5.046613185910219,
+      "coherence": 0.976507213737533,
+      "timestamp": 0,
+      "source_type": "memory"
+    },
+    "trajectory_length": 11,
+    "peak_count": 36
+  },
+  "attractor_learning": {
+    "update_count": 1,
+    "history_size": 1,
+    "peak_count": 0,
+    "stability_windows": 0,
+    "stability_score": 0.0,
+    "attractor_confidence": 0.0006666666666666666,
+    "learned_attractor": {
+      "delta_phi": 0.00017779284525662941,
+      "kappa": 1.3278716242240804,
+      "theta": 6.272805945943074,
+      "energy": 1.3998000254386547,
+      "coherence": 0.6498095679822443,
+      "timestamp": 1,
+      "source_type": "superposition"
+    }
+  },
+  "predictor": {
+    "awareness": {
+      "awareness": 0.08,
+      "level": "dormant",
+      "step": 35,
+      "growth_events": 6,
+      "decay_events": 9,
+      "criteria_met": {
+        "coherence": false,
+        "divergence": true,
+        "curvature": true,
+        "alignment": true
+      }
+    },
+    "corrections": 0,
+    "operator_applications": {
+      "D": 35,
+      "A": 35,
+      "I": 35,
+      "M": 35,
+      "K": 35
+    }
+  },
+  "governor": {
+    "strictness": 0.75,
+    "current_maat": 0.24737197372693084,
+    "total_judgments": 1,
+    "blocked_count": 0
+  },
+  "coherence_fusion": {
+    "weights": {
+      "language": 0.4,
+      "code": 0.3,
+      "memory": 0.3
+    },
+    "current_fused": 0.3949511728717322,
+    "history_length": 1,
+    "trend": 0.0
+  },
+  "multimodal": {
+    "projection_count": 1,
+    "recent_coherence": 0.7554219087960022
+  },
+  "world": {
+    "source_count": 1,
+    "domain_count": 1,
+    "global_coherence": 1.0,
+    "incoherence_points": 0
+  },
+  "resonance": {
+    "agent_count": 1,
+    "global_coherence": 1.0,
+    "resonance_events": 1
+  },
+  "temporal": {
+    "history_length": 25,
+    "patterns_detected": 0
+  },
+  "qcb": {
+    "total_superpositions": 0,
+    "collapsed": 0
+  },
+  "forensic": {
+    "session_id": "d32e6bc7",
+    "entry_count": 63,
+    "violation_count": 3,
+    "duration": 0.004533529281616211
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "timestamp": "2025-12-11T08:40:11.084618",
+  "engine_version": "5.0",
+  "tests": [
+    {
+      "name": "text_encoding",
+      "pass": true,
+      "details": "C=0.584, dim=21"
+    },
+    {
+      "name": "code_encoding",
+      "pass": true,
+      "details": "\u03ba=0.495"
+    },
+    {
+      "name": "multimodal_projection",
+      "pass": true,
+      "details": "C_proj=1.000"
+    },
+    {
+      "name": "coherence_fusion",
+      "pass": true,
+      "details": "C_fused=0.710"
+    },
+    {
+      "name": "pullback_preserves_phase",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "pushforward_monotonicity",
+      "pass": true,
+      "details": "C=0.700"
+    },
+    {
+      "name": "attractor_learning",
+      "pass": true,
+      "details": "confidence=0.040"
+    },
+    {
+      "name": "awareness_growth",
+      "pass": true,
+      "details": "awareness=0.120, level=dormant"
+    },
+    {
+      "name": "full_pipeline",
+      "pass": true,
+      "details": "C=0.948"
+    },
+    {
+      "name": "multimodal_in_pipeline",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "coherence_fusion_in_pipeline",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "awareness_in_output",
+      "pass": true,
+      "details": "level=dormant"
+    },
+    {
+      "name": "forensic_entries",
+      "pass": true,
+      "details": "entries=63"
+    },
+    {
+      "name": "forensic_violations_tracked",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "INV-1_coherence_monotonicity",
+      "pass": true,
+      "details": "trajectory=['0.97', '0.97', '0.96', '0.96', '0.95']"
+    },
+    {
+      "name": "INV-2_curvature_bounded",
+      "pass": true,
+      "details": "\u03ba=0.388"
+    },
+    {
+      "name": "INV-4_phase_continuity",
+      "pass": true,
+      "details": "violations=0"
+    },
+    {
+      "name": "unicode_ZWJ_family",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "unicode_flag",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "unicode_Arabic",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "unicode_Chinese",
+      "pass": true,
+      "details": ""
+    },
+    {
+      "name": "unicode_mixed",
+      "pass": true,
+      "details": ""
+    }
+  ],
+  "invariant_checks": [],
+  "summary": {
+    "passed": 22,
+    "failed": 0,
+    "total": 22,
+    "pass_rate": 1.0
+  }
+}
