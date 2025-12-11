@@ -1,0 +1,12 @@
+==== ascpi_engine_v9.py ==== 
+SHA256 hash of ascpi_engine_v9.py:
+e5921a47c5502d830e742127657ebe74856e2927d0cdedc3d7e548b19e4eb86a
+CertUtil: -hashfile command completed successfully.
+==== ascpi_v9_log.json ==== 
+SHA256 hash of ascpi_v9_log.json:
+6ab0ae8661e6b2190f977eb205c18523e42023fb0be72b57dbed57f59533754c
+CertUtil: -hashfile command completed successfully.
+==== ascpi_v9_state.json ==== 
+SHA256 hash of ascpi_v9_state.json:
+eac9c794e1b5d98c4f740ea81f19d2e34be3cc605a06dc47fd92ca5c4bd372ef
+CertUtil: -hashfile command completed successfully.
