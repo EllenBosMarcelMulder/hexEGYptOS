@@ -1,0 +1,137 @@
+{
+  "timestamp": "2025-12-11T06:17:24.213238",
+  "engine_version": "4.0",
+  "tests": [
+    {
+      "name": "multilingual_all",
+      "status": "PASS",
+      "details": "10 languages"
+    },
+    {
+      "name": "emoji_ZWJ_family",
+      "status": "PASS",
+      "details": "glyphs=1"
+    },
+    {
+      "name": "emoji_ZWJ_profession",
+      "status": "PASS",
+      "details": "glyphs=1"
+    },
+    {
+      "name": "emoji_Flag_pair",
+      "status": "PASS",
+      "details": "glyphs=1"
+    },
+    {
+      "name": "emoji_Skin_tone",
+      "status": "PASS",
+      "details": "glyphs=1"
+    },
+    {
+      "name": "emoji_Multiple_emoji",
+      "status": "PASS",
+      "details": "glyphs=4"
+    },
+    {
+      "name": "emoji_Mixed_ZWJ",
+      "status": "PASS",
+      "details": "glyphs=7"
+    },
+    {
+      "name": "long_sequence_100",
+      "status": "PASS",
+      "details": "0.00s, glyphs=100"
+    },
+    {
+      "name": "long_sequence_1000",
+      "status": "PASS",
+      "details": "0.29s, glyphs=1000"
+    },
+    {
+      "name": "long_sequence_10000",
+      "status": "PASS",
+      "details": "27.45s, glyphs=10000"
+    },
+    {
+      "name": "extreme_high_alpha",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "extreme_high_beta",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "extreme_high_gamma",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "extreme_all_low",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "extreme_all_high",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "extreme_balanced",
+      "status": "PASS",
+      "details": "C=0.3999"
+    },
+    {
+      "name": "repeated_variance",
+      "status": "PASS",
+      "details": "var=0.00e+00"
+    },
+    {
+      "name": "convergence_speed_0",
+      "status": "PASS",
+      "details": "steps=2, C=0.984"
+    },
+    {
+      "name": "convergence_speed_1",
+      "status": "PASS",
+      "details": "steps=50, C=0.256"
+    },
+    {
+      "name": "convergence_speed_2",
+      "status": "PASS",
+      "details": "steps=50, C=0.307"
+    },
+    {
+      "name": "maat_coherence_monotonic",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "maat_kappa_converges",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "maat_energy_bounded",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "maat_theta_stabilizes",
+      "status": "PASS",
+      "details": ""
+    },
+    {
+      "name": "maat_no_divergence",
+      "status": "PASS",
+      "details": ""
+    }
+  ],
+  "summary": {
+    "passed": 25,
+    "failed": 0,
+    "total": 25,
+    "pass_rate": 1.0
+  }
+}
