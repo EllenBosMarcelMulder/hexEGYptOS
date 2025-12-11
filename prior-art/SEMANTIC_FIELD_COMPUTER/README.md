@@ -1,5 +1,3 @@
-# 📄 **`/repro/README.md` — ASCπ FieldLab Reproduction Package**
-
 # **ASCπ FieldLab — Reproduction Package**
 
 **Version:** 1.0
