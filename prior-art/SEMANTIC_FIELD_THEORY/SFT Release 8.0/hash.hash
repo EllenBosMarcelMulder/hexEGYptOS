@@ -1,0 +1,12 @@
+==== ascpi_engine_unified.py ==== 
+SHA256 hash of ascpi_engine_unified.py:
+fe067ee7c53f9b5d12a5b932ece50ee2d586e1085642af4a1bcf962fd718be39
+CertUtil: -hashfile command completed successfully.
+==== ascpi_unified_log.json ==== 
+SHA256 hash of ascpi_unified_log.json:
+0c7aa3f221d5af01281e7b59336c8b34853d721b92704d2941b35142156cdc44
+CertUtil: -hashfile command completed successfully.
+==== ascpi_unified_state.json ==== 
+SHA256 hash of ascpi_unified_state.json:
+4de6cacc2a8bee5d9d059909fc86f15b564dabe326b126097b2f75bee90dc7bd
+CertUtil: -hashfile command completed successfully.
