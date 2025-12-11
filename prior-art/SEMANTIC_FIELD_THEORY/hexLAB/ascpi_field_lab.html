@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ FieldLab — Semantic Field Analyzer</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a25;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --phi: #f4a261;
+            --kappa: #2a9d8f;
+            --theta: #9b5de5;
+            --energy: #00d4ff;
+            --coherence: #7fff00;
+            --maat: #ff6b6b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .lab-container {
+            display: grid;
+            grid-template-rows: 56px 1fr;
+            height: 100vh;
+        }
+        
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 24px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--phi);
+        }
+        
+        .logo span { color: var(--theta); }
+        .logo small { color: var(--muted); font-size: 0.75rem; margin-left: 8px; font-weight: 400; }
+        
+        .header-stats {
+            display: flex;
+            gap: 24px;
+            margin-left: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        .stat { display: flex; align-items: center; gap: 6px; }
+        .stat .label { color: var(--muted); }
+        .stat .value { color: var(--coherence); }
+        
+        .main {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            overflow: hidden;
+        }
+        
+        .panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .panel:last-child { border-right: none; border-left: 1px solid var(--border); }
+        
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        /* File Loader */
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--theta);
+            background: rgba(155, 93, 229, 0.05);
+        }
+        
+        .drop-zone-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .drop-zone-text { color: var(--muted); font-size: 0.9rem; }
+        .drop-zone-text strong { color: var(--theta); }
+        
+        .file-input { display: none; }
+        
+        .url-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .url-input input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 12px;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .url-input input::placeholder { color: var(--muted); }
+        
+        .btn {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover { background: var(--coherence); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn.secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+        .btn.secondary:hover { background: var(--border); }
+        
+        /* Segmentation */
+        .segment-options {
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .segment-options label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        .segment-options input[type="radio"] {
+            accent-color: var(--theta);
+        }
+        
+        /* Segment List */
+        .segment-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .segment-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.8rem;
+        }
+        
+        .segment-item:hover { border-color: var(--theta); }
+        .segment-item.selected { border-color: var(--coherence); background: rgba(127, 255, 0, 0.05); }
+        
+        .segment-item .index {
+            color: var(--theta);
+            font-family: monospace;
+            margin-right: 8px;
+        }
+        
+        .segment-item .preview {
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .segment-item .psi-mini {
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+        
+        /* Visualization Canvas */
+        .viz-area {
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .viz-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        .viz-tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .viz-tab:hover { color: var(--text); }
+        .viz-tab.active { color: var(--theta); border-bottom-color: var(--theta); }
+        
+        .viz-canvas-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .viz-canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .viz-legend {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.75rem;
+        }
+        
+        .viz-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        
+        .viz-legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+        
+        .viz-tooltip {
+            position: absolute;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            max-width: 300px;
+            z-index: 100;
+        }
+        
+        .viz-tooltip.visible { opacity: 1; }
+        
+        /* Analysis Panel */
+        .analysis-section {
+            background: var(--surface2);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .analysis-section h4 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+        
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+        
+        .metric-row:last-child { border-bottom: none; }
+        .metric-row .label { color: var(--muted); }
+        .metric-row .value { font-family: monospace; color: var(--coherence); }
+        
+        .coherence-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .coherence-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--theta), var(--coherence));
+            transition: width 0.3s;
+        }
+        
+        /* Compare Panel */
+        .compare-slots {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .compare-slot {
+            background: var(--surface2);
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .compare-slot.filled {
+            border-style: solid;
+            border-color: var(--theta);
+        }
+        
+        .compare-slot .slot-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        
+        .compare-slot .slot-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+        
+        .compare-result {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        
+        .distance-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--phi);
+            font-family: monospace;
+        }
+        
+        .distance-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        
+        /* Timeline */
+        .timeline-container {
+            height: 200px;
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        /* Progress */
+        .progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--theta);
+            transition: width 0.2s;
+        }
+        
+        /* Actions */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons .btn { flex: 1; min-width: 100px; }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="lab-container">
+        <div class="header">
+            <div class="logo">
+                ASC<span>π</span> FieldLab
+                <small>Semantic Field Analyzer v1.0</small>
+            </div>
+            <div class="header-stats">
+                <div class="stat">
+                    <span class="label">Segments:</span>
+                    <span class="value" id="segmentCount">0</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Avg C:</span>
+                    <span class="value" id="avgCoherence">—</span>
+                </div>
+                <div class="stat">
+                    <span class="label">M∞:</span>
+                    <span class="value" id="memoryC">0.500</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main">
+            <!-- Left Panel: Input & Segments -->
+            <div class="panel">
+                <div class="panel-header">📄 Text Input</div>
+                <div class="panel-content">
+                    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                        <div class="drop-zone-icon">📁</div>
+                        <div class="drop-zone-text">
+                            Drop <strong>.txt</strong> file here<br>
+                            or click to browse
+                        </div>
+                    </div>
+                    <input type="file" id="fileInput" class="file-input" accept=".txt" onchange="handleFileSelect(event)">
+                    
+                    <div class="url-input">
+                        <input type="text" id="urlInput" placeholder="Or paste URL...">
+                        <button class="btn secondary" onclick="loadFromUrl()">Load</button>
+                    </div>
+                    
+                    <div class="segment-options">
+                        <strong style="font-size: 0.75rem; color: var(--muted);">SEGMENTATION</strong>
+                        <label>
+                            <input type="radio" name="segMode" value="sentence" checked>
+                            Per sentence
+                        </label>
+                        <label>
+                            <input type="radio" name="segMode" value="paragraph">
+                            Per paragraph
+                        </label>
+                        <label>
+                            <input type="radio" name="segMode" value="chunk">
+                            Per chunk (50 words)
+                        </label>
+                    </div>
+                    
+                    <div class="progress-bar" id="progressBar" style="display: none;">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn" onclick="processSegments()" id="processBtn" disabled>
+                            ⚡ Process All
+                        </button>
+                        <button class="btn secondary" onclick="clearAll()">
+                            🗑️ Clear
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 16px;">
+                        <div class="panel-header" style="padding: 0; border: none; margin-bottom: 12px;">
+                            📋 Segments
+                        </div>
+                        <div class="segment-list" id="segmentList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Center: Visualization -->
+            <div class="viz-area">
+                <div class="viz-tabs">
+                    <button class="viz-tab active" onclick="setVizMode('scatter')">ΔΦ-κ Scatter</button>
+                    <button class="viz-tab" onclick="setVizMode('polar')">Phase Polar</button>
+                    <button class="viz-tab" onclick="setVizMode('timeline')">M∞ Timeline</button>
+                    <button class="viz-tab" onclick="setVizMode('interference')">Interference</button>
+                </div>
+                <div class="viz-canvas-container">
+                    <canvas class="viz-canvas" id="vizCanvas"></canvas>
+                    <div class="viz-legend" id="vizLegend"></div>
+                    <div class="viz-tooltip" id="vizTooltip"></div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Analysis -->
+            <div class="panel">
+                <div class="panel-header">📊 Analysis</div>
+                <div class="panel-content">
+                    <div class="analysis-section">
+                        <h4>Current Selection</h4>
+                        <div id="selectionInfo">
+                            <p style="color: var(--muted); font-size: 0.85rem;">
+                                Click a segment to view details
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h4>Field Statistics</h4>
+                        <div class="metric-row">
+                            <span class="label">ΔΦ range</span>
+                            <span class="value" id="dPhiRange">—</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">κ range</span>
+                            <span class="value" id="kappaRange">—</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">θ spread</span>
+                            <span class="value" id="thetaSpread">—</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">Coherence σ</span>
+                            <span class="value" id="coherenceStd">—</span>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h4>Text Comparison</h4>
+                        <div class="compare-slots">
+                            <div class="compare-slot" id="slotA" onclick="setCompareSlot('A')">
+                                <div class="slot-label">Text A</div>
+                                <div class="slot-name" id="slotAName">Drop segment</div>
+                            </div>
+                            <div class="compare-slot" id="slotB" onclick="setCompareSlot('B')">
+                                <div class="slot-label">Text B</div>
+                                <div class="slot-name" id="slotBName">Drop segment</div>
+                            </div>
+                        </div>
+                        <div class="compare-result" id="compareResult" style="display: none;">
+                            <div class="distance-value" id="distanceValue">0.000</div>
+                            <div class="distance-label">Field Distance d(Ψ_A, Ψ_B)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h4>Memory Attractor M∞</h4>
+                        <div class="metric-row">
+                            <span class="label">ΔΦ</span>
+                            <span class="value" id="mInfDPhi">0.000</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">κ</span>
+                            <span class="value" id="mInfKappa">0.500</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">θ</span>
+                            <span class="value" id="mInfTheta">0.000</span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="label">Coherence</span>
+                            <span class="value" id="mInfC">0.500</span>
+                        </div>
+                        <div class="coherence-bar">
+                            <div class="coherence-bar-fill" id="mInfBar" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn secondary" onclick="exportData()">
+                            💾 Export JSON
+                        </button>
+                        <button class="btn secondary" onclick="exportSVG()">
+                            🖼️ Export SVG
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONSTANTS & CORE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0,
+    theta_max: Math.PI / 2,
+    alpha: 0.15,
+    beta: 0.12,
+    gamma: 0.18,
+    eta: 0.25,
+    K: 0.5,
+    lambda: 0.02
+};
+
+class Psi {
+    constructor(dPhi = 0, kappa = 1, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi; this.kappa = kappa; this.theta = theta;
+        this.N = N; this.C = C; this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    vec() { return [this.dPhi, this.kappa, this.theta, this.N, this.C]; }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        const dt = Math.min(Math.abs(this.theta - o.theta), CONST.tau - Math.abs(this.theta - o.theta)) ** 2;
+        return Math.sqrt(dp + dk + dt / CONST.pi ** 2);
+    }
+    
+    blend(o, a = 0.5) {
+        const b = 1 - a;
+        const sinT = a * Math.sin(this.theta) + b * Math.sin(o.theta);
+        const cosT = a * Math.cos(this.theta) + b * Math.cos(o.theta);
+        return new Psi(a * this.dPhi + b * o.dPhi, a * this.kappa + b * o.kappa,
+            Math.atan2(sinT, cosT), a * this.N + b * o.N, Math.max(this.C, o.C), Math.max(this.t, o.t) + 1);
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MEMORY FIELD
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class MemoryField {
+    constructor() {
+        this.mInf = new Psi(0, 0.5, 0, 0.5, 0.5);
+        this.history = [];
+        this.cFloor = 0;
+    }
+    
+    absorb(psi) {
+        const w = Math.tanh(psi.C * 2) * 0.2;
+        const sinB = (1-w)*Math.sin(this.mInf.theta)+w*Math.sin(psi.theta);
+        const cosB = (1-w)*Math.cos(this.mInf.theta)+w*Math.cos(psi.theta);
+        this.mInf.dPhi = (1-w)*this.mInf.dPhi+w*psi.dPhi*0.9;
+        this.mInf.kappa = (1-w)*this.mInf.kappa+w*psi.kappa*0.95;
+        this.mInf.theta = Math.atan2(sinB, cosB);
+        this.mInf.N = (1-w)*this.mInf.N+w*psi.N;
+        
+        this.history.push({ t: this.history.length, mInf: this.mInf.copy() });
+        
+        if (this.history.length >= 3) {
+            const phases = this.history.slice(-20).map(h => h.mInf.theta);
+            const sinSum = phases.reduce((s,t) => s+Math.sin(t), 0);
+            const cosSum = phases.reduce((s,t) => s+Math.cos(t), 0);
+            const r = Math.sqrt(sinSum**2+cosSum**2)/phases.length;
+            this.cFloor = Math.max(this.cFloor-0.001, r-0.05);
+            this.mInf.C = Math.max(r, this.cFloor);
+        }
+        this.mInf.enforce();
+    }
+    
+    reset() {
+        this.mInf = new Psi(0, 0.5, 0, 0.5, 0.5);
+        this.history = [];
+        this.cFloor = 0;
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TEXT ENCODER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function encodeText(text) {
+    if (!text || text.trim().length === 0) return new Psi();
+    
+    // Normalize
+    let normalized = text.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+    normalized = normalized.replace(/[^\x20-\x7E\n\r\t]/g, '').trim();
+    
+    const chars = [...normalized].filter(c => !c.match(/\s/));
+    if (chars.length === 0) return new Psi();
+    
+    let dP = 0, k = 0, N = 0, sinS = 0, cosS = 0;
+    
+    chars.forEach((c, i) => {
+        const cp = c.charCodeAt(0);
+        const t = ((cp / 256) * CONST.phi + (cp % 256) / 256 * CONST.tau + (i / chars.length) * CONST.pi) % CONST.tau;
+        sinS += Math.sin(t);
+        cosS += Math.cos(t);
+        k += 0.3;
+        dP += Math.abs(cp - 0x4E00) / 0x10FFFF;
+        N += Math.log(1 + cp) / Math.log(0x10FFFF + 1);
+    });
+    
+    const n = chars.length;
+    const C = Math.sqrt(sinS ** 2 + cosS ** 2) / n;
+    
+    return new Psi(dP / n, k / n, Math.atan2(sinS, cosS), N, C, 0);
+}
+
+function kernelF(psi, mInf, gradC) {
+    let newK = psi.kappa - CONST.alpha * (psi.kappa - mInf.kappa);
+    let newN = psi.N + CONST.beta * psi.C;
+    let newDP = psi.C > 0.6 ? psi.dPhi * (1 - CONST.gamma * psi.C ** 2) : psi.dPhi;
+    
+    newDP += CONST.eta * (mInf.dPhi - newDP);
+    newK += CONST.eta * (mInf.kappa - newK);
+    newN += CONST.eta * (mInf.N - newN);
+    
+    let dt = mInf.theta - psi.theta;
+    if (dt > CONST.pi) dt -= CONST.tau;
+    else if (dt < -CONST.pi) dt += CONST.tau;
+    const shift = Math.max(-CONST.theta_max, Math.min(CONST.theta_max, CONST.K * Math.sin(dt)));
+    const newT = (psi.theta + shift) % CONST.tau;
+    
+    newK -= gradC * 0.15;
+    newDP -= gradC * 0.08;
+    
+    return new Psi(newDP, newK, newT, newN, psi.C, psi.t + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SEGMENTATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function segmentText(text, mode) {
+    let segments = [];
+    
+    switch (mode) {
+        case 'sentence':
+            segments = text.split(/(?<=[.!?])\s+/)
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+            break;
+            
+        case 'paragraph':
+            segments = text.split(/\n\s*\n/)
+                .map(s => s.trim().replace(/\n/g, ' '))
+                .filter(s => s.length > 0);
+            break;
+            
+        case 'chunk':
+            const words = text.split(/\s+/);
+            const chunkSize = 50;
+            for (let i = 0; i < words.length; i += chunkSize) {
+                const chunk = words.slice(i, i + chunkSize).join(' ');
+                if (chunk.trim().length > 0) segments.push(chunk);
+            }
+            break;
+    }
+    
+    return segments;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APPLICATION STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let rawText = '';
+let segments = [];
+let psiList = [];
+let memory = new MemoryField();
+let selectedIndex = -1;
+let compareSlotA = null;
+let compareSlotB = null;
+let activeCompareSlot = null;
+let vizMode = 'scatter';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FILE LOADING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const dropZone = document.getElementById('dropZone');
+
+dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+});
+
+dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+});
+
+dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.name.endsWith('.txt')) {
+        loadFile(file);
+    }
+});
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) loadFile(file);
+}
+
+function loadFile(file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        rawText = e.target.result;
+        segmentAndDisplay();
+    };
+    reader.readAsText(file);
+}
+
+async function loadFromUrl() {
+    const url = document.getElementById('urlInput').value.trim();
+    if (!url) return;
+    
+    try {
+        const response = await fetch(url);
+        rawText = await response.text();
+        segmentAndDisplay();
+    } catch (error) {
+        alert('Failed to load URL: ' + error.message);
+    }
+}
+
+function segmentAndDisplay() {
+    const mode = document.querySelector('input[name="segMode"]:checked').value;
+    segments = segmentText(rawText, mode);
+    psiList = [];
+    memory.reset();
+    selectedIndex = -1;
+    compareSlotA = null;
+    compareSlotB = null;
+    
+    renderSegmentList();
+    updateStats();
+    document.getElementById('processBtn').disabled = segments.length === 0;
+    render();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PROCESSING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function processSegments() {
+    if (segments.length === 0) return;
+    
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    progressBar.style.display = 'block';
+    
+    psiList = [];
+    memory.reset();
+    let cPrev = 0.5;
+    
+    for (let i = 0; i < segments.length; i++) {
+        // Encode text to initial Psi
+        let psi = encodeText(segments[i]);
+        
+        // Evolution loop
+        for (let j = 0; j < 15; j++) {
+            const cFused = (psi.C + memory.mInf.C) / 2;
+            const gradC = cFused - cPrev;
+            cPrev = cFused;
+            
+            psi = kernelF(psi, memory.mInf, gradC);
+            memory.absorb(psi);
+            psi.C = memory.mInf.C;
+            
+            if (psi.C > 0.95) break;
+        }
+        
+        psiList.push({
+            index: i,
+            segment: segments[i],
+            psi: psi,
+            mInfSnapshot: memory.mInf.copy()
+        });
+        
+        // Update progress
+        progressFill.style.width = ((i + 1) / segments.length * 100) + '%';
+        
+        // Yield to UI
+        if (i % 10 === 0) {
+            await new Promise(r => setTimeout(r, 0));
+        }
+    }
+    
+    progressBar.style.display = 'none';
+    renderSegmentList();
+    updateStats();
+    render();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UI RENDERING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function renderSegmentList() {
+    const container = document.getElementById('segmentList');
+    
+    container.innerHTML = segments.map((seg, i) => {
+        const psiData = psiList[i];
+        const preview = seg.substring(0, 60) + (seg.length > 60 ? '...' : '');
+        const psiMini = psiData ? 
+            `κ=${psiData.psi.kappa.toFixed(2)} θ=${(psiData.psi.theta/CONST.pi).toFixed(2)}π C=${(psiData.psi.C*100).toFixed(0)}%` : 
+            'Not processed';
+        
+        return `
+            <div class="segment-item ${i === selectedIndex ? 'selected' : ''}" 
+                 onclick="selectSegment(${i})"
+                 data-index="${i}">
+                <span class="index">[${i}]</span>
+                <span class="preview">${escapeHtml(preview)}</span>
+                <div class="psi-mini">${psiMini}</div>
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('segmentCount').textContent = segments.length;
+}
+
+function selectSegment(index) {
+    selectedIndex = index;
+    renderSegmentList();
+    
+    // If comparing, assign to active slot
+    if (activeCompareSlot && psiList[index]) {
+        if (activeCompareSlot === 'A') {
+            compareSlotA = psiList[index];
+            document.getElementById('slotA').classList.add('filled');
+            document.getElementById('slotAName').textContent = `Segment [${index}]`;
+        } else {
+            compareSlotB = psiList[index];
+            document.getElementById('slotB').classList.add('filled');
+            document.getElementById('slotBName').textContent = `Segment [${index}]`;
+        }
+        activeCompareSlot = null;
+        updateComparison();
+    }
+    
+    // Show selection info
+    if (psiList[index]) {
+        const data = psiList[index];
+        document.getElementById('selectionInfo').innerHTML = `
+            <div class="metric-row">
+                <span class="label">Segment</span>
+                <span class="value">[${index}]</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">ΔΦ</span>
+                <span class="value">${data.psi.dPhi.toFixed(4)}</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">κ</span>
+                <span class="value">${data.psi.kappa.toFixed(4)}</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">θ</span>
+                <span class="value">${(data.psi.theta/CONST.pi).toFixed(4)}π</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">N</span>
+                <span class="value">${data.psi.N.toFixed(4)}</span>
+            </div>
+            <div class="metric-row">
+                <span class="label">C</span>
+                <span class="value">${(data.psi.C*100).toFixed(2)}%</span>
+            </div>
+            <div style="margin-top: 12px; font-size: 0.8rem; color: var(--muted); word-break: break-word;">
+                "${escapeHtml(data.segment.substring(0, 150))}${data.segment.length > 150 ? '...' : ''}"
+            </div>
+        `;
+    }
+    
+    render();
+}
+
+function setCompareSlot(slot) {
+    activeCompareSlot = slot;
+}
+
+function updateComparison() {
+    const result = document.getElementById('compareResult');
+    if (compareSlotA && compareSlotB) {
+        const dist = compareSlotA.psi.dist(compareSlotB.psi);
+        document.getElementById('distanceValue').textContent = dist.toFixed(4);
+        result.style.display = 'block';
+    } else {
+        result.style.display = 'none';
+    }
+}
+
+function updateStats() {
+    if (psiList.length === 0) {
+        document.getElementById('avgCoherence').textContent = '—';
+        document.getElementById('dPhiRange').textContent = '—';
+        document.getElementById('kappaRange').textContent = '—';
+        document.getElementById('thetaSpread').textContent = '—';
+        document.getElementById('coherenceStd').textContent = '—';
+        return;
+    }
+    
+    const dPhis = psiList.map(p => p.psi.dPhi);
+    const kappas = psiList.map(p => p.psi.kappa);
+    const thetas = psiList.map(p => p.psi.theta);
+    const Cs = psiList.map(p => p.psi.C);
+    
+    const avgC = Cs.reduce((a, b) => a + b, 0) / Cs.length;
+    const stdC = Math.sqrt(Cs.reduce((s, c) => s + (c - avgC) ** 2, 0) / Cs.length);
+    
+    // Circular spread for theta
+    const sinSum = thetas.reduce((s, t) => s + Math.sin(t), 0);
+    const cosSum = thetas.reduce((s, t) => s + Math.cos(t), 0);
+    const R = Math.sqrt(sinSum ** 2 + cosSum ** 2) / thetas.length;
+    const thetaSpread = 1 - R; // 0 = all aligned, 1 = spread out
+    
+    document.getElementById('avgCoherence').textContent = (avgC * 100).toFixed(1) + '%';
+    document.getElementById('dPhiRange').textContent = `[${Math.min(...dPhis).toFixed(3)}, ${Math.max(...dPhis).toFixed(3)}]`;
+    document.getElementById('kappaRange').textContent = `[${Math.min(...kappas).toFixed(3)}, ${Math.max(...kappas).toFixed(3)}]`;
+    document.getElementById('thetaSpread').textContent = (thetaSpread * 100).toFixed(1) + '%';
+    document.getElementById('coherenceStd').textContent = (stdC * 100).toFixed(2) + '%';
+    
+    // Update M∞ display
+    document.getElementById('memoryC').textContent = memory.mInf.C.toFixed(3);
+    document.getElementById('mInfDPhi').textContent = memory.mInf.dPhi.toFixed(4);
+    document.getElementById('mInfKappa').textContent = memory.mInf.kappa.toFixed(4);
+    document.getElementById('mInfTheta').textContent = (memory.mInf.theta / CONST.pi).toFixed(4) + 'π';
+    document.getElementById('mInfC').textContent = (memory.mInf.C * 100).toFixed(2) + '%';
+    document.getElementById('mInfBar').style.width = (memory.mInf.C * 100) + '%';
+}
+
+function clearAll() {
+    rawText = '';
+    segments = [];
+    psiList = [];
+    memory.reset();
+    selectedIndex = -1;
+    compareSlotA = null;
+    compareSlotB = null;
+    
+    document.getElementById('segmentList').innerHTML = '';
+    document.getElementById('processBtn').disabled = true;
+    document.getElementById('slotA').classList.remove('filled');
+    document.getElementById('slotB').classList.remove('filled');
+    document.getElementById('slotAName').textContent = 'Drop segment';
+    document.getElementById('slotBName').textContent = 'Drop segment';
+    document.getElementById('compareResult').style.display = 'none';
+    document.getElementById('selectionInfo').innerHTML = '<p style="color: var(--muted); font-size: 0.85rem;">Click a segment to view details</p>';
+    
+    updateStats();
+    render();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const canvas = document.getElementById('vizCanvas');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('vizTooltip');
+const legend = document.getElementById('vizLegend');
+
+function resizeCanvas() {
+    const container = canvas.parentElement;
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    render();
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function setVizMode(mode) {
+    vizMode = mode;
+    document.querySelectorAll('.viz-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    render();
+}
+
+function render() {
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    switch (vizMode) {
+        case 'scatter': renderScatter(); break;
+        case 'polar': renderPolar(); break;
+        case 'timeline': renderTimeline(); break;
+        case 'interference': renderInterference(); break;
+    }
+}
+
+function renderScatter() {
+    if (psiList.length === 0) {
+        renderEmptyState('Load and process text to see ΔΦ-κ scatter plot');
+        return;
+    }
+    
+    const padding = 60;
+    const w = canvas.width - padding * 2;
+    const h = canvas.height - padding * 2;
+    
+    // Find ranges
+    const dPhis = psiList.map(p => p.psi.dPhi);
+    const kappas = psiList.map(p => p.psi.kappa);
+    const dPhiMin = Math.min(...dPhis) - 0.05;
+    const dPhiMax = Math.max(...dPhis) + 0.05;
+    const kappaMin = Math.min(...kappas) - 0.05;
+    const kappaMax = Math.max(...kappas) + 0.05;
+    
+    // Draw axes
+    ctx.strokeStyle = '#2a2a35';
+    ctx.lineWidth = 1;
+    
+    // X axis
+    ctx.beginPath();
+    ctx.moveTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // Y axis
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // Labels
+    ctx.fillStyle = '#888899';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('ΔΦ (Semantic Tension)', canvas.width / 2, canvas.height - 15);
+    
+    ctx.save();
+    ctx.translate(15, canvas.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('κ (Curvature)', 0, 0);
+    ctx.restore();
+    
+    // Grid
+    ctx.strokeStyle = '#1a1a25';
+    for (let i = 0; i <= 4; i++) {
+        const x = padding + (w * i / 4);
+        const y = padding + (h * i / 4);
+        
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, canvas.height - padding);
+        ctx.stroke();
+        
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(canvas.width - padding, y);
+        ctx.stroke();
+        
+        // Tick labels
+        ctx.fillStyle = '#888899';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText((dPhiMin + (dPhiMax - dPhiMin) * i / 4).toFixed(2), x, canvas.height - padding + 15);
+        ctx.textAlign = 'right';
+        ctx.fillText((kappaMax - (kappaMax - kappaMin) * i / 4).toFixed(2), padding - 8, y + 4);
+    }
+    
+    // Draw points
+    psiList.forEach((data, i) => {
+        const x = padding + ((data.psi.dPhi - dPhiMin) / (dPhiMax - dPhiMin)) * w;
+        const y = padding + ((kappaMax - data.psi.kappa) / (kappaMax - kappaMin)) * h;
+        
+        // Size based on N
+        const radius = 5 + data.psi.N * 10;
+        
+        // Color based on θ (phase)
+        const hue = (data.psi.theta / CONST.tau) * 360;
+        
+        // Coherence ring
+        ctx.beginPath();
+        ctx.arc(x, y, radius + 3, 0, CONST.tau);
+        ctx.strokeStyle = `hsla(${120}, 70%, 50%, ${data.psi.C})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Main point
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, CONST.tau);
+        ctx.fillStyle = `hsla(${hue}, 70%, 50%, 0.8)`;
+        ctx.fill();
+        
+        // Selected highlight
+        if (i === selectedIndex) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius + 8, 0, CONST.tau);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+        
+        // Index label
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '9px monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(i.toString(), x, y + 3);
+    });
+    
+    // Legend
+    legend.innerHTML = `
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: linear-gradient(90deg, hsl(0,70%,50%), hsl(180,70%,50%), hsl(360,70%,50%));"></div>
+            <span>Color = θ (phase)</span>
+        </div>
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: var(--coherence); border-radius: 50%;"></div>
+            <span>Ring = C (coherence)</span>
+        </div>
+        <div class="viz-legend-item">
+            <span style="margin-left: 20px;">Size = N (energy)</span>
+        </div>
+    `;
+}
+
+function renderPolar() {
+    if (psiList.length === 0) {
+        renderEmptyState('Load and process text to see phase polar plot');
+        return;
+    }
+    
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const maxRadius = Math.min(cx, cy) - 60;
+    
+    // Draw polar grid
+    ctx.strokeStyle = '#2a2a35';
+    ctx.lineWidth = 1;
+    
+    // Circles
+    for (let r = 0.25; r <= 1; r += 0.25) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, maxRadius * r, 0, CONST.tau);
+        ctx.stroke();
+        
+        ctx.fillStyle = '#888899';
+        ctx.font = '10px monospace';
+        ctx.fillText((r).toFixed(2), cx + 5, cy - maxRadius * r + 12);
+    }
+    
+    // Radial lines
+    for (let a = 0; a < CONST.tau; a += CONST.pi / 4) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(a) * maxRadius, cy + Math.sin(a) * maxRadius);
+        ctx.stroke();
+        
+        // Angle labels
+        ctx.fillStyle = '#888899';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'center';
+        const labelR = maxRadius + 20;
+        ctx.fillText((a / CONST.pi).toFixed(1) + 'π', cx + Math.cos(a) * labelR, cy + Math.sin(a) * labelR + 4);
+    }
+    
+    // Draw points (r = coherence, angle = theta)
+    psiList.forEach((data, i) => {
+        const r = data.psi.C * maxRadius;
+        const angle = data.psi.theta;
+        const x = cx + Math.cos(angle) * r;
+        const y = cy + Math.sin(angle) * r;
+        
+        const size = 4 + data.psi.N * 8;
+        const hue = (data.psi.kappa / CONST.kappa_max) * 180 + 180; // κ as hue
+        
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, CONST.tau);
+        ctx.fillStyle = `hsla(${hue}, 70%, 50%, 0.8)`;
+        ctx.fill();
+        
+        if (i === selectedIndex) {
+            ctx.beginPath();
+            ctx.arc(x, y, size + 5, 0, CONST.tau);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+    });
+    
+    // Draw M∞ attractor
+    const mR = memory.mInf.C * maxRadius;
+    const mAngle = memory.mInf.theta;
+    const mX = cx + Math.cos(mAngle) * mR;
+    const mY = cy + Math.sin(mAngle) * mR;
+    
+    ctx.beginPath();
+    ctx.arc(mX, mY, 12, 0, CONST.tau);
+    ctx.strokeStyle = '#ff6b6b';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(255, 107, 107, 0.3)';
+    ctx.fill();
+    
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('M∞', mX, mY + 4);
+    
+    legend.innerHTML = `
+        <div class="viz-legend-item">
+            <span>Radius = C (coherence)</span>
+        </div>
+        <div class="viz-legend-item">
+            <span>Angle = θ (phase)</span>
+        </div>
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: linear-gradient(90deg, hsl(180,70%,50%), hsl(270,70%,50%), hsl(360,70%,50%));"></div>
+            <span>Color = κ (curvature)</span>
+        </div>
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: var(--maat); border-radius: 50%;"></div>
+            <span>M∞ = Memory attractor</span>
+        </div>
+    `;
+}
+
+function renderTimeline() {
+    if (psiList.length === 0 || memory.history.length === 0) {
+        renderEmptyState('Load and process text to see M∞ timeline');
+        return;
+    }
+    
+    const padding = 60;
+    const w = canvas.width - padding * 2;
+    const h = canvas.height - padding * 2;
+    
+    // Draw axes
+    ctx.strokeStyle = '#2a2a35';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, canvas.height - padding);
+    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, canvas.height - padding);
+    ctx.stroke();
+    
+    // Labels
+    ctx.fillStyle = '#888899';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('Segment Index (Time)', canvas.width / 2, canvas.height - 15);
+    
+    ctx.save();
+    ctx.translate(15, canvas.height / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Field Value', 0, 0);
+    ctx.restore();
+    
+    const history = memory.history;
+    const n = history.length;
+    
+    // Draw lines for each component
+    const components = [
+        { key: 'C', color: '#7fff00', label: 'Coherence' },
+        { key: 'kappa', color: '#2a9d8f', label: 'κ', scale: 1/CONST.kappa_max },
+        { key: 'theta', color: '#9b5de5', label: 'θ', scale: 1/CONST.tau },
+        { key: 'dPhi', color: '#f4a261', label: 'ΔΦ' }
+    ];
+    
+    components.forEach(comp => {
+        ctx.beginPath();
+        ctx.strokeStyle = comp.color;
+        ctx.lineWidth = 2;
+        
+        history.forEach((h, i) => {
+            let val = h.mInf[comp.key];
+            if (comp.scale) val *= comp.scale;
+            val = Math.min(1, Math.max(0, val));
+            
+            const x = padding + (i / (n - 1)) * w;
+            const y = canvas.height - padding - val * h;
+            
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        });
+        
+        ctx.stroke();
+    });
+    
+    // Tick marks
+    ctx.fillStyle = '#888899';
+    ctx.font = '10px monospace';
+    for (let i = 0; i <= 4; i++) {
+        const x = padding + (w * i / 4);
+        const idx = Math.round((n - 1) * i / 4);
+        ctx.textAlign = 'center';
+        ctx.fillText(idx.toString(), x, canvas.height - padding + 15);
+        
+        const y = canvas.height - padding - (h * i / 4);
+        ctx.textAlign = 'right';
+        ctx.fillText((i / 4).toFixed(1), padding - 8, y + 4);
+    }
+    
+    // Selected position
+    if (selectedIndex >= 0 && selectedIndex < history.length) {
+        const x = padding + (selectedIndex / (n - 1)) * w;
+        ctx.beginPath();
+        ctx.moveTo(x, padding);
+        ctx.lineTo(x, canvas.height - padding);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
+    
+    legend.innerHTML = components.map(c => `
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: ${c.color};"></div>
+            <span>${c.label}</span>
+        </div>
+    `).join('');
+}
+
+function renderInterference() {
+    if (!compareSlotA || !compareSlotB) {
+        renderEmptyState('Select two segments (A and B) in the Analysis panel to simulate interference');
+        return;
+    }
+    
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const maxRadius = Math.min(cx, cy) - 80;
+    
+    const psiA = compareSlotA.psi;
+    const psiB = compareSlotB.psi;
+    
+    // Simulate blending at different ratios
+    const blendPoints = [];
+    for (let alpha = 0; alpha <= 1; alpha += 0.05) {
+        const blended = psiA.blend(psiB, alpha);
+        blendPoints.push({ alpha, psi: blended });
+    }
+    
+    // Draw interference pattern
+    ctx.strokeStyle = '#2a2a35';
+    ctx.lineWidth = 1;
+    
+    // Background circles
+    for (let r = 0.25; r <= 1; r += 0.25) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, maxRadius * r, 0, CONST.tau);
+        ctx.stroke();
+    }
+    
+    // Draw A
+    const rA = psiA.C * maxRadius;
+    const xA = cx + Math.cos(psiA.theta) * rA;
+    const yA = cy + Math.sin(psiA.theta) * rA;
+    
+    ctx.beginPath();
+    ctx.arc(xA, yA, 15, 0, CONST.tau);
+    ctx.fillStyle = 'rgba(244, 162, 97, 0.8)';
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', xA, yA + 4);
+    
+    // Draw B
+    const rB = psiB.C * maxRadius;
+    const xB = cx + Math.cos(psiB.theta) * rB;
+    const yB = cy + Math.sin(psiB.theta) * rB;
+    
+    ctx.beginPath();
+    ctx.arc(xB, yB, 15, 0, CONST.tau);
+    ctx.fillStyle = 'rgba(0, 212, 255, 0.8)';
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.fillText('B', xB, yB + 4);
+    
+    // Draw interference path
+    ctx.beginPath();
+    ctx.strokeStyle = '#7fff00';
+    ctx.lineWidth = 3;
+    
+    blendPoints.forEach((bp, i) => {
+        const r = bp.psi.C * maxRadius;
+        const x = cx + Math.cos(bp.psi.theta) * r;
+        const y = cy + Math.sin(bp.psi.theta) * r;
+        
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    
+    // Draw blend markers
+    [0, 0.25, 0.5, 0.75, 1].forEach(alpha => {
+        const bp = blendPoints[Math.round(alpha * 20)];
+        const r = bp.psi.C * maxRadius;
+        const x = cx + Math.cos(bp.psi.theta) * r;
+        const y = cy + Math.sin(bp.psi.theta) * r;
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, CONST.tau);
+        ctx.fillStyle = '#7fff00';
+        ctx.fill();
+        
+        ctx.fillStyle = '#888899';
+        ctx.font = '9px monospace';
+        ctx.fillText((alpha * 100).toFixed(0) + '%', x, y - 12);
+    });
+    
+    // Info
+    ctx.fillStyle = '#888899';
+    ctx.font = '12px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(`d(A,B) = ${psiA.dist(psiB).toFixed(4)}`, 20, 30);
+    ctx.fillText(`θ_A = ${(psiA.theta/CONST.pi).toFixed(2)}π, θ_B = ${(psiB.theta/CONST.pi).toFixed(2)}π`, 20, 50);
+    ctx.fillText(`C_A = ${(psiA.C*100).toFixed(1)}%, C_B = ${(psiB.C*100).toFixed(1)}%`, 20, 70);
+    
+    legend.innerHTML = `
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: rgba(244, 162, 97, 0.8);"></div>
+            <span>Text A</span>
+        </div>
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: rgba(0, 212, 255, 0.8);"></div>
+            <span>Text B</span>
+        </div>
+        <div class="viz-legend-item">
+            <div class="viz-legend-color" style="background: var(--coherence);"></div>
+            <span>Interference path</span>
+        </div>
+    `;
+}
+
+function renderEmptyState(message) {
+    ctx.fillStyle = '#888899';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(message, canvas.width / 2, canvas.height / 2);
+    legend.innerHTML = '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════════════════════════════
+
+canvas.addEventListener('mousemove', (e) => {
+    if (vizMode !== 'scatter' || psiList.length === 0) {
+        tooltip.classList.remove('visible');
+        return;
+    }
+    
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    
+    const padding = 60;
+    const w = canvas.width - padding * 2;
+    const h = canvas.height - padding * 2;
+    
+    const dPhis = psiList.map(p => p.psi.dPhi);
+    const kappas = psiList.map(p => p.psi.kappa);
+    const dPhiMin = Math.min(...dPhis) - 0.05;
+    const dPhiMax = Math.max(...dPhis) + 0.05;
+    const kappaMin = Math.min(...kappas) - 0.05;
+    const kappaMax = Math.max(...kappas) + 0.05;
+    
+    let closest = null;
+    let closestDist = Infinity;
+    
+    psiList.forEach((data, i) => {
+        const x = padding + ((data.psi.dPhi - dPhiMin) / (dPhiMax - dPhiMin)) * w;
+        const y = padding + ((kappaMax - data.psi.kappa) / (kappaMax - kappaMin)) * h;
+        const dist = Math.sqrt((mx - x) ** 2 + (my - y) ** 2);
+        
+        if (dist < closestDist && dist < 30) {
+            closestDist = dist;
+            closest = { data, x, y };
+        }
+    });
+    
+    if (closest) {
+        tooltip.innerHTML = `
+            <strong>[${closest.data.index}]</strong><br>
+            ΔΦ: ${closest.data.psi.dPhi.toFixed(4)}<br>
+            κ: ${closest.data.psi.kappa.toFixed(4)}<br>
+            θ: ${(closest.data.psi.theta/CONST.pi).toFixed(3)}π<br>
+            C: ${(closest.data.psi.C*100).toFixed(1)}%<br>
+            <span style="color: var(--muted); font-size: 0.75rem;">
+                "${closest.data.segment.substring(0, 50)}..."
+            </span>
+        `;
+        tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+        tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+        tooltip.classList.add('visible');
+    } else {
+        tooltip.classList.remove('visible');
+    }
+});
+
+canvas.addEventListener('mouseleave', () => {
+    tooltip.classList.remove('visible');
+});
+
+canvas.addEventListener('click', (e) => {
+    if (vizMode !== 'scatter' || psiList.length === 0) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    
+    const padding = 60;
+    const w = canvas.width - padding * 2;
+    const h = canvas.height - padding * 2;
+    
+    const dPhis = psiList.map(p => p.psi.dPhi);
+    const kappas = psiList.map(p => p.psi.kappa);
+    const dPhiMin = Math.min(...dPhis) - 0.05;
+    const dPhiMax = Math.max(...dPhis) + 0.05;
+    const kappaMin = Math.min(...kappas) - 0.05;
+    const kappaMax = Math.max(...kappas) + 0.05;
+    
+    psiList.forEach((data, i) => {
+        const x = padding + ((data.psi.dPhi - dPhiMin) / (dPhiMax - dPhiMin)) * w;
+        const y = padding + ((kappaMax - data.psi.kappa) / (kappaMax - kappaMin)) * h;
+        const dist = Math.sqrt((mx - x) ** 2 + (my - y) ** 2);
+        
+        if (dist < 20) {
+            selectSegment(i);
+        }
+    });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function exportData() {
+    const data = {
+        timestamp: new Date().toISOString(),
+        segments: psiList.map(p => ({
+            index: p.index,
+            text: p.segment,
+            psi: {
+                dPhi: p.psi.dPhi,
+                kappa: p.psi.kappa,
+                theta: p.psi.theta,
+                N: p.psi.N,
+                C: p.psi.C
+            }
+        })),
+        memory: {
+            dPhi: memory.mInf.dPhi,
+            kappa: memory.mInf.kappa,
+            theta: memory.mInf.theta,
+            N: memory.mInf.N,
+            C: memory.mInf.C
+        },
+        memoryHistory: memory.history.map(h => ({
+            t: h.t,
+            C: h.mInf.C,
+            theta: h.mInf.theta
+        }))
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ascpi_fieldlab_export.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function exportSVG() {
+    // Simple SVG export of current scatter
+    if (psiList.length === 0) return;
+    
+    const width = 800;
+    const height = 600;
+    const padding = 60;
+    
+    const dPhis = psiList.map(p => p.psi.dPhi);
+    const kappas = psiList.map(p => p.psi.kappa);
+    const dPhiMin = Math.min(...dPhis) - 0.05;
+    const dPhiMax = Math.max(...dPhis) + 0.05;
+    const kappaMin = Math.min(...kappas) - 0.05;
+    const kappaMax = Math.max(...kappas) + 0.05;
+    
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
+        <rect fill="#0a0a0f" width="${width}" height="${height}"/>
+        <line x1="${padding}" y1="${height-padding}" x2="${width-padding}" y2="${height-padding}" stroke="#2a2a35"/>
+        <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${height-padding}" stroke="#2a2a35"/>
+        <text x="${width/2}" y="${height-15}" fill="#888899" text-anchor="middle" font-size="12">ΔΦ</text>
+        <text x="15" y="${height/2}" fill="#888899" text-anchor="middle" font-size="12" transform="rotate(-90 15 ${height/2})">κ</text>`;
+    
+    psiList.forEach((data, i) => {
+        const x = padding + ((data.psi.dPhi - dPhiMin) / (dPhiMax - dPhiMin)) * (width - padding * 2);
+        const y = padding + ((kappaMax - data.psi.kappa) / (kappaMax - kappaMin)) * (height - padding * 2);
+        const radius = 5 + data.psi.N * 10;
+        const hue = (data.psi.theta / CONST.tau) * 360;
+        
+        svg += `<circle cx="${x}" cy="${y}" r="${radius+3}" fill="none" stroke="hsl(120,70%,50%)" stroke-opacity="${data.psi.C}"/>`;
+        svg += `<circle cx="${x}" cy="${y}" r="${radius}" fill="hsl(${hue},70%,50%)" fill-opacity="0.8"/>`;
+        svg += `<text x="${x}" y="${y+3}" fill="white" text-anchor="middle" font-size="9">${i}</text>`;
+    });
+    
+    svg += '</svg>';
+    
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ascpi_fieldlab_scatter.svg';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Listen for segmentation mode changes
+document.querySelectorAll('input[name="segMode"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+        if (rawText) segmentAndDisplay();
+    });
+});
+
+// Initial render
+render();
+</script>
+</body>
+</html>
