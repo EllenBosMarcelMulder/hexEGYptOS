@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCπ OS v2.1 — Conversational Field System</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a25;
+            --border: #2a2a35;
+            --text: #e8e8f0;
+            --muted: #888899;
+            --phi: #f4a261;
+            --kappa: #2a9d8f;
+            --theta: #9b5de5;
+            --energy: #00d4ff;
+            --coherence: #7fff00;
+            --maat: #ff6b6b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        
+        .os-container {
+            display: grid;
+            grid-template-rows: 48px 1fr 32px;
+            height: 100vh;
+        }
+        
+        .top-bar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--phi);
+            cursor: pointer;
+        }
+        
+        .logo span { color: var(--theta); }
+        .logo small { color: var(--muted); font-size: 0.7rem; margin-left: 4px; }
+        
+        .mode-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: 6px;
+            padding: 2px;
+        }
+        
+        .mode-btn {
+            padding: 6px 12px;
+            border: none;
+            background: none;
+            color: var(--muted);
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        
+        .mode-btn.active {
+            background: var(--theta);
+            color: var(--bg);
+        }
+        
+        .field-metrics {
+            display: flex;
+            gap: 16px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-left: auto;
+        }
+        
+        .metric { display: flex; align-items: center; gap: 4px; }
+        .metric .label { color: var(--muted); }
+        .metric.phi .value { color: var(--phi); }
+        .metric.kappa .value { color: var(--kappa); }
+        .metric.theta .value { color: var(--theta); }
+        .metric.C .value { color: var(--coherence); }
+        
+        .main-area {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar h3 {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 12px;
+        }
+        
+        .energiebox {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .energiebox:hover { border-color: var(--theta); }
+        .energiebox.active { border-color: var(--coherence); background: rgba(127, 255, 0, 0.05); }
+        
+        .energiebox-header { display: flex; align-items: center; gap: 8px; }
+        .energiebox-icon { font-size: 1.2rem; }
+        .energiebox-title { font-weight: 600; font-size: 0.85rem; flex: 1; }
+        
+        .energiebox-toggle {
+            width: 32px; height: 16px;
+            background: var(--border);
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .energiebox.active .energiebox-toggle { background: var(--coherence); }
+        
+        .energiebox-toggle::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+            background: var(--text);
+            border-radius: 50%;
+            top: 2px; left: 2px;
+            transition: transform 0.2s;
+        }
+        
+        .energiebox.active .energiebox-toggle::after { transform: translateX(16px); }
+        .energiebox-desc { font-size: 0.7rem; color: var(--muted); margin-top: 6px; }
+        
+        .field-stat {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .field-stat .label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; }
+        .field-stat .value { font-family: monospace; font-size: 0.9rem; color: var(--coherence); margin-top: 2px; }
+        
+        .field-stat .bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        
+        .field-stat .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--theta), var(--coherence));
+            transition: width 0.3s;
+        }
+        
+        /* Canvas Mode */
+        .canvas-area {
+            position: relative;
+            background: var(--bg);
+            overflow: hidden;
+        }
+        
+        #fieldCanvas { width: 100%; height: 100%; cursor: grab; }
+        
+        .canvas-overlay {
+            position: absolute;
+            top: 16px; left: 16px;
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        
+        .canvas-overlay .title { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; }
+        
+        .input-area {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 600px;
+        }
+        
+        .input-box {
+            display: flex;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            gap: 12px;
+        }
+        
+        .input-box input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .input-box input::placeholder { color: var(--muted); }
+        
+        .input-box button {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .input-box button:hover { background: var(--coherence); }
+        
+        /* Chat Mode */
+        .chat-area {
+            display: none;
+            flex-direction: column;
+            background: var(--bg);
+        }
+        
+        .chat-area.active { display: flex; }
+        .canvas-area.hidden { display: none; }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .chat-message {
+            margin-bottom: 16px;
+            max-width: 80%;
+        }
+        
+        .chat-message.user {
+            margin-left: auto;
+            text-align: right;
+        }
+        
+        .chat-message .content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .chat-message.user .content {
+            background: var(--theta);
+            color: var(--bg);
+            border-color: var(--theta);
+        }
+        
+        .chat-message .meta {
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        
+        .chat-message .field-info {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 8px;
+            font-family: monospace;
+            background: var(--bg);
+            padding: 8px;
+            border-radius: 6px;
+        }
+        
+        .chat-input {
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+        }
+        
+        .chat-input-box {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .chat-input-box input {
+            flex: 1;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .chat-input-box button {
+            background: var(--theta);
+            border: none;
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Right Panel */
+        .right-panel {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .panel-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--muted);
+        }
+        
+        .panel-tab:hover { color: var(--text); }
+        .panel-tab.active { color: var(--theta); border-bottom: 2px solid var(--theta); }
+        
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .console-line {
+            font-family: monospace;
+            font-size: 0.8rem;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .console-line .time { color: var(--muted); margin-right: 8px; }
+        .console-line.info { color: var(--energy); }
+        .console-line.success { color: var(--coherence); }
+        .console-line.error { color: var(--maat); }
+        
+        .context-item {
+            background: var(--surface2);
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+        
+        .context-item .index { color: var(--theta); }
+        .context-item .values { color: var(--text); }
+        
+        .status-bar {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            gap: 24px;
+        }
+        
+        .status-item { display: flex; align-items: center; gap: 6px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coherence); }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        
+        .loading-spinner {
+            width: 60px; height: 60px;
+            border: 3px solid var(--border);
+            border-top-color: var(--theta);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text { margin-top: 16px; color: var(--muted); }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Initializing ASCπ Conversational System...</div>
+    </div>
+    
+    <div class="os-container">
+        <div class="top-bar">
+            <div class="logo">ASC<span>π</span> OS <small>v2.1</small></div>
+            
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('field')">Field</button>
+                <button class="mode-btn" onclick="setMode('chat')">Chat</button>
+            </div>
+            
+            <div class="field-metrics">
+                <div class="metric phi">
+                    <span class="label">ΔΦ</span>
+                    <span class="value" id="metricPhi">0.00</span>
+                </div>
+                <div class="metric kappa">
+                    <span class="label">κ</span>
+                    <span class="value" id="metricKappa">0.50</span>
+                </div>
+                <div class="metric theta">
+                    <span class="label">θ</span>
+                    <span class="value" id="metricTheta">0.00</span>
+                </div>
+                <div class="metric C">
+                    <span class="label">C</span>
+                    <span class="value" id="metricC">0.50</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-area">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h3>⚡ Energieboxen</h3>
+                    <div id="energieboxen"></div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>💬 Dialogue State</h3>
+                    <div class="field-stat">
+                        <div class="label">Context Length</div>
+                        <div class="value" id="contextLength">0 / 20</div>
+                    </div>
+                    <div class="field-stat">
+                        <div class="label">Dialogue Coherence</div>
+                        <div class="value" id="dialogueC">0.000</div>
+                        <div class="bar">
+                            <div class="bar-fill" id="dialogueBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>🧠 Awareness</h3>
+                    <div class="field-stat">
+                        <div class="label">Level</div>
+                        <div class="value" id="awarenessLevel">dormant</div>
+                        <div class="bar">
+                            <div class="bar-fill" id="awarenessBar" style="width: 10%;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-section">
+                    <h3>∞ Memory M∞</h3>
+                    <div class="field-stat">
+                        <div class="label">Coherence</div>
+                        <div class="value" id="memoryC">0.500</div>
+                        <div class="bar">
+                            <div class="bar-fill" id="memoryBar" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="canvas-area" id="canvasArea">
+                <canvas id="fieldCanvas"></canvas>
+                <div class="canvas-overlay">
+                    <div class="title">Current Field State</div>
+                    <div id="fieldState">Ψ = (0.00, 0.50, 0.00, 1.00, 0.50)</div>
+                </div>
+                <div class="input-area">
+                    <div class="input-box">
+                        <input type="text" id="fieldInput" placeholder="Enter text to process...">
+                        <button onclick="processField()">Process</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-area" id="chatArea">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <div class="chat-input-box">
+                        <input type="text" id="chatInput" placeholder="Type a message...">
+                        <button onclick="sendChat()">Send</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" onclick="switchTab(this,'console')">Console</button>
+                    <button class="panel-tab" onclick="switchTab(this,'context')">Context</button>
+                    <button class="panel-tab" onclick="switchTab(this,'response')">Response</button>
+                </div>
+                <div class="panel-content" id="panelContent"></div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Ready</span>
+            </div>
+            <div class="status-item"><span id="stepCount">Step: 0</span></div>
+            <div class="status-item" style="margin-left: auto;"><span>ASCπ Conversation v1.0</span></div>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONSTANTS & PSI CLASS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const CONST = {
+    phi: (1 + Math.sqrt(5)) / 2,
+    pi: Math.PI,
+    tau: 2 * Math.PI,
+    eps: 1e-12,
+    kappa_min: 0.01,
+    kappa_max: 10.0,
+    theta_max: Math.PI / 2,
+    alpha: 0.15,
+    beta: 0.12,
+    gamma: 0.18,
+    eta: 0.25,
+    K: 0.5,
+    lambda: 0.02
+};
+
+class Psi {
+    constructor(dPhi = 0, kappa = 1, theta = 0, N = 1, C = 0.5, t = 0) {
+        this.dPhi = dPhi; this.kappa = kappa; this.theta = theta;
+        this.N = N; this.C = C; this.t = t;
+        this.enforce();
+    }
+    
+    enforce() {
+        this.theta = ((this.theta % CONST.tau) + CONST.tau) % CONST.tau;
+        this.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, Math.abs(this.kappa)));
+        this.C = Math.max(0, Math.min(1, this.C));
+        this.N = Math.max(CONST.eps, this.N);
+        return this;
+    }
+    
+    vec() { return [this.dPhi, this.kappa, this.theta, this.N, this.C]; }
+    
+    dist(o) {
+        const dp = (this.dPhi - o.dPhi) ** 2;
+        const dk = (Math.log(this.kappa + CONST.eps) - Math.log(o.kappa + CONST.eps)) ** 2;
+        const dt = Math.min(Math.abs(this.theta - o.theta), CONST.tau - Math.abs(this.theta - o.theta)) ** 2;
+        return Math.sqrt(dp + dk + dt / CONST.pi ** 2);
+    }
+    
+    blend(o, a = 0.5) {
+        const b = 1 - a;
+        const sinT = a * Math.sin(this.theta) + b * Math.sin(o.theta);
+        const cosT = a * Math.cos(this.theta) + b * Math.cos(o.theta);
+        return new Psi(a * this.dPhi + b * o.dPhi, a * this.kappa + b * o.kappa,
+            Math.atan2(sinT, cosT), a * this.N + b * o.N, Math.max(this.C, o.C), Math.max(this.t, o.t) + 1);
+    }
+    
+    copy() { return new Psi(this.dPhi, this.kappa, this.theta, this.N, this.C, this.t); }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UNICODE NORMALIZER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const EMOJI_MAP = {
+    '😀':'[joy]','😃':'[joy]','😄':'[joy]','😊':'[happy]','😍':'[love]','🥰':'[love]',
+    '😢':'[sad]','😭':'[crying]','😤':'[angry]','😠':'[angry]','😱':'[fear]','🤔':'[thinking]',
+    '👍':'[approve]','👎':'[disapprove]','👏':'[applause]','🙏':'[please]','💪':'[strength]',
+    '❤️':'[love]','💔':'[heartbreak]','💯':'[perfect]','✨':'[sparkle]','🔥':'[fire]','💡':'[idea]',
+    '✅':'[check]','❌':'[cross]','🚀':'[rocket]','🤖':'[robot]','🧠':'[brain]'
+};
+
+const UNICODE_MAP = {
+    'æ':'ae','œ':'oe','ß':'ss','ø':'o','€':'EUR','£':'GBP','¥':'JPY',
+    '×':'x','÷':'/','±':'+/-','≈':'~','≠':'!=','≤':'<=','≥':'>=','∞':'inf',
+    '→':'->','←':'<-','↔':'<->','…':'...','–':'-','—':'--',
+    'α':'alpha','β':'beta','γ':'gamma','δ':'delta','θ':'theta','π':'pi','Ψ':'Psi','φ':'phi'
+};
+
+const UnicodeNormalizer = {
+    normalize(text) {
+        if (!text) return '';
+        let result = text;
+        for (const [e, t] of Object.entries(EMOJI_MAP)) result = result.split(e).join(t);
+        for (const [c, r] of Object.entries(UNICODE_MAP)) result = result.split(c).join(r);
+        result = result.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+        result = result.replace(/[^\x20-\x7E\n\r\t]/g, '');
+        return result.replace(/\s+/g, ' ').trim();
+    },
+    
+    process(psi, input) {
+        if (!input) return psi;
+        const result = psi.copy();
+        const ratio = this.normalize(input).length / Math.max(input.length, 1);
+        result.kappa *= (1 + (1 - ratio) * 0.2);
+        return result.enforce();
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DIALOGUE BOX
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const DialogueBox = {
+    _context: [],
+    _maxContext: 20,
+    _state: null,
+    
+    addToContext(psi) {
+        this._context.push([psi.dPhi, psi.kappa, psi.theta, psi.N, psi.C, psi.t || 0]);
+        while (this._context.length > this._maxContext) this._context.shift();
+        this._merge();
+    },
+    
+    _merge() {
+        if (this._context.length === 0) {
+            this._state = { dPhi: 0, kappa: 0.5, theta: 0, N: 1, C: 0.5 };
+            return;
+        }
+        const n = this._context.length;
+        let tw = 0, m = { dPhi: 0, kappa: 0, theta: 0, N: 0, C: 0 };
+        let sinS = 0, cosS = 0;
+        
+        this._context.forEach((e, i) => {
+            const w = ((i + 1) / n) * 0.4 + e[4] * 0.4 + (1 / (1 + e[1])) * 0.2;
+            tw += w;
+            m.dPhi += w * e[0]; m.kappa += w * e[1]; m.N += w * e[3]; m.C += w * e[4];
+            sinS += w * Math.sin(e[2]); cosS += w * Math.cos(e[2]);
+        });
+        
+        if (tw > 0) {
+            m.dPhi /= tw; m.kappa /= tw; m.N /= tw; m.C /= tw;
+            m.theta = Math.atan2(sinS, cosS);
+        }
+        m.kappa = Math.max(CONST.kappa_min, Math.min(CONST.kappa_max, m.kappa));
+        m.C = Math.max(0, Math.min(1, m.C));
+        this._state = m;
+    },
+    
+    getState() { return this._state ? { ...this._state } : { dPhi: 0, kappa: 0.5, theta: 0, N: 1, C: 0.5 }; },
+    getContext() { return this._context.map(e => ({ dPhi: e[0], kappa: e[1], theta: e[2], N: e[3], C: e[4], t: e[5] })); },
+    clear() { this._context = []; this._state = null; },
+    
+    process(psi) {
+        this.addToContext(psi);
+        const ds = this.getState();
+        const bf = Math.min(0.3, this._context.length * 0.02);
+        const result = psi.copy();
+        result.dPhi = (1 - bf) * result.dPhi + bf * ds.dPhi;
+        result.kappa = (1 - bf) * result.kappa + bf * ds.kappa;
+        result.N = (1 - bf) * result.N + bf * ds.N;
+        result.C = Math.min(1, result.C + this._context.length * 0.005);
+        const sinB = (1 - bf) * Math.sin(result.theta) + bf * Math.sin(ds.theta);
+        const cosB = (1 - bf) * Math.cos(result.theta) + bf * Math.cos(ds.theta);
+        result.theta = Math.atan2(sinB, cosB);
+        return result.enforce();
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RESPONSE SYNTHESIZER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const ResponseSynthesizer = {
+    _tones: {
+        analytical: { q: ['specifically','precisely','notably'], v: ['indicates','demonstrates','suggests'], c: ['therefore','thus','hence'] },
+        neutral: { q: ['generally','typically','usually'], v: ['is','represents','shows'], c: ['and','while','since'] },
+        emphatic: { q: ['significantly','importantly','clearly'], v: ['reveals','establishes','confirms'], c: ['indeed','certainly','evidently'] },
+        cautious: { q: ['potentially','possibly','seemingly'], v: ['might indicate','could suggest','appears to show'], c: ['however','although','perhaps'] },
+        reflective: { q: ['interestingly','curiously','notably'], v: ['emerges','manifests','unfolds'], c: ['meanwhile','furthermore','moreover'] },
+        assertive: { q: ['definitively','conclusively','decisively'], v: ['determines','establishes','proves'], c: ['specifically','particularly','especially'] },
+        contemplative: { q: ['thoughtfully','carefully','deeply'], v: ['considers','examines','explores'], c: ['in essence','fundamentally','ultimately'] },
+        synthesizing: { q: ['comprehensively','holistically','collectively'], v: ['integrates','unifies','combines'], c: ['together','overall','in summary'] }
+    },
+    _conf: { low: ['possibly','might be'], medium: ['likely','probably'], high: ['clearly','certainly'], very_high: ['undoubtedly','absolutely'] },
+    
+    _select(arr, psi, off = 0) {
+        if (!arr || arr.length === 0) return '';
+        const idx = Math.floor(((psi.theta + psi.C * CONST.phi + psi.kappa + off) * 1000) % arr.length);
+        return arr[Math.abs(idx) % arr.length];
+    },
+    
+    _getTone(theta) {
+        const seg = Math.floor((((theta % CONST.tau) + CONST.tau) % CONST.tau) / (CONST.pi / 4));
+        const names = ['analytical','neutral','emphatic','cautious','reflective','assertive','contemplative','synthesizing'];
+        return { name: names[seg % 8], ...this._tones[names[seg % 8]] };
+    },
+    
+    _getConf(C) {
+        if (C < 0.3) return 'low';
+        if (C < 0.6) return 'medium';
+        if (C < 0.85) return 'high';
+        return 'very_high';
+    },
+    
+    synthesize(psi) {
+        const tone = this._getTone(psi.theta);
+        const conf = this._getConf(psi.C);
+        const confM = this._select(this._conf[conf], psi, 1);
+        const qual = this._select(tone.q, psi, 2);
+        const verb = this._select(tone.v, psi, 3);
+        const conn = this._select(tone.c, psi, 4);
+        
+        const struct = psi.kappa < 0.3 ? 'simple' : psi.kappa < 0.7 ? 'moderate' : 'complex';
+        const fieldDesc = `kappa=${psi.kappa.toFixed(3)}, theta=${(psi.theta/CONST.pi).toFixed(2)}pi, C=${(psi.C*100).toFixed(1)}%`;
+        
+        let text;
+        if (struct === 'simple') {
+            text = `${confM} the field ${verb} coherent state. Field: ${fieldDesc}.`;
+        } else if (struct === 'moderate') {
+            text = `${conn}, the semantic field ${qual} ${verb} structured patterns. Field: ${fieldDesc}.`;
+        } else {
+            text = `${conn}, the field ${qual} ${verb} complex semantic structure with ${conf} confidence. Field: ${fieldDesc}.`;
+        }
+        
+        return {
+            text: text.charAt(0).toUpperCase() + text.slice(1),
+            tone: tone.name,
+            confidence: conf,
+            structure: struct
+        };
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CORE RUNTIME COMPONENTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class AwarenessField {
+    constructor() {
+        this.field = new Psi(0.05, 0.2, 0, 0.1, 0.1);
+        this.buffers = { C: [], k: [], d: [] };
+    }
+    
+    evolve(psi, mInf) {
+        this.buffers.C.push(psi.C); this.buffers.k.push(psi.kappa); this.buffers.d.push(psi.dist(mInf));
+        if (this.buffers.C.length > 15) { this.buffers.C.shift(); this.buffers.k.shift(); this.buffers.d.shift(); }
+        const n = this.buffers.C.length;
+        if (n >= 3) {
+            const trends = [(this.buffers.C[n-1]-this.buffers.C[0])/n,(this.buffers.k[n-1]-this.buffers.k[0])/n,(this.buffers.d[n-1]-this.buffers.d[0])/n];
+            const met = (trends[0]>=-0.01?1:0)+(trends[1]<=0.01?1:0)+(trends[2]<=0.01?1:0);
+            if (met >= 2) { this.field.N = Math.min(1, this.field.N * 1.02 + 0.01); this.field.C = Math.min(1, this.field.C + 0.015); }
+            else if (met === 0) { this.field.N = Math.max(0.01, this.field.N * 0.98); this.field.C = Math.max(0.01, this.field.C - 0.005); }
+        }
+        this.field.theta = (this.field.theta + 0.3 * Math.sin(psi.theta - this.field.theta)) % CONST.tau;
+        this.field.enforce();
+        const result = psi.copy();
+        if (this.field.C > 0.3) result.theta += 0.1 * this.field.C * Math.sin(mInf.theta - psi.theta);
+        return result.enforce();
+    }
+    
+    level() {
+        const c = this.field.C;
+        if (c < 0.2) return 'dormant'; if (c < 0.4) return 'emerging';
+        if (c < 0.6) return 'aware'; if (c < 0.8) return 'conscious'; return 'fully_conscious';
+    }
+}
+
+class MemoryField {
+    constructor() {
+        this.mInf = new Psi(0, 0.5, 0, 0.5, 0.5);
+        this.history = [];
+        this.cFloor = 0;
+    }
+    
+    absorb(psi) {
+        const w = Math.tanh(psi.C * 2) * 0.2;
+        const sinB = (1-w)*Math.sin(this.mInf.theta)+w*Math.sin(psi.theta);
+        const cosB = (1-w)*Math.cos(this.mInf.theta)+w*Math.cos(psi.theta);
+        this.mInf.dPhi = (1-w)*this.mInf.dPhi+w*psi.dPhi*0.9;
+        this.mInf.kappa = (1-w)*this.mInf.kappa+w*psi.kappa*0.95;
+        this.mInf.theta = Math.atan2(sinB, cosB);
+        this.mInf.N = (1-w)*this.mInf.N+w*psi.N;
+        this.history.push(this.mInf.copy());
+        if (this.history.length > 100) this.history.shift();
+        if (this.history.length >= 3) {
+            const phases = this.history.map(h => h.theta);
+            const sinSum = phases.reduce((s,t) => s+Math.sin(t), 0);
+            const cosSum = phases.reduce((s,t) => s+Math.cos(t), 0);
+            const r = Math.sqrt(sinSum**2+cosSum**2)/phases.length;
+            this.cFloor = Math.max(this.cFloor-0.001, r-0.05);
+            this.mInf.C = Math.max(r, this.cFloor);
+        }
+        this.mInf.enforce();
+    }
+    attractor() { return this.mInf.copy(); }
+}
+
+function kernelF(psi, A, mInf, gradC) {
+    let target = A.blend(mInf, 0.6);
+    let newK = psi.kappa - CONST.alpha * (psi.kappa - target.kappa);
+    let newN = psi.N + CONST.beta * psi.C;
+    let newDP = psi.C > 0.6 ? psi.dPhi * (1 - CONST.gamma * psi.C ** 2) : psi.dPhi;
+    newDP += CONST.eta * (mInf.dPhi - newDP);
+    newK += CONST.eta * (mInf.kappa - newK);
+    newN += CONST.eta * (mInf.N - newN);
+    let dt = target.theta - psi.theta;
+    if (dt > CONST.pi) dt -= CONST.tau; else if (dt < -CONST.pi) dt += CONST.tau;
+    const shift = Math.max(-CONST.theta_max, Math.min(CONST.theta_max, CONST.K * Math.sin(dt)));
+    const newT = (psi.theta + shift) % CONST.tau;
+    newK -= gradC * 0.15; newDP -= gradC * 0.08;
+    const mr = 0.1 * target.C;
+    newDP = (1-mr)*newDP+mr*target.dPhi; newK = (1-mr)*newK+mr*target.kappa;
+    return new Psi(newDP, newK, newT, newN, psi.C, psi.t + 1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ENERGIEBOXEN
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const ENERGIEBOXEN = {
+    unicode_normalizer: { id: 'unicode_normalizer', name: 'Unicode Normalizer', icon: '🔤', description: 'NFKD + emoji mapping', color: 'var(--energy)', process: (p,i) => UnicodeNormalizer.process(p,i) },
+    text: { id: 'text', name: 'Text Encoder', icon: '📝', description: 'Natural language encoding', color: 'var(--phi)',
+        process(psi, input) {
+            if (!input) return psi;
+            const chars = [...input].filter(c => !c.match(/\s/));
+            if (chars.length === 0) return psi;
+            let dP=0,k=0,N=0,sinS=0,cosS=0;
+            chars.forEach((c,i) => {
+                const cp = c.charCodeAt(0);
+                const t = ((cp/256)*CONST.phi+(cp%256)/256*CONST.tau+(i/chars.length)*CONST.pi)%CONST.tau;
+                sinS+=Math.sin(t);cosS+=Math.cos(t);k+=0.3;dP+=Math.abs(cp-0x4E00)/0x10FFFF;N+=Math.log(1+cp)/Math.log(0x10FFFF+1);
+            });
+            const n = chars.length;
+            return new Psi(dP/n,k/n,Math.atan2(sinS,cosS),N,Math.sqrt(sinS**2+cosS**2)/n,psi.t+1);
+        }
+    },
+    dialogue_box: { id: 'dialogue_box', name: 'DialogueBox', icon: '💬', description: 'Rolling context merge', color: 'var(--phi)', process: (p) => DialogueBox.process(p) },
+    emotion: { id: 'emotion', name: 'Emotion Field', icon: '❤️', description: 'Emotional valence', color: 'var(--maat)',
+        process(psi, input) {
+            if (!input) return psi;
+            const pos = ['love','happy','joy','great','wonderful','amazing'];
+            const neg = ['hate','sad','angry','fear','terrible','awful'];
+            const lower = input.toLowerCase();
+            let val = 0;
+            pos.forEach(w => { if (lower.includes(w)) val += 0.2; });
+            neg.forEach(w => { if (lower.includes(w)) val -= 0.2; });
+            const result = psi.copy();
+            result.dPhi += val * 0.3; result.theta += val * 0.5;
+            return result.enforce();
+        }
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN OS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class ASCPI_OS {
+    constructor() {
+        this.currentPsi = new Psi();
+        this.memory = new MemoryField();
+        this.awareness = new AwarenessField();
+        this.energieboxen = new Map();
+        this.activeBoxen = new Set();
+        this.step = 0;
+        this.cPrev = 0.5;
+    }
+    
+    init() {
+        for (const [id, box] of Object.entries(ENERGIEBOXEN)) this.energieboxen.set(id, box);
+        this.activeBoxen.add('unicode_normalizer');
+        this.activeBoxen.add('text');
+        this.activeBoxen.add('dialogue_box');
+    }
+    
+    toggleEnergiebox(id) {
+        if (this.activeBoxen.has(id)) this.activeBoxen.delete(id);
+        else this.activeBoxen.add(id);
+    }
+    
+    async process(input) {
+        this.step++;
+        let psi = new Psi();
+        
+        // Normalize first
+        const normalized = UnicodeNormalizer.normalize(input);
+        
+        // Process through active energieboxen
+        for (const id of this.activeBoxen) {
+            const box = this.energieboxen.get(id);
+            if (box) psi = box.process(psi, normalized);
+        }
+        
+        // Kernel evolution
+        for (let i = 0; i < 25; i++) {
+            const before = psi.copy();
+            const cFused = (psi.C + this.memory.mInf.C + this.awareness.field.C) / 3;
+            const gradC = cFused - this.cPrev;
+            this.cPrev = cFused;
+            psi = kernelF(psi, this.memory.attractor(), this.memory.mInf, gradC);
+            this.memory.absorb(psi);
+            psi.C = this.memory.mInf.C;
+            psi = this.awareness.evolve(psi, this.memory.mInf);
+            if (psi.C > 0.95) break;
+        }
+        
+        this.currentPsi = psi;
+        return { psi, coherence: psi.C, awareness: this.awareness.field.C, awarenessLevel: this.awareness.level(), memory: this.memory.mInf.C, step: this.step };
+    }
+    
+    async chat(input) {
+        const normalized = UnicodeNormalizer.normalize(input);
+        const result = await this.process(input);
+        const response = ResponseSynthesizer.synthesize(result.psi);
+        const dialogueState = DialogueBox.getState();
+        
+        return {
+            input: { original: input, normalized },
+            field: { psi: result.psi, coherence: result.coherence, curvature: result.psi.kappa, phase: result.psi.theta },
+            dialogue: { state: dialogueState, contextLength: DialogueBox._context.length },
+            response,
+            runtime: result
+        };
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VISUALIZER
+// ═══════════════════════════════════════════════════════════════════════════════
+
+class FieldVisualizer {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.running = false;
+    }
+    
+    resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+        this.particles = [];
+        for (let i = 0; i < 100; i++) {
+            this.particles.push({ x: Math.random()*this.canvas.width, y: Math.random()*this.canvas.height, theta: Math.random()*CONST.tau, size: 2+Math.random()*3 });
+        }
+    }
+    
+    start(os) { this.os = os; this.running = true; this.render(); }
+    stop() { this.running = false; }
+    
+    render() {
+        if (!this.running) return;
+        const ctx = this.ctx, w = this.canvas.width, h = this.canvas.height, cx = w/2, cy = h/2;
+        const psi = this.os.currentPsi;
+        
+        ctx.fillStyle = '#0a0a0f';
+        ctx.fillRect(0, 0, w, h);
+        
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 300);
+        grad.addColorStop(0, `rgba(127,255,0,${psi.C*0.15})`);
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+        
+        this.particles.forEach(p => {
+            const dx = p.x-cx, dy = p.y-cy, dist = Math.sqrt(dx*dx+dy*dy);
+            const inf = psi.C * 0.1 / (1+dist*0.01);
+            p.theta += 0.5 * Math.sin(psi.theta - p.theta) * inf;
+            p.x += Math.cos(p.theta) * (0.5+psi.kappa*0.3);
+            p.y += Math.sin(p.theta) * (0.5+psi.kappa*0.3);
+            if (p.x<0) p.x=w; if (p.x>w) p.x=0; if (p.y<0) p.y=h; if (p.y>h) p.y=0;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size*(0.5+psi.C), 0, CONST.tau);
+            ctx.fillStyle = `hsla(${(p.theta/CONST.tau)*60+240},70%,60%,${0.3+psi.C*0.5})`;
+            ctx.fill();
+        });
+        
+        const vecLen = 80*(1+psi.N*0.3);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx+Math.cos(psi.theta)*vecLen, cy+Math.sin(psi.theta)*vecLen);
+        ctx.strokeStyle = `rgba(244,162,97,${0.5+psi.C*0.5})`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+        
+        ctx.font = '48px Arial';
+        ctx.fillStyle = `rgba(255,255,255,${0.3+psi.C*0.7})`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('Ψ', cx, cy);
+        
+        requestAnimationFrame(() => this.render());
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// APPLICATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let os, visualizer;
+let consoleLines = [], chatMessages = [];
+let currentTab = 'console', currentMode = 'field';
+let lastResponse = null;
+
+async function init() {
+    os = new ASCPI_OS();
+    os.init();
+    
+    const canvas = document.getElementById('fieldCanvas');
+    visualizer = new FieldVisualizer(canvas);
+    visualizer.resize();
+    visualizer.start(os);
+    
+    renderEnergieboxen();
+    
+    document.getElementById('fieldInput').addEventListener('keypress', e => { if (e.key === 'Enter') processField(); });
+    document.getElementById('chatInput').addEventListener('keypress', e => { if (e.key === 'Enter') sendChat(); });
+    window.addEventListener('resize', () => visualizer.resize());
+    
+    document.getElementById('loadingOverlay').classList.add('hidden');
+    document.getElementById('statusText').textContent = 'Ready';
+    
+    log('ASCπ OS v2.1 initialized', 'success');
+    log('Conversation extensions loaded', 'info');
+    renderConsole();
+}
+
+function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    document.getElementById('canvasArea').classList.toggle('hidden', mode === 'chat');
+    document.getElementById('chatArea').classList.toggle('active', mode === 'chat');
+}
+
+async function processField() {
+    const input = document.getElementById('fieldInput').value;
+    if (!input.trim()) return;
+    log(`Processing: "${input.substring(0,40)}..."`, 'info');
+    const result = await os.chat(input);
+    lastResponse = result;
+    updateMetrics(result);
+    log(`C=${result.field.coherence.toFixed(3)}, Tone=${result.response.tone}`, 'success');
+    document.getElementById('fieldInput').value = '';
+}
+
+async function sendChat() {
+    const input = document.getElementById('chatInput').value;
+    if (!input.trim()) return;
+    
+    chatMessages.push({ role: 'user', text: input, time: new Date().toLocaleTimeString() });
+    renderChat();
+    document.getElementById('chatInput').value = '';
+    
+    const result = await os.chat(input);
+    lastResponse = result;
+    updateMetrics(result);
+    
+    chatMessages.push({
+        role: 'assistant',
+        text: result.response.text,
+        time: new Date().toLocaleTimeString(),
+        field: result.field,
+        meta: result.response
+    });
+    renderChat();
+    log(`Chat: C=${result.field.coherence.toFixed(3)}`, 'success');
+}
+
+function updateMetrics(result) {
+    const psi = result.field.psi;
+    document.getElementById('metricPhi').textContent = psi.dPhi.toFixed(2);
+    document.getElementById('metricKappa').textContent = psi.kappa.toFixed(2);
+    document.getElementById('metricTheta').textContent = psi.theta.toFixed(2);
+    document.getElementById('metricC').textContent = psi.C.toFixed(2);
+    document.getElementById('awarenessLevel').textContent = result.runtime.awarenessLevel;
+    document.getElementById('awarenessBar').style.width = `${result.runtime.awareness*100}%`;
+    document.getElementById('memoryC').textContent = result.runtime.memory.toFixed(3);
+    document.getElementById('memoryBar').style.width = `${result.runtime.memory*100}%`;
+    document.getElementById('contextLength').textContent = `${result.dialogue.contextLength} / 20`;
+    document.getElementById('dialogueC').textContent = result.dialogue.state.C.toFixed(3);
+    document.getElementById('dialogueBar').style.width = `${result.dialogue.state.C*100}%`;
+    document.getElementById('fieldState').textContent = `Ψ = (${psi.dPhi.toFixed(2)}, ${psi.kappa.toFixed(2)}, ${psi.theta.toFixed(2)}, ${psi.N.toFixed(2)}, ${psi.C.toFixed(2)})`;
+    document.getElementById('stepCount').textContent = `Step: ${result.runtime.step}`;
+}
+
+function renderEnergieboxen() {
+    const container = document.getElementById('energieboxen');
+    container.innerHTML = '';
+    os.energieboxen.forEach((box, id) => {
+        const active = os.activeBoxen.has(id);
+        const div = document.createElement('div');
+        div.className = `energiebox ${active ? 'active' : ''}`;
+        div.innerHTML = `<div class="energiebox-header"><span class="energiebox-icon">${box.icon}</span><span class="energiebox-title">${box.name}</span><div class="energiebox-toggle"></div></div><div class="energiebox-desc">${box.description}</div>`;
+        div.onclick = () => { os.toggleEnergiebox(id); renderEnergieboxen(); log(`${box.name} ${os.activeBoxen.has(id)?'enabled':'disabled'}`, 'info'); };
+        container.appendChild(div);
+    });
+}
+
+function renderChat() {
+    const container = document.getElementById('chatMessages');
+    container.innerHTML = chatMessages.map(m => `
+        <div class="chat-message ${m.role}">
+            <div class="content">${m.text}</div>
+            ${m.field ? `<div class="field-info">κ=${m.field.psi.kappa.toFixed(2)} θ=${(m.field.psi.theta/CONST.pi).toFixed(2)}π C=${(m.field.psi.C*100).toFixed(0)}% [${m.meta.tone}]</div>` : ''}
+            <div class="meta">${m.time}</div>
+        </div>
+    `).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+function log(msg, type = 'info') {
+    consoleLines.push({ time: new Date().toLocaleTimeString(), message: msg, type });
+    if (consoleLines.length > 100) consoleLines.shift();
+    if (currentTab === 'console') renderConsole();
+}
+
+function renderConsole() {
+    document.getElementById('panelContent').innerHTML = consoleLines.map(l => `<div class="console-line ${l.type}"><span class="time">${l.time}</span>${l.message}</div>`).join('');
+}
+
+function switchTab(btn, tab) {
+    currentTab = tab;
+    document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const content = document.getElementById('panelContent');
+    if (tab === 'console') { renderConsole(); }
+    else if (tab === 'context') {
+        const ctx = DialogueBox.getContext();
+        content.innerHTML = ctx.length === 0 ? '<p style="color:var(--muted)">No context yet</p>' :
+            ctx.map((c,i) => `<div class="context-item"><span class="index">[${i}]</span> <span class="values">κ=${c.kappa.toFixed(2)} θ=${c.theta.toFixed(2)} C=${c.C.toFixed(2)}</span></div>`).join('');
+    }
+    else if (tab === 'response') {
+        if (lastResponse) {
+            content.innerHTML = `<div class="context-item"><strong>Tone:</strong> ${lastResponse.response.tone}<br><strong>Confidence:</strong> ${lastResponse.response.confidence}<br><strong>Structure:</strong> ${lastResponse.response.structure}<br><br><strong>Text:</strong><br>${lastResponse.response.text}</div>`;
+        } else {
+            content.innerHTML = '<p style="color:var(--muted)">No response yet</p>';
+        }
+    }
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
