@@ -1,0 +1,16 @@
+==== ascpi_engine_v10.py ==== 
+SHA256 hash of ascpi_engine_v10.py:
+c9b7909941b10d0c6f3605d461df717d0a9715013c8208f491d76cf53bb5576a
+CertUtil: -hashfile command completed successfully.
+==== ascpi_engine_v10_readme.md ==== 
+SHA256 hash of ascpi_engine_v10_readme.md:
+9d6406a06558708fc9ca9e8a17f59e3669afae2fba3882a24aa60630f6e21ac3
+CertUtil: -hashfile command completed successfully.
+==== ascpi_engine_v10_spec.md ==== 
+SHA256 hash of ascpi_engine_v10_spec.md:
+a67db6cea1ba806c0ca646273c218fd570d3644ff38fb91e45c812eeabdd3f9d
+CertUtil: -hashfile command completed successfully.
+==== ascpi_engine_v10_tests.py ==== 
+SHA256 hash of ascpi_engine_v10_tests.py:
+8bca36e808d56bc7ebeae89bb58acb0f7f6042c92dfdfce3decd3c79845a18cb
+CertUtil: -hashfile command completed successfully.
