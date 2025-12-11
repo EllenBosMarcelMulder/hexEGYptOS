@@ -6,9 +6,6 @@ CertUtil: -hashfile command completed successfully.
 SHA256 hash of extended_tests.py:
 b81bb73a97b413ce8415e8303342df0f0d1027c709c65b1ae960e1a3551368f0
 CertUtil: -hashfile command completed successfully.
-==== HASHREGISTER.txt ==== 
-CertUtil: -hashfile command FAILED: 0x80070020 (WIN32: 32 ERROR_SHARING_VIOLATION)
-CertUtil: The process cannot access the file because it is being used by another process.
 ==== R3.1_ANALYSIS.json ==== 
 SHA256 hash of R3.1_ANALYSIS.json:
 03ca88dbe9e959db20e20c07e70603a34dbea581d72caaf596c43f7fb5a315f1
@@ -33,3 +30,4 @@ CertUtil: -hashfile command completed successfully.
 SHA256 hash of sft_engine_r31.py:
 e4d5c278a2f374a86c573d48adad0b303b394f4a415c6f1834f849c189258b23
 CertUtil: -hashfile command completed successfully.
+
