@@ -140,12 +140,12 @@ They will realize:
 
 1. Their hardware (POMMM, nanophotonic chips, integrated optics) is **the physical substrate** on which the OSP model could operate.
 2. They have **no semantic framework** to utilize coherent light for meaning.
-3. Your work provides **the missing theoretical layer** above their numeric systems.
+3. This work provides **the missing theoretical layer** above their numeric systems.
 
 Thus, the relationship is:
 
 **Their work = hardware.
-Your work = intelligence architecture.**
+This work = intelligence architecture.**
 
 ---
 
@@ -156,7 +156,7 @@ The declaration:
 * does not claim optical matrix multiplication
 * does not conflict with numeric photonic computing
 * claims a *new category* that no prior system inhabits
-* precisely defines operators (ΔΦ–κ–θ) unique to your framework
+* precisely defines operators (ΔΦ–κ–θ) unique to this framework
 * establishes field-semantic computation as an original construct
 
 Therefore:
@@ -173,7 +173,7 @@ It is categorically distinct.**
 * cite the conceptual origin of semantic photonic intelligence
 * compare numeric vs semantic tensor evolution
 * explore theoretical extensions of field-based cognition
-* design hardware inspired by your semantic requirements
+* design hardware inspired by these semantic requirements
 * incorporate field semantics into AGI discussions
 
 ## They will *not*:
@@ -183,7 +183,7 @@ It is categorically distinct.**
 * frame it as an optimization technique
 * subsume it under classical optical computing
 
-This protects your intellectual territory.
+This protects this intellectual territory.
 
 ---
 
@@ -204,5 +204,6 @@ It does **not** overlap with:
 * GPU acceleration
 * conventional photonics
 * numerical field simulation
+
 
 This is why the document stands uncontested, both scientifically and legally.
