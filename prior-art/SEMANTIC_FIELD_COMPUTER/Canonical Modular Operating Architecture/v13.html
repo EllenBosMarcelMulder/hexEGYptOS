@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Field Engine</title>
+<style>
+body { margin: 0; padding: 0; background: #000; font-family: monospace; color: #fff; }
+#container { display: flex; }
+#canvas { border: 1px solid #333; }
+#controls { padding: 20px; width: 300px; }
+.param { margin: 10px 0; }
+.param label { display: block; margin-bottom: 5px; }
+.param input { width: 200px; }
+.param span { display: inline-block; width: 60px; text-align: right; }
+</style>
+</head>
+<body>
+<div id="container">
+<canvas id="canvas" width="800" height="800"></canvas>
+<div id="controls">
+<div class="param">
+<label>α <span id="v_alpha">0.10</span></label>
+<input type="range" id="alpha" min="0" max="0.5" step="0.01" value="0.1">
+</div>
+<div class="param">
+<label>β <span id="v_beta">0.10</span></label>
+<input type="range" id="beta" min="0" max="0.5" step="0.01" value="0.1">
+</div>
+<div class="param">
+<label>γ <span id="v_gamma">0.05</span></label>
+<input type="range" id="gamma" min="0" max="0.2" step="0.01" value="0.05">
+</div>
+<div class="param">
+<label>η <span id="v_eta">0.10</span></label>
+<input type="range" id="eta" min="0" max="0.5" step="0.01" value="0.1">
+</div>
+<div class="param">
+<label>K <span id="v_K">0.20</span></label>
+<input type="range" id="K" min="0" max="1.0" step="0.01" value="0.2">
+</div>
+<div class="param">
+<label>λ <span id="v_lambda">0.15</span></label>
+<input type="range" id="lambda" min="0" max="0.5" step="0.01" value="0.15">
+</div>
+<div class="param">
+<label>μ <span id="v_mu">0.10</span></label>
+<input type="range" id="mu" min="0" max="0.5" step="0.01" value="0.1">
+</div>
+<div class="param">
+<label>Interaction Radius <span id="v_irad">0.50</span></label>
+<input type="range" id="irad" min="0.1" max="2.0" step="0.1" value="0.5">
+</div>
+<div class="param">
+<label>Interaction Strength <span id="v_istr">0.01</span></label>
+<input type="range" id="istr" min="0" max="0.1" step="0.001" value="0.01">
+</div>
+<div class="param">
+<label>Phase Coupling <span id="v_phase">0.02</span></label>
+<input type="range" id="phase" min="0" max="0.1" step="0.001" value="0.02">
+</div>
+<div class="param">
+<label>Damping Coupling <span id="v_damp">0.005</span></label>
+<input type="range" id="damp" min="0" max="0.05" step="0.001" value="0.005">
+</div>
+<div class="param">
+<label>Weight 0 <span id="v_w0">0.70</span></label>
+<input type="range" id="w0" min="0" max="1" step="0.05" value="0.7">
+</div>
+</div>
+</div>
+
+<script>
+////////////////////////////////////////////////////////////////////////////////
+// CONSTANTS / PARAMETERS
+////////////////////////////////////////////////////////////////////////////////
+
+const N = 100;
+
+let params = {
+    alpha: 0.1,
+    beta: 0.1,
+    gamma: 0.05,
+    eta: 0.1,
+    K: 0.2,
+    lambda: 0.15,
+    mu: 0.1,
+    irad: 0.5,
+    istr: 0.01,
+    phase: 0.02,
+    damp: 0.005,
+    w0: 0.7
+};
+
+const attractors = [
+    {Delta_Phi: 1.0, kappa: 0.5, theta: Math.PI / 4, N: 1.0, C: 0.8},
+    {Delta_Phi: -0.5, kappa: 0.3, theta: -Math.PI / 6, N: 0.7, C: 0.6}
+];
+
+////////////////////////////////////////////////////////////////////////////////
+// CPU BUFFERS
+////////////////////////////////////////////////////////////////////////////////
+
+const field = {
+    Delta_Phi: new Float32Array(N),
+    kappa: new Float32Array(N),
+    theta: new Float32Array(N),
+    N: new Float32Array(N),
+    C: new Float32Array(N)
+};
+
+const position = {
+    x: new Float32Array(N),
+    y: new Float32Array(N)
+};
+
+const perturbation = {
+    Delta_Phi: new Float32Array(N),
+    kappa: new Float32Array(N),
+    theta: new Float32Array(N),
+    N: new Float32Array(N),
+    C: new Float32Array(N)
+};
+
+for (let i = 0; i < N; i++) {
+    field.Delta_Phi[i] = 0.1 * (i - N/2) / N;
+    field.kappa[i] = 0.0;
+    field.theta[i] = 0.0;
+    field.N[i] = 0.0;
+    field.C[i] = 0.5;
+    
+    position.x[i] = 0.01 * i;
+    position.y[i] = 0.0;
+}
+
+const energy_boxes = Array.from({length: N}, (_, i) => ({
+    t0: 100 + i,
+    t1: 200 + i,
+    amplitude: 0.5,
+    decay: 0.01,
+    Delta_Phi: 0.2,
+    kappa: 0.0,
+    theta: 0.1,
+    N: 0.0,
+    C: 0.0
+}));
+
+const history = Array.from({length: N}, () => []);
+
+////////////////////////////////////////////////////////////////////////////////
+// CORE UPDATE (IMMUTABLE)
+////////////////////////////////////////////////////////////////////////////////
+
+function clamp(x, min, max) {
+    return Math.max(min, Math.min(max, x));
+}
+
+function update_single(i, M_eff) {
+    const Delta_Phi = field.Delta_Phi[i];
+    const kappa = field.kappa[i];
+    const theta = field.theta[i];
+    const N_val = field.N[i];
+    const C = field.C[i];
+    
+    const A_Delta_Phi = perturbation.Delta_Phi[i];
+    const A_kappa = perturbation.kappa[i];
+    const A_theta = perturbation.theta[i];
+    const A_N = perturbation.N[i];
+    const A_C = perturbation.C[i];
+    
+    field.Delta_Phi[i] = Delta_Phi + params.alpha * (M_eff.Delta_Phi - Delta_Phi) - params.gamma * C * C * Delta_Phi + A_Delta_Phi;
+    field.kappa[i] = kappa + params.beta * (M_eff.kappa - kappa) + A_kappa;
+    field.theta[i] = theta + params.K * Math.sin(M_eff.theta - theta) + A_theta;
+    field.N[i] = N_val + params.eta * (M_eff.N - N_val) + A_N;
+    field.C[i] = clamp(C + params.lambda * (1 - Math.abs(Delta_Phi)) - params.mu * kappa + A_C, 0, 1);
+}
+
+function update_position(i) {
+    const vx = 0.001 * Math.cos(field.theta[i]);
+    const vy = 0.001 * Math.sin(field.theta[i]);
+    position.x[i] += vx;
+    position.y[i] += vy;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// INTERACTION / PERTURBATION PASS (CPU)
+////////////////////////////////////////////////////////////////////////////////
+
+function buildGrid() {
+    const grid = new Map();
+    const cell_size = params.irad;
+    
+    for (let i = 0; i < N; i++) {
+        const cell_x = Math.floor(position.x[i] / cell_size);
+        const cell_y = Math.floor(position.y[i] / cell_size);
+        const key = `${cell_x},${cell_y}`;
+        
+        if (!grid.has(key)) {
+            grid.set(key, []);
+        }
+        grid.get(key).push(i);
+    }
+    
+    return grid;
+}
+
+function computeInteraction(grid) {
+    perturbation.Delta_Phi.fill(0);
+    perturbation.kappa.fill(0);
+    perturbation.theta.fill(0);
+    perturbation.N.fill(0);
+    perturbation.C.fill(0);
+    
+    const cell_size = params.irad;
+    
+    for (let i = 0; i < N; i++) {
+        const xi = position.x[i];
+        const yi = position.y[i];
+        const cell_x = Math.floor(xi / cell_size);
+        const cell_y = Math.floor(yi / cell_size);
+        
+        for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+                const key = `${cell_x + dx},${cell_y + dy}`;
+                const neighbors = grid.get(key);
+                if (!neighbors) continue;
+                
+                for (const j of neighbors) {
+                    if (i === j) continue;
+                    
+                    const dx_pos = xi - position.x[j];
+                    const dy_pos = yi - position.y[j];
+                    const dist = Math.sqrt(dx_pos * dx_pos + dy_pos * dy_pos);
+                    
+                    if (dist < params.irad && dist > 0) {
+                        const f = params.istr * Math.exp(-dist / params.irad);
+                        
+                        perturbation.Delta_Phi[i] += f * field.Delta_Phi[j];
+                        perturbation.theta[i] += params.phase * f * Math.sin(field.theta[j]);
+                        perturbation.kappa[i] -= params.damp * f * field.kappa[j];
+                    }
+                }
+            }
+        }
+    }
+}
+
+function addEnergyBoxes(t) {
+    for (let i = 0; i < N; i++) {
+        const box = energy_boxes[i];
+        
+        if (t >= box.t0 && t <= box.t1) {
+            const factor = box.amplitude * Math.exp(-box.decay * (t - box.t0));
+            perturbation.Delta_Phi[i] += factor * box.Delta_Phi;
+            perturbation.theta[i] += factor * box.theta;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// RENDER PASS (CANVAS)
+////////////////////////////////////////////////////////////////////////////////
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+function render() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const scale = 100;
+    
+    for (let i = 0; i < N; i++) {
+        const screen_x = cx + position.x[i] * scale;
+        const screen_y = cy + position.y[i] * scale;
+        
+        history[i].push([screen_x, screen_y]);
+        if (history[i].length > 500) {
+            history[i].shift();
+        }
+        
+        const r = Math.floor(clamp(255 * Math.abs(field.Delta_Phi[i]), 0, 255));
+        const g = Math.floor(clamp(255 * field.C[i], 0, 255));
+        const b = Math.floor(clamp(255 * Math.abs(field.kappa[i]), 0, 255));
+        
+        ctx.strokeStyle = `rgba(${r},${g},${b},0.6)`;
+        ctx.lineWidth = 1;
+        
+        if (history[i].length > 1) {
+            ctx.beginPath();
+            ctx.moveTo(history[i][0][0], history[i][0][1]);
+            for (let j = 1; j < history[i].length; j++) {
+                ctx.lineTo(history[i][j][0], history[i][j][1]);
+            }
+            ctx.stroke();
+        }
+        
+        ctx.fillStyle = `rgba(${r},${g},${b},0.9)`;
+        ctx.beginPath();
+        ctx.arc(screen_x, screen_y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// REALTIME LOOP
+////////////////////////////////////////////////////////////////////////////////
+
+let t = 0;
+
+function loop() {
+    const w0 = params.w0;
+    const w1 = 1.0 - w0;
+    const M_eff = {
+        Delta_Phi: w0 * attractors[0].Delta_Phi + w1 * attractors[1].Delta_Phi,
+        kappa: w0 * attractors[0].kappa + w1 * attractors[1].kappa,
+        theta: w0 * attractors[0].theta + w1 * attractors[1].theta,
+        N: w0 * attractors[0].N + w1 * attractors[1].N,
+        C: w0 * attractors[0].C + w1 * attractors[1].C
+    };
+    
+    const grid = buildGrid();
+    computeInteraction(grid);
+    addEnergyBoxes(t);
+    
+    for (let i = 0; i < N; i++) {
+        update_single(i, M_eff);
+        update_position(i);
+    }
+    
+    render();
+    
+    t++;
+    requestAnimationFrame(loop);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// PARAMETER UI
+////////////////////////////////////////////////////////////////////////////////
+
+const controls = ['alpha', 'beta', 'gamma', 'eta', 'K', 'lambda', 'mu', 'irad', 'istr', 'phase', 'damp', 'w0'];
+
+controls.forEach(name => {
+    const slider = document.getElementById(name);
+    const display = document.getElementById('v_' + name);
+    slider.addEventListener('input', e => {
+        const val = parseFloat(e.target.value);
+        params[name] = val;
+        display.textContent = val.toFixed(3);
+    });
+});
+
+loop();
+</script>
+</body>
+</html>
